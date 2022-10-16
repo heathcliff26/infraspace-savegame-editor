@@ -1,9 +1,57 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 )
+
+var researchIndex = []string{
+	"farming",
+	"electronics",
+	"steelMaking",
+	"oneWayRoads",
+	"science2",
+	"homeAppliances",
+	"solarPanels",
+	"improvedWindTurbineBlades",
+	"concreteRoads",
+	"aluminiumMining",
+	"powerSubstation",
+	"motors",
+	"fourLaneRoads",
+	"parks",
+	"computers",
+	"largeMines",
+	"highways",
+	"trains",
+	"foodProcessing",
+	"fertilizer",
+	"nanotubes",
+	"selfCleaningSolarPanels",
+	"sixLaneRoads",
+	"stadiums",
+	"neuralProcessors",
+	"science3",
+	"uraniumMining",
+	"superhighways",
+	"homeRobots",
+	"industrialRobots",
+	"particleFiltering",
+	"nuclearPower",
+	"schools",
+	"iridiumMining",
+	"recycling",
+	"holoDisplays",
+	"highTechWorkshop",
+	"aiControlUnits",
+	"iridiumPropellant",
+	"fastNeutronReactor",
+	"science4",
+	"adamantineMining",
+}
 
 var maxResearchProgress = map[string]int{
 	"farming":                   5,
@@ -63,6 +111,49 @@ func unlockAllResearch(save *savegame) {
 	}
 }
 
+// interactively unlock specific research
+func unlockResearch(save *savegame) error {
+	researchProgress := save.getResearchProgress()
+	lockedResearch := make([]string, 0, len(maxResearchProgress))
+	i := 0
+	fmt.Printf("Research to unlock:\n")
+	for x := 0; x < len(researchIndex); x++ {
+		key := researchIndex[x]
+		value := researchProgress[key]
+		if value.(float64) < float64(maxResearchProgress[key]) {
+			lockedResearch = append(lockedResearch, key)
+			fmt.Printf("\t%d.\t%s\n", i, key)
+			i++
+		}
+	}
+	fmt.Printf("\nEnter the numbers of the items to unlock and press enter\n> ")
+
+	r := bufio.NewReader(os.Stdin)
+
+	input, err := r.ReadString('\n')
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Input: %s\nUnlocking the following research:\n", input)
+	input = strings.Trim(input, "\n")
+	input = strings.Trim(input, "\r")
+	indexes := strings.Split(input, " ")
+	for _, index := range indexes {
+		i, err = strconv.Atoi(index)
+		if err != nil {
+			return err
+		}
+		if i < 0 || i >= len(lockedResearch) {
+			return fmt.Errorf("Invalid input, %d is not a valid choice", i)
+		}
+		key := lockedResearch[i]
+		researchProgress[key] = float64(maxResearchProgress[key])
+		fmt.Printf("\t%s\n", key)
+	}
+
+	return nil
+}
+
 // increase the starter workers ot the given count, return resulting number of starting workers
 func increaseStarterWorkers(save *savegame, count int) int {
 	starterWorkers := save.getStarterWorkers()
@@ -100,7 +191,9 @@ func printSaveInfo(save *savegame) {
 	researchProgress := save.getResearchProgress()
 	fmt.Printf("Unlocked Research:\n")
 	researchProgressEmpty := true
-	for key, value := range researchProgress {
+	for i := 0; i < len(researchIndex); i++ {
+		key := researchIndex[i]
+		value := researchProgress[key]
 		if value.(float64) == float64(maxResearchProgress[key]) {
 			fmt.Printf("\t%s\n", key)
 			researchProgressEmpty = false

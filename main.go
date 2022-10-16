@@ -9,7 +9,8 @@ import (
 
 var (
 	pathFlag           stringFlag
-	unlockResearch     bool
+	research           bool
+	researchall        bool
 	show               bool
 	starterWorkerCount intFlag
 )
@@ -50,22 +51,37 @@ func (flag *intFlag) String() string {
 
 func init() {
 	flag.Var(&pathFlag, "p", "Requiered: Path to the savegame")
-	flag.BoolVar(&unlockResearch, "research", false, "Unlock all research")
-	flag.Var(&starterWorkerCount, "setWorkers", "Increase the starter workers to the given value")
 	flag.BoolVar(&show, "s", false, "Show the current values of the safe")
+	flag.BoolVar(&research, "research", false, "Unlock research")
+	flag.BoolVar(&researchall, "researchall", false, "Unlock all research")
+	flag.Var(&starterWorkerCount, "setWorkers", "Increase the starter workers to the given value")
 }
 
-func main() {
+func parseFlags() {
 	flag.Parse()
 
+	exitWithError := false
 	if !pathFlag.set {
 		fmt.Println("Error: Path is required")
+		exitWithError = true
+	}
+	if research && researchall {
+		fmt.Println("Error: You can't use research and researchall at the same time")
+		exitWithError = true
+	}
+
+	if exitWithError {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+}
+
+func main() {
+	parseFlags()
+
 	save, err := LoadSavegame(pathFlag.value)
 	if err != nil {
-		fmt.Printf("Could not load savegame %s: %v\n", pathFlag.value, err)
+		fmt.Printf("Could not load savegame %s: %s\n", pathFlag.value, err)
 		os.Exit(1)
 	}
 
@@ -75,10 +91,19 @@ func main() {
 
 	changed := false
 
-	if unlockResearch {
+	if researchall {
 		unlockAllResearch(save)
-		fmt.Println("Unlocked all Research")
+		fmt.Printf("Unlocked all Research\n")
 		changed = true
+	} else if research {
+		err = unlockResearch(save)
+		if err != nil {
+			fmt.Printf("Error: Could not unlock research: %s\n", err)
+			os.Exit(1)
+		} else {
+			fmt.Printf("Unlocked Research\n")
+			changed = true
+		}
 	}
 	if starterWorkerCount.set {
 		count := increaseStarterWorkers(save, starterWorkerCount.value)
@@ -91,13 +116,16 @@ func main() {
 	}
 
 	if !changed && !show {
-		fmt.Println("There was nothing to change")
+		fmt.Printf("There was nothing to change\n")
+		flag.PrintDefaults()
 		os.Exit(1)
-	}
-
-	save.setPath("edited.sav")
-	err = save.Save()
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+	} else if changed {
+		save.setPath("edited.sav")
+		err = save.Save()
+		if err != nil {
+			fmt.Printf("Error: %s\n", err)
+		} else {
+			fmt.Printf("Changes have been writtent to %s\n", save.getPath())
+		}
 	}
 }
