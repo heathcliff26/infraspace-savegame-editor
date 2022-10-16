@@ -98,6 +98,14 @@ var maxResearchProgress = map[string]int{
 	"adamantineMining":          350,
 }
 
+var habitatResourceNames = []string{
+	"oxygen",
+	"survivalFood",
+	"homeAppliance",
+	"computer",
+	"parkPoints",
+}
+
 const RESOURCE_FACTOR = 100
 
 type worker struct {
@@ -217,6 +225,25 @@ func setResource(save *savegame, resource string, value int) error {
 	return nil
 }
 
+func getBuildingStorage(building map[string]interface{}) (map[string]interface{}, bool) {
+	if building == nil {
+		return nil, false
+	}
+	consumerProducer, ok := building["consumerProducer"].(map[string]interface{})
+	if !ok || consumerProducer == nil {
+		return nil, false
+	}
+	productionLogic, ok := consumerProducer["productionLogic"].(map[string]interface{})
+	if !ok || productionLogic == nil {
+		return nil, false
+	}
+	storage, ok := productionLogic["storage"].(map[string]interface{})
+	if !ok || storage == nil {
+		return nil, false
+	}
+	return storage, true
+}
+
 func maxHabitatStorage(save *savegame) {
 	buildings := save.getBuildings()
 	for i := 0; i < len(buildings); i++ {
@@ -225,9 +252,13 @@ func maxHabitatStorage(save *savegame) {
 		if !strings.HasPrefix(buildingName, "habitatLevel") {
 			continue
 		}
-		storage := building["consumerProducer"].(map[string]interface{})["productionLogic"].(map[string]interface{})["storage"].(map[string]interface{})
-		for resource, _ := range storage {
-			storage[resource] = 1000
+		storage, ok := getBuildingStorage(building)
+		if !ok {
+			fmt.Printf("Skipped Habitat because could not get Storage Variable\n")
+			continue
+		}
+		for _, resourceName := range habitatResourceNames {
+			storage[resourceName] = 10
 		}
 	}
 }
