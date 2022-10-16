@@ -64,6 +64,11 @@ func main() {
 		fmt.Printf("Set Habitat Storage to 1000\n")
 		changed = true
 	}
+	if habitatWorkers {
+		maxHabitatWorkers(save)
+		fmt.Printf("Filled all habitats with workers\n")
+		changed = true
+	}
 
 	if !changed && !show {
 		fmt.Printf("There was nothing to change\n")

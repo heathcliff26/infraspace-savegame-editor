@@ -159,7 +159,7 @@ func unlockResearch(save *savegame) error {
 // increase the starter workers ot the given count, return resulting number of starting workers
 func increaseStarterWorkers(save *savegame, count int) int {
 	starterWorkers := save.getStarterWorkers()
-	var nextID int = int(save.Data()["nextID"].(float64))
+	nextID := save.getNextID()
 	var newWorker worker
 	for len(starterWorkers) < count {
 		newWorker = worker{
@@ -170,7 +170,7 @@ func increaseStarterWorkers(save *savegame, count int) int {
 		starterWorkers = append(starterWorkers, newWorker)
 	}
 	save.Data()["market"].(map[string]interface{})["starterWorkers"] = starterWorkers
-	save.Data()["nextID"] = float64(nextID)
+	save.setNextID(nextID)
 	return len(starterWorkers)
 }
 
@@ -230,4 +230,31 @@ func maxHabitatStorage(save *savegame) {
 			storage[resource] = 1000
 		}
 	}
+}
+
+func maxHabitatWorkers(save *savegame) {
+	buildings := save.getBuildings()
+	nextID := save.getNextID()
+	for i := 0; i < len(buildings); i++ {
+		building := buildings[i].(map[string]interface{})
+		buildingName := building["buildingName"].(string)
+		if !strings.HasPrefix(buildingName, "habitatLevel") {
+			continue
+		}
+		productionLogic := building["consumerProducer"].(map[string]interface{})["productionLogic"].(map[string]interface{})
+		maxInhabitants := int(productionLogic["maxInhabitants"].(float64))
+		homeID := int(building["ID"].(float64))
+		workers := productionLogic["workers"].([]interface{})
+		var newWorker worker
+		for len(workers) < maxInhabitants {
+			newWorker = worker{
+				_home: homeID,
+				ID:    nextID,
+			}
+			nextID++
+			workers = append(workers, newWorker)
+		}
+		productionLogic["workers"] = workers
+	}
+	save.setNextID(nextID)
 }

@@ -86,3 +86,11 @@ func (save *savegame) getResources() map[string]interface{} {
 func (save *savegame) getBuildings() []interface{} {
 	return save.Data()["buildings"].([]interface{})
 }
+
+func (save *savegame) getNextID() int {
+	return int(save.Data()["nextID"].(float64))
+}
+
+func (save *savegame) setNextID(newID int) {
+	save.Data()["nextID"] = float64(newID)
+}

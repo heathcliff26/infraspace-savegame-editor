@@ -19,6 +19,7 @@ var (
 	starterWorkerCount intFlag
 	resourceFlags      = make(intFlagMap)
 	habitatStorage     bool
+	habitatWorkers     bool
 )
 
 type stringFlag struct {
@@ -88,6 +89,7 @@ func init() {
 	flag.Var(&starterWorkerCount, "setWorkers", "Increase the starter workers to the given value")
 	flag.Var(resourceFlags, "resource", "Set the resource to the given value, can be used multiple times")
 	flag.BoolVar(&habitatStorage, "maxHabitatStorage", false, "Set all resources in the habitat to 1000")
+	flag.BoolVar(&habitatWorkers, "maxHabitatWorkers", false, "Fill all habitats with workers")
 }
 
 func parseFlags() {
