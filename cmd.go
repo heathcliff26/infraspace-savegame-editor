@@ -8,7 +8,10 @@ import (
 	"strings"
 )
 
+const GAME_VERSION = "InfraSpace Alpha 8.1.184"
+
 var (
+	version            bool
 	pathFlag           stringFlag
 	research           bool
 	researchall        bool
@@ -76,6 +79,7 @@ func (f intFlagMap) String() string {
 }
 
 func init() {
+	flag.BoolVar(&version, "version", false, "Print version information and exit")
 	flag.Var(&pathFlag, "p", "Requiered: Path to the savegame")
 	flag.BoolVar(&show, "s", false, "Show the current values of the safe")
 	flag.BoolVar(&research, "research", false, "Unlock research")
@@ -87,6 +91,10 @@ func init() {
 func parseFlags() {
 	flag.Parse()
 
+	if version {
+		fmt.Printf("This editor was made with %s\n", GAME_VERSION)
+		os.Exit(0)
+	}
 	exitWithError := false
 	if !pathFlag.set {
 		fmt.Println("Error: Path is required")
