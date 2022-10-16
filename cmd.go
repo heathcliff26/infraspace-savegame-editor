@@ -20,6 +20,7 @@ var (
 	resourceFlags      = make(intFlagMap)
 	habitatStorage     bool
 	habitatWorkers     bool
+	noBackup bool
 )
 
 type stringFlag struct {
@@ -55,7 +56,7 @@ func (f *intFlag) Set(arg string) error {
 }
 
 func (f *intFlag) String() string {
-	return string(f.value)
+	return fmt.Sprint(f.value)
 }
 
 func (f intFlagMap) Set(arg string) error {
@@ -90,6 +91,7 @@ func init() {
 	flag.Var(resourceFlags, "resource", "Set the resource to the given value, can be used multiple times")
 	flag.BoolVar(&habitatStorage, "maxHabitatStorage", false, "Set all resources in the habitat to 1000")
 	flag.BoolVar(&habitatWorkers, "maxHabitatWorkers", false, "Fill all habitats with workers")
+	flag.BoolVar(&noBackup, "nobackup", false, "Do not create a backup of the save")
 }
 
 func parseFlags() {

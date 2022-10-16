@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -75,10 +77,31 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	} else if changed {
-		save.setPath("edited.sav")
+		if !noBackup {
+			src := save.getPath()
+			dst := src + ".backup"
+			i := 0
+			_, err = os.Stat(dst)
+			for !errors.Is(err, os.ErrNotExist) {
+				i++
+				dst = src + ".backup_" + fmt.Sprint(i)
+				_, err = os.Stat(dst)
+			}
+
+			input, err := ioutil.ReadFile(src)
+			if err != nil {
+				exitError(fmt.Sprintf("Error: Could not backup save: %s", err))
+			}
+
+			err = ioutil.WriteFile(dst, input, 0644)
+			if err != nil {
+				exitError(fmt.Sprintf("Error: Could not backup save: %s", err))
+			}
+			fmt.Printf("Created backup of save at %s\n", dst)
+		}
 		err = save.Save()
 		if err != nil {
-			exitError(fmt.Sprintf("Error: %s", err))
+			exitError(fmt.Sprintf("Error: Could not save changes: %s", err))
 		} else {
 			fmt.Printf("Changes have been writtent to %s\n", save.getPath())
 		}
