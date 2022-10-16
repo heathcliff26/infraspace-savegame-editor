@@ -6,9 +6,12 @@ func GetJSONObject(parent map[string]interface{}, path ...string) (map[string]in
 
 func GetJSONArray(parent map[string]interface{}, path ...string) ([]interface{}, bool) {
 	i := len(path) - 1
-	parent, ok := getJSONObject(parent, path[:i])
-	if !ok {
-		return nil, false
+	var ok bool
+	if i > 0 {
+		parent, ok = getJSONObject(parent, path[:i])
+		if !ok {
+			return nil, false
+		}
 	}
 	resultInterface, ok := parent[path[i]]
 	if !ok || resultInterface == nil {
@@ -26,7 +29,7 @@ func getJSONObject(parent map[string]interface{}, path []string) (map[string]int
 		return nil, false
 	}
 	var result map[string]interface{}
-	for i := 0; len(path) < i; i++ {
+	for i := 0; len(path) > i; i++ {
 		resultInterface, ok := parent[path[i]]
 		if !ok || resultInterface == nil {
 			return nil, false

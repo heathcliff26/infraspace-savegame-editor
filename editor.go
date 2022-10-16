@@ -200,6 +200,9 @@ func printSaveInfo(save *savegame) {
 	starterWorkers := save.getStarterWorkers()
 	fmt.Printf("starter workers: %d\n\n", len(starterWorkers))
 
+	buildings := save.getBuildings()
+	fmt.Printf("building count: %d\n\n", len(buildings))
+
 	researchProgress := save.getResearchProgress()
 	fmt.Printf("Unlocked Research:\n")
 	researchProgressEmpty := true
@@ -238,7 +241,7 @@ func checkIfHabitat(building map[string]interface{}) bool {
 
 func checkIfIndustrialRobotFactory(building map[string]interface{}) bool {
 	buildingName := building["buildingName"].(string)
-	return strings.HasPrefix(buildingName, "industrialRobotFactory")
+	return buildingName == "industrialRobotFactory"
 }
 
 func maxHabitatStorage(building map[string]interface{}) error {
@@ -281,8 +284,8 @@ func maxHabitatWorkers(building map[string]interface{}, nextID int) (int, error)
 	return nextID, nil
 }
 
-func setFactoryStorage(productionLogic map[string]interface{}, targetAmount int) error {
-	incomingStorage, ok := GetJSONArray(productionLogic, "incomingStorage")
+func setFactoryStorage(factory map[string]interface{}, targetAmount int) error {
+	incomingStorage, ok := GetJSONArray(factory, "consumerProducer", "incomingStorage")
 	if !ok {
 		return fmt.Errorf("Could not find storage")
 	}
@@ -290,11 +293,11 @@ func setFactoryStorage(productionLogic map[string]interface{}, targetAmount int)
 	for i := 0; len(incomingStorage)-1 > i; i++ {
 		incomingStorage[i] = targetAmount
 	}
-	outgoingStorage, ok := GetJSONArray(productionLogic, "outgoingStorage")
+	outgoingStorage, ok := GetJSONArray(factory, "consumerProducer", "outgoingStorage")
 	if !ok {
 		return fmt.Errorf("Could not find storage")
 	}
-	for i := 0; len(incomingStorage) > i; i++ {
+	for i := 0; len(outgoingStorage) > i; i++ {
 		outgoingStorage[i] = targetAmount
 	}
 	return nil
@@ -310,9 +313,9 @@ func maxFactoryStorage(building map[string]interface{}) error {
 		return nil
 	}
 	if checkIfIndustrialRobotFactory(building) {
-		return setFactoryStorage(productionLogic, 1000000)
+		return setFactoryStorage(building, 1000000)
 	} else {
-		return setFactoryStorage(productionLogic, 100)
+		return setFactoryStorage(building, 100)
 	}
 }
 
@@ -320,11 +323,7 @@ func maxIndustrialRobots(building map[string]interface{}) error {
 	if !checkIfIndustrialRobotFactory(building) {
 		return nil
 	}
-	productionLogic, ok := getBuildingProductionLogic(building)
-	if !ok {
-		return nil
-	}
-	return setFactoryStorage(productionLogic, 1000000)
+	return setFactoryStorage(building, 1000000)
 }
 
 func editBuildings(save *savegame, args map[string]bool) error {
