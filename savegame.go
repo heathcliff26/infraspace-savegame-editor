@@ -72,25 +72,29 @@ func (save *savegame) Data() map[string]interface{} {
 }
 
 func (save *savegame) getResearchProgress() map[string]interface{} {
-	return save.Data()["researchManager"].(map[string]interface{})["researchProgress"].(map[string]interface{})
+	result, _ := GetJSONObject(save.Data(), "researchManager", "researchProgress")
+	return result
 }
 
 func (save *savegame) getStarterWorkers() []interface{} {
-	return save.Data()["market"].(map[string]interface{})["starterWorkers"].([]interface{})
+	result, _ := GetJSONArray(save.Data(), "market", "starterWorkers")
+	return result
 }
 
 func (save *savegame) getResources() map[string]interface{} {
-	return save.Data()["resources"].(map[string]interface{})
+	result, _ := GetJSONObject(save.Data(), "resources")
+	return result
 }
 
 func (save *savegame) getBuildings() []interface{} {
-	return save.Data()["buildings"].([]interface{})
+	result, _ := GetJSONArray(save.Data(), "buildings")
+	return result
 }
 
 func (save *savegame) getNextID() int {
 	return int(save.Data()["nextID"].(float64))
 }
 
-func (save *savegame) setNextID(newID int) {
-	save.Data()["nextID"] = float64(newID)
+func (save *savegame) setNextID(nextID int) {
+	save.Data()["nextID"] = float64(nextID)
 }

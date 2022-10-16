@@ -20,7 +20,9 @@ var (
 	resourceFlags      = make(intFlagMap)
 	habitatStorage     bool
 	habitatWorkers     bool
-	noBackup bool
+	noBackup           bool
+	industrialRobots   bool
+	factoryStorage     bool
 )
 
 type stringFlag struct {
@@ -92,6 +94,8 @@ func init() {
 	flag.BoolVar(&habitatStorage, "maxHabitatStorage", false, "Set all resources in the habitat to 1000")
 	flag.BoolVar(&habitatWorkers, "maxHabitatWorkers", false, "Fill all habitats with workers")
 	flag.BoolVar(&noBackup, "nobackup", false, "Do not create a backup of the save")
+	flag.BoolVar(&industrialRobots, "industrialRobots", false, "Fill all Industrial Robot factorys with 1 mio robots and resources")
+	flag.BoolVar(&factoryStorage, "factoryStorage", false, "Fill all storage in factory buildings to 100")
 }
 
 func parseFlags() {
@@ -108,6 +112,10 @@ func parseFlags() {
 	}
 	if research && researchall {
 		fmt.Println("Error: You can't use research and researchall at the same time")
+		exitWithError = true
+	}
+	if industrialRobots && factoryStorage {
+		fmt.Println("Error: You can't use industrialRobots and factoryStorage at the same time")
 		exitWithError = true
 	}
 

@@ -104,6 +104,9 @@ var habitatResourceNames = []string{
 	"homeAppliance",
 	"computer",
 	"parkPoints",
+	"goodFood",
+	"homeRobot",
+	"culturePoints",
 }
 
 const RESOURCE_FACTOR = 100
@@ -177,7 +180,6 @@ func increaseStarterWorkers(save *savegame, count int) int {
 		nextID++
 		starterWorkers = append(starterWorkers, newWorker)
 	}
-	save.Data()["market"].(map[string]interface{})["starterWorkers"] = starterWorkers
 	save.setNextID(nextID)
 	return len(starterWorkers)
 }
@@ -225,67 +227,144 @@ func setResource(save *savegame, resource string, value int) error {
 	return nil
 }
 
-func getBuildingStorage(building map[string]interface{}) (map[string]interface{}, bool) {
-	if building == nil {
-		return nil, false
-	}
-	consumerProducer, ok := building["consumerProducer"].(map[string]interface{})
-	if !ok || consumerProducer == nil {
-		return nil, false
-	}
-	productionLogic, ok := consumerProducer["productionLogic"].(map[string]interface{})
-	if !ok || productionLogic == nil {
-		return nil, false
-	}
-	storage, ok := productionLogic["storage"].(map[string]interface{})
-	if !ok || storage == nil {
-		return nil, false
-	}
-	return storage, true
+func getBuildingProductionLogic(building map[string]interface{}) (map[string]interface{}, bool) {
+	return GetJSONObject(building, "consumerProducer", "productionLogic")
 }
 
-func maxHabitatStorage(save *savegame) {
-	buildings := save.getBuildings()
-	for i := 0; i < len(buildings); i++ {
-		building := buildings[i].(map[string]interface{})
-		buildingName := building["buildingName"].(string)
-		if !strings.HasPrefix(buildingName, "habitatLevel") {
-			continue
+func checkIfHabitat(building map[string]interface{}) bool {
+	buildingName := building["buildingName"].(string)
+	return strings.HasPrefix(buildingName, "habitatLevel")
+}
+
+func checkIfIndustrialRobotFactory(building map[string]interface{}) bool {
+	buildingName := building["buildingName"].(string)
+	return strings.HasPrefix(buildingName, "industrialRobotFactory")
+}
+
+func maxHabitatStorage(building map[string]interface{}) error {
+	if checkIfHabitat(building) {
+		return nil
+	}
+	storage, ok := GetJSONObject(building, "consumerProducer", "productionLogic", "storage")
+	if !ok {
+		return fmt.Errorf("Could not fill Habitat Storage")
+	}
+	for _, resourceName := range habitatResourceNames {
+		storage[resourceName] = 10
+	}
+	return nil
+}
+
+func maxHabitatWorkers(building map[string]interface{}, nextID int) (int, error) {
+	if checkIfHabitat(building) {
+		return nextID, nil
+	}
+	productionLogic, ok := getBuildingProductionLogic(building)
+	if !ok {
+		return nextID, fmt.Errorf("Could not max habitat workers")
+	}
+	maxInhabitants := int(productionLogic["maxInhabitants"].(float64))
+	homeID := int(building["ID"].(float64))
+	workers, ok := GetJSONArray(productionLogic, "workers")
+	if !ok {
+		return nextID, fmt.Errorf("Could not max habitat workers")
+	}
+	var newWorker worker
+	for len(workers) < maxInhabitants {
+		newWorker = worker{
+			_home: homeID,
+			ID:    nextID,
 		}
-		storage, ok := getBuildingStorage(building)
-		if !ok {
-			fmt.Printf("Skipped Habitat because could not get Storage Variable\n")
-			continue
-		}
-		for _, resourceName := range habitatResourceNames {
-			storage[resourceName] = 10
-		}
+		nextID++
+		workers = append(workers, newWorker)
+	}
+	return nextID, nil
+}
+
+func setFactoryStorage(productionLogic map[string]interface{}, targetAmount int) error {
+	incomingStorage, ok := GetJSONArray(productionLogic, "incomingStorage")
+	if !ok {
+		return fmt.Errorf("Could not find storage")
+	}
+	// skip last entry, as it is not needed
+	for i := 0; len(incomingStorage)-1 > i; i++ {
+		incomingStorage[i] = targetAmount
+	}
+	outgoingStorage, ok := GetJSONArray(productionLogic, "outgoingStorage")
+	if !ok {
+		return fmt.Errorf("Could not find storage")
+	}
+	for i := 0; len(incomingStorage) > i; i++ {
+		outgoingStorage[i] = targetAmount
+	}
+	return nil
+}
+
+func maxFactoryStorage(building map[string]interface{}) error {
+	productionLogic, ok := getBuildingProductionLogic(building)
+	if !ok {
+		return nil
+	}
+	buildingType := productionLogic["$type"].(string)
+	if !strings.HasPrefix(buildingType, "FactoryProductionLogic") {
+		return nil
+	}
+	if checkIfIndustrialRobotFactory(building) {
+		return setFactoryStorage(productionLogic, 1000000)
+	} else {
+		return setFactoryStorage(productionLogic, 100)
 	}
 }
 
-func maxHabitatWorkers(save *savegame) {
+func maxIndustrialRobots(building map[string]interface{}) error {
+	if !checkIfIndustrialRobotFactory(building) {
+		return nil
+	}
+	productionLogic, ok := getBuildingProductionLogic(building)
+	if !ok {
+		return nil
+	}
+	return setFactoryStorage(productionLogic, 1000000)
+}
+
+func editBuildings(save *savegame, args map[string]bool) error {
 	buildings := save.getBuildings()
 	nextID := save.getNextID()
+	oldNextID := nextID
+	habitatWorkers := args["habitatWorkers"]
+	habitatStorage := args["habitatStorage"]
+	industrialRobots := args["industrialRobots"]
+	factoryStorage := args["factoryStorage"]
+	var err error
 	for i := 0; i < len(buildings); i++ {
 		building := buildings[i].(map[string]interface{})
-		buildingName := building["buildingName"].(string)
-		if !strings.HasPrefix(buildingName, "habitatLevel") {
-			continue
-		}
-		productionLogic := building["consumerProducer"].(map[string]interface{})["productionLogic"].(map[string]interface{})
-		maxInhabitants := int(productionLogic["maxInhabitants"].(float64))
-		homeID := int(building["ID"].(float64))
-		workers := productionLogic["workers"].([]interface{})
-		var newWorker worker
-		for len(workers) < maxInhabitants {
-			newWorker = worker{
-				_home: homeID,
-				ID:    nextID,
+		if habitatWorkers {
+			nextID, err = maxHabitatWorkers(building, nextID)
+			if err != nil {
+				return err
 			}
-			nextID++
-			workers = append(workers, newWorker)
 		}
-		productionLogic["workers"] = workers
+		if habitatStorage {
+			err = maxHabitatStorage(building)
+			if err != nil {
+				return err
+			}
+		}
+		if factoryStorage {
+			err = maxFactoryStorage(building)
+			if err != nil {
+				return err
+			}
+		}
+		if industrialRobots {
+			err = maxIndustrialRobots(building)
+			if err != nil {
+				return err
+			}
+		}
 	}
-	save.setNextID(nextID)
+	if nextID != oldNextID {
+		save.setNextID(nextID)
+	}
+	return nil
 }

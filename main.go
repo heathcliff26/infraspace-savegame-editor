@@ -61,14 +61,17 @@ func main() {
 			}
 		}
 	}
-	if habitatStorage {
-		maxHabitatStorage(save)
-		fmt.Printf("Set Habitat Storage to 1000\n")
-		changed = true
-	}
-	if habitatWorkers {
-		maxHabitatWorkers(save)
-		fmt.Printf("Filled all habitats with workers\n")
+	if habitatStorage || habitatWorkers || industrialRobots || factoryStorage {
+		buildingFlags := map[string]bool{
+			"habitatWorkers":   habitatWorkers,
+			"habitatStorage":   habitatStorage,
+			"industrialRobots": industrialRobots,
+			"factoryStorage":   factoryStorage,
+		}
+		err = editBuildings(save, buildingFlags)
+		if err != nil {
+			exitError(fmt.Sprintf("%s", err))
+		}
 		changed = true
 	}
 
@@ -103,7 +106,7 @@ func main() {
 		if err != nil {
 			exitError(fmt.Sprintf("Error: Could not save changes: %s", err))
 		} else {
-			fmt.Printf("Changes have been writtent to %s\n", save.getPath())
+			fmt.Printf("Changes have been written to %s\n", save.getPath())
 		}
 	}
 }
