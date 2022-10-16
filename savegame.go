@@ -13,6 +13,7 @@ type savegame struct {
 	data   map[string]interface{}
 }
 
+// Load the savegame from the path
 func LoadSavegame(path string) (*savegame, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -38,6 +39,7 @@ func LoadSavegame(path string) (*savegame, error) {
 	}, nil
 }
 
+// Save the savegame to the Path
 func (save *savegame) Save() error {
 	buf, err := json.MarshalIndent(save.Data(), "", "  ")
 	if err != nil {
@@ -64,6 +66,19 @@ func (save *savegame) setPrefix(newPrefix string) {
 	save.prefix = newPrefix
 }
 
+// Points to save data as a JSON Object (map[string]interface{})
 func (save *savegame) Data() map[string]interface{} {
 	return save.data
+}
+
+func (save *savegame) getResearchProgress() map[string]interface{} {
+	return save.Data()["researchManager"].(map[string]interface{})["researchProgress"].(map[string]interface{})
+}
+
+func (save *savegame) getStarterWorkers() []interface{} {
+	return save.Data()["market"].(map[string]interface{})["starterWorkers"].([]interface{})
+}
+
+func (save *savegame) getResources() map[string]interface{} {
+	return save.Data()["resources"].(map[string]interface{})
 }

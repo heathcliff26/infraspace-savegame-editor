@@ -10,6 +10,7 @@ import (
 var (
 	pathFlag           stringFlag
 	unlockResearch     bool
+	show               bool
 	starterWorkerCount intFlag
 )
 
@@ -51,6 +52,7 @@ func init() {
 	flag.Var(&pathFlag, "p", "Requiered: Path to the savegame")
 	flag.BoolVar(&unlockResearch, "research", false, "Unlock all research")
 	flag.Var(&starterWorkerCount, "setWorkers", "Increase the starter workers to the given value")
+	flag.BoolVar(&show, "s", false, "Show the current values of the safe")
 }
 
 func main() {
@@ -65,6 +67,10 @@ func main() {
 	if err != nil {
 		fmt.Printf("Could not load savegame %s: %v\n", pathFlag.value, err)
 		os.Exit(1)
+	}
+
+	if show {
+		printSaveInfo(save)
 	}
 
 	changed := false
@@ -84,7 +90,7 @@ func main() {
 		}
 	}
 
-	if !changed {
+	if !changed && !show {
 		fmt.Println("There was nothing to change")
 		os.Exit(1)
 	}
