@@ -82,3 +82,7 @@ func (save *savegame) getStarterWorkers() []interface{} {
 func (save *savegame) getResources() map[string]interface{} {
 	return save.Data()["resources"].(map[string]interface{})
 }
+
+func (save *savegame) getBuildings() []interface{} {
+	return save.Data()["buildings"].([]interface{})
+}

@@ -59,6 +59,11 @@ func main() {
 			}
 		}
 	}
+	if habitatStorage {
+		maxHabitatStorage(save)
+		fmt.Printf("Set Habitat Storage to 1000\n")
+		changed = true
+	}
 
 	if !changed && !show {
 		fmt.Printf("There was nothing to change\n")

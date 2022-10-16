@@ -216,3 +216,18 @@ func setResource(save *savegame, resource string, value int) error {
 	resources[resource] = float64(value * RESOURCE_FACTOR)
 	return nil
 }
+
+func maxHabitatStorage(save *savegame) {
+	buildings := save.getBuildings()
+	for i := 0; i < len(buildings); i++ {
+		building := buildings[i].(map[string]interface{})
+		buildingName := building["buildingName"].(string)
+		if !strings.HasPrefix(buildingName, "habitatLevel") {
+			continue
+		}
+		storage := building["consumerProducer"].(map[string]interface{})["productionLogic"].(map[string]interface{})["storage"].(map[string]interface{})
+		for resource, _ := range storage {
+			storage[resource] = 1000
+		}
+	}
+}
