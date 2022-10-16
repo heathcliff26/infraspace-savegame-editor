@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -13,6 +14,7 @@ var (
 	researchall        bool
 	show               bool
 	starterWorkerCount intFlag
+	resourceFlags      = make(intFlagMap)
 )
 
 type stringFlag struct {
@@ -25,28 +27,52 @@ type intFlag struct {
 	value int
 }
 
-func (flag *stringFlag) Set(arg string) error {
-	flag.value = arg
-	flag.set = true
+type intFlagMap map[string]intFlag
+
+func (f *stringFlag) Set(arg string) error {
+	f.value = arg
+	f.set = true
 	return nil
 }
 
-func (flag *stringFlag) String() string {
-	return flag.value
+func (f *stringFlag) String() string {
+	return f.value
 }
 
-func (flag *intFlag) Set(arg string) error {
+func (f *intFlag) Set(arg string) error {
 	i, err := strconv.Atoi(arg)
 	if err != nil {
 		return fmt.Errorf("Expected a number")
 	}
-	flag.value = i
-	flag.set = true
+	f.value = i
+	f.set = true
 	return nil
 }
 
-func (flag *intFlag) String() string {
-	return string(flag.value)
+func (f *intFlag) String() string {
+	return string(f.value)
+}
+
+func (f intFlagMap) Set(arg string) error {
+	keyvalue := strings.Split(arg, "=")
+	if len(keyvalue) != 2 {
+		return fmt.Errorf("Unexcpected input '%s' for resource, expected <resource>=<value>", arg)
+	}
+	key := keyvalue[0]
+	if _, ok := f[key]; ok {
+		return fmt.Errorf("Got multiple inputs for %s", keyvalue[0])
+	}
+	value := intFlag{}
+	err := value.Set(keyvalue[1])
+	if err != nil {
+		return err
+	}
+	f[key] = value
+	return nil
+}
+
+func (f intFlagMap) String() string {
+	return fmt.Sprintf("Can't convert intFlagMap to string")
 }
 
 func init() {
@@ -55,6 +81,7 @@ func init() {
 	flag.BoolVar(&research, "research", false, "Unlock research")
 	flag.BoolVar(&researchall, "researchall", false, "Unlock all research")
 	flag.Var(&starterWorkerCount, "setWorkers", "Increase the starter workers to the given value")
+	flag.Var(resourceFlags, "resource", "Set the resource to the given value, can be used multiple times")
 }
 
 func parseFlags() {
@@ -112,6 +139,18 @@ func main() {
 			changed = true
 		} else {
 			fmt.Printf("Could not increase the starter workers, there where already %d workers\n", count)
+		}
+	}
+	for name, resourceFlag := range resourceFlags {
+		if resourceFlag.set {
+			err = setResource(save, name, resourceFlag.value)
+			if err != nil {
+				fmt.Printf("Could not set resource %s: %s\n", name, err)
+				os.Exit(1)
+			} else {
+				fmt.Printf("Set %s to %d\n", name, resourceFlag.value)
+				changed = true
+			}
 		}
 	}
 

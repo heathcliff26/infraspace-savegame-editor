@@ -98,6 +98,8 @@ var maxResearchProgress = map[string]int{
 	"adamantineMining":          350,
 }
 
+const RESOURCE_FACTOR = 100
+
 type worker struct {
 	_home int
 	ID    int
@@ -180,7 +182,7 @@ func printSaveInfo(save *savegame) {
 	resources := save.getResources()
 	fmt.Printf("Resources:\n")
 	for key, value := range resources {
-		resource := int(value.(float64) / 10)
+		resource := int(value.(float64) / RESOURCE_FACTOR)
 		fmt.Printf("\t%s: %d\n", key, resource)
 	}
 	fmt.Printf("\n")
@@ -204,4 +206,13 @@ func printSaveInfo(save *savegame) {
 	} else {
 		fmt.Printf("\n")
 	}
+}
+
+func setResource(save *savegame, resource string, value int) error {
+	resources := save.getResources()
+	if _, ok := resources[resource]; !ok {
+		return fmt.Errorf("Unkown resource %s", resource)
+	}
+	resources[resource] = float64(value * RESOURCE_FACTOR)
+	return nil
 }
