@@ -1,0 +1,87 @@
+---
+name: Run golangci
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: [main]
+    paths:
+      - "go.mod"
+      - "go.sum"
+      - "*.go"
+      - ".golangci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "go.mod"
+      - "go.sum"
+      - "*.go"
+      - ".golangci.yml"
+      - ".github/workflows/ci.yaml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: 'stable'
+          cache-dependency-path: go.sum
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
+        with:
+          version: latest
+          args: --config=.golangci.yml
+          skip-cache: true
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: 'stable'
+          cache-dependency-path: go.sum
+
+      - name: run tests
+        run: go test -v ./...
+
+  build:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            os: windows
+          - arch: arm64
+            os: windows
+          - arch: amd64
+            os: linux
+          - arch: arm64
+            os: linux
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: 'stable'
+          cache-dependency-path: go.sum
+
+      - name: Build Artifact
+        run: GOOS="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" hack/build.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        with:
+          name: "infraspace-savegame-editor_${{ matrix.os }}_${{ matrix.arch }}"
+          path: "bin/infraspace-savegame-editor_*"
+          retention-days: 1
+          if-no-files-found: error
