@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -15,7 +15,7 @@ type savegame struct {
 
 // Load the savegame from the path
 func LoadSavegame(path string) (*savegame, error) {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (save *savegame) Save() error {
 		return err
 	}
 	fullSave := save.getPrefix() + string(buf)
-	err = ioutil.WriteFile(save.getPath(), []byte(fullSave), 0644)
+	err = os.WriteFile(save.getPath(), []byte(fullSave), 0644)
 	return err
 }
 
@@ -54,17 +54,17 @@ func (save *savegame) getPath() string {
 	return save.path
 }
 
-func (save *savegame) setPath(newPath string) {
-	save.path = newPath
-}
+// func (save *savegame) setPath(newPath string) {
+// 	save.path = newPath
+// }
 
 func (save *savegame) getPrefix() string {
 	return save.prefix
 }
 
-func (save *savegame) setPrefix(newPrefix string) {
-	save.prefix = newPrefix
-}
+// func (save *savegame) setPrefix(newPrefix string) {
+// 	save.prefix = newPrefix
+// }
 
 // Points to save data as a JSON Object (map[string]interface{})
 func (save *savegame) Data() map[string]interface{} {

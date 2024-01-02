@@ -80,7 +80,7 @@ func (f intFlagMap) Set(arg string) error {
 }
 
 func (f intFlagMap) String() string {
-	return fmt.Sprintf("Can't convert intFlagMap to string")
+	return "Can't convert intFlagMap to string"
 }
 
 func init() {

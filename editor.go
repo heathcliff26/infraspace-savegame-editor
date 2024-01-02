@@ -119,7 +119,7 @@ type worker struct {
 // unlock all research
 func unlockAllResearch(save *savegame) {
 	researchProgress := save.getResearchProgress()
-	for key, _ := range researchProgress {
+	for key := range researchProgress {
 		researchProgress[key] = float64(maxResearchProgress[key])
 	}
 }
