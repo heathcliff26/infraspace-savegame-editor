@@ -1,0 +1,9 @@
+# Test savegame files
+*.sav
+*.backup*
+
+# Generated go-test coverage reports
+coverprofiles/
+
+# Generated artifacts
+bin/
