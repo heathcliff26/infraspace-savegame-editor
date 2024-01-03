@@ -4,17 +4,22 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"runtime/debug"
+	"runtime"
 
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
 var (
-	version bool
+	printVersion bool
 
 	noBackup bool
 
 	Options CLIOptions
+)
+
+var (
+	Version   = "devel"
+	GitCommit = ""
 )
 
 type CLIOptions struct {
@@ -31,7 +36,7 @@ type CLIOptions struct {
 func init() {
 	Options.Resources = make(IntMapFlag)
 
-	flag.BoolVar(&version, "version", false, "Print version information and exit")
+	flag.BoolVar(&printVersion, "v", false, "Print version information and exit")
 	flag.StringVar(&Options.Path, "p", "", "Requiered: Path to the savegame")
 	flag.BoolVar(&Options.Show, "s", false, "Show the current values of the safe")
 
@@ -49,26 +54,14 @@ func init() {
 	flag.BoolVar(&noBackup, "nobackup", false, "Do not create a backup of the save")
 }
 
-func getGitRevision(settings []debug.BuildSetting) string {
-	for _, v := range settings {
-		if v.Key == "vcs.revision" {
-			return v.Value
-		}
-	}
-	return "(devel)"
-}
-
 func ParseCLI() *CLIOptions {
 	flag.Parse()
 
-	if version {
-		if buildinfo, ok := debug.ReadBuildInfo(); ok {
-			fmt.Println("Version: " + getGitRevision(buildinfo.Settings))
-			fmt.Println(buildinfo.GoVersion)
-		} else {
-			fmt.Println("Failed to read BuildInfo")
-		}
-		fmt.Println(save.GAME_VERSION)
+	if printVersion {
+		fmt.Println("Version: " + Version)
+		fmt.Println("Commit: " + GitCommit)
+		fmt.Println("Go: " + runtime.Version())
+		fmt.Println("InfraSpace: " + save.GAME_VERSION)
 
 		os.Exit(0)
 	}
