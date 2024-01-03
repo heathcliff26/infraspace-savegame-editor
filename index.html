@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Go Coverage Report</title>
+		<title>save: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,26 +55,467 @@
 			<div id="nav">
 				<select id="files">
 				
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
+				
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (76.1%)</option>
+				
+				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
+				
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (61.9%)</option>
+				
 				</select>
 			</div>
 			<div id="legend">
 				<span>not tracked</span>
 			
-				<span class="cov0">no coverage</span>
-				<span class="cov1">low coverage</span>
-				<span class="cov2">*</span>
-				<span class="cov3">*</span>
-				<span class="cov4">*</span>
-				<span class="cov5">*</span>
-				<span class="cov6">*</span>
-				<span class="cov7">*</span>
-				<span class="cov8">*</span>
-				<span class="cov9">*</span>
-				<span class="cov10">high coverage</span>
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
 			
 			</div>
 		</div>
 		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package save
+
+import "fmt"
+
+type ErrMissingKey struct {
+        Map, Key string
+}
+
+func NewErrMissingKey(m, key string) error <span class="cov0" title="0">{
+        return &amp;ErrMissingKey{m, key}
+}</span>
+
+func (e *ErrMissingKey) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("The map \"%s\" has no key \"%s\"", e.Map, e.Key)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package save
+
+import (
+        "encoding/json"
+)
+
+type SaveData struct {
+        MapSeed                    int64               `json:"mapSeed"`
+        MapGenVersion              int64               `json:"mapGenVersion"`
+        NextID                     int64               `json:"nextID"`
+        SimulationFrame            int64               `json:"simulationFrame"`
+        TotalGameTime              float64             `json:"totalGameTime"`
+        TotalPlayTime              float64             `json:"totalPlayTime"`
+        SaveFixGracePeriodActive   bool                `json:"saveFixGracePeriodActive"`
+        WorldSettings              json.RawMessage     `json:"worldSettings"`
+        Buildings                  []Building          `json:"buildings"`
+        BuildingConnectors         json.RawMessage     `json:"buildingConnectors"`
+        BuildingGroups             json.RawMessage     `json:"buildingGroups"`
+        NetEdges                   json.RawMessage     `json:"netEdges"`
+        NetNodes                   json.RawMessage     `json:"netNodes"`
+        Cars                       json.RawMessage     `json:"cars"`
+        Market                     Market              `json:"market"`
+        Resources                  map[string]int64    `json:"resources"`
+        GoalManager                json.RawMessage     `json:"goalManager"`
+        ResearchManager            ResearchManager     `json:"researchManager"`
+        PopulationManager          json.RawMessage     `json:"populationManager"`
+        Statistics                 json.RawMessage     `json:"statistics"`
+        Camera                     json.RawMessage     `json:"camera"`
+        DistrictManager            json.RawMessage     `json:"districtManager"`
+        TrainLineManager           json.RawMessage     `json:"trainLineManager"`
+        Trains                     json.RawMessage     `json:"trains"`
+        CarCarriers                json.RawMessage     `json:"carCarriers"`
+        Spaceship                  json.RawMessage     `json:"spaceship"`
+        PipeComponentManager       json.RawMessage     `json:"pipeComponentManager"`
+        ScriptMods                 json.RawMessage     `json:"scriptMods"`
+        NewWorldPersistent         NewWorldPersistent  `json:"newWorldPersistent"`
+        EnvironmentObjects         []EnvironmentObject `json:"environmentObjects"` // Very Big Object ca. 8k lines
+        TerraformingProgressString json.RawMessage     `json:"terraformingProgressString"`
+        AchievementsManager        AchievementsManager `json:"achievementsManager"`
+        TrailerModule              json.RawMessage     `json:"trailerModule"`
+        StoryMessagesModule        json.RawMessage     `json:"storyMessagesModule"`
+        Roads                      json.RawMessage     `json:"roads"`
+        Intersections              json.RawMessage     `json:"intersections"`
+}
+
+type Building struct {
+        BuildingName            string          `json:"buildingName"`
+        CustomName              json.RawMessage `json:"customName"`
+        Road                    int64           `json:"road"`
+        Pipes                   json.RawMessage `json:"pipes"`
+        ID                      int
+        Position                json.RawMessage   `json:"position"`
+        Rotation                float64           `json:"rotation"`
+        ConsumerProducer        *ConsumerProducer `json:"consumerProducer"`
+        MissingResourceDuration float64           `json:"missingResourceDuration"`
+        Upgrades                json.RawMessage   `json:"upgrades"`
+        IntegratedNetEdges      json.RawMessage   `json:"integratedNetEdges"`
+        TextModule              json.RawMessage   `json:"textModule"`
+        StationModule           json.RawMessage   `json:"stationModule"`
+}
+
+type ConsumerProducer struct {
+        ProductionLogic       interface{} `json:"productionLogic"`
+        IncomingStorage       []int64     `json:"incomingStorage"`
+        OutgoingStorage       []int64     `json:"outgoingStorage"`
+        RequestStatusDirty    bool        `json:"requestStatusDirty"`
+        LastStepPowerProduced float64     `json:"lastStepPowerProduced"`
+        LastStepPowerNeeded   float64     `json:"lastStepPowerNeeded"`
+
+        Type BuildingType `json:"-"`
+}
+
+type BuildingType int
+
+type FactoryProductionLogic struct {
+        Type                 string          `json:"$type"`
+        ProductionDefinition json.RawMessage `json:"productionDefinition"`
+        LogicOverride        json.RawMessage `json:"logicOverride"`
+        TerraformRadius      float64         `json:"terraformRadius"`
+        TerraformType        json.RawMessage `json:"terraformType"`
+        ProductionTimeStep   int64           `json:"productionTimeStep"`
+}
+
+type HabitatProductionLogic struct {
+        Type                    string             `json:"$type"`
+        Storage                 map[string]float64 `json:"storage"`
+        MaxInhabitants          int64              `json:"maxInhabitants"`
+        HabitatLevel            int64              `json:"habitatLevel"`
+        Upgrade                 string             `json:"upgrade"`
+        Downgrade               json.RawMessage    `json:"downgrade"`
+        PowerNeededForTenPeople float64            `json:"powerNeededForTenPeople"`
+        TargetInhabitants       float64            `json:"targetInhabitants"`
+        UpgradeCountdown        float64            `json:"upgradeCountdown"`
+        DowngradeCountdown      float64            `json:"downgradeCountdown"`
+        Workers                 []Worker           `json:"workers"`
+}
+
+type Market struct {
+        StarterWorkers     []Worker        `json:"starterWorkers"`
+        ResourcePriorities json.RawMessage `json:"resourcePriorities"`
+}
+
+type Worker struct {
+        Home int64 `json:"_home"`
+        ID   int64
+}
+
+type ResearchManager struct {
+        ResearchProgress map[string]uint `json:"researchProgress"`
+        CurrentResearch  string          `json:"currentResearch"`
+        ResearchQueue    []string        `json:"researchQueue"`
+}
+
+type NewWorldPersistent struct {
+        HeightData string          `json:"heightData"`
+        AlphaData  []string        `json:"alphaData"`
+        DetailData []string        `json:"detailData"`
+        BiomesData json.RawMessage `json:"biomesData"`
+}
+
+type EnvironmentObject struct {
+        ID                  int64
+        ObjectName          string  `json:"objectName"`
+        Health              float64 `json:"health"`
+        TransformCompressed string  `json:"transformCompressed"`
+}
+
+type AchievementsManager struct {
+        UnlockabilityStatus           UnlockabilityStatus `json:"unlockabilityStatus"`
+        SerializedAchievementTrackers json.RawMessage     `json:"serializedAchievementTrackers"`
+}
+
+type UnlockabilityStatus struct {
+        DisabledDueToMods                             bool `json:"disabledDueToMods"`
+        DisabledDueToCreativeSettings                 bool `json:"disabledDueToCreativeSettings"`
+        DisabledDueToSettingsModification             bool `json:"disabledDueToSettingsModification"`
+        DisabledDueToCheats                           bool `json:"disabledDueToCheats"`
+        DisabledDueToModsBackingField                 bool `json:"&lt;disabledDueToMods&gt;k__BackingField"`
+        DisabledDueToCreativeSettingsBackingField     bool `json:"&lt;disabledDueToCreativeSettings&gt;k__BackingField"`
+        DisabledDueToSettingsModificationBackingField bool `json:"&lt;disabledDueToSettingsModification&gt;k__BackingField"`
+        DisabledDueToCheatsBackingField               bool `json:"&lt;disabledDueToCheats&gt;k__BackingField"`
+}
+
+func (c *ConsumerProducer) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        var v map[string]json.RawMessage
+        err := json.Unmarshal(data, &amp;v)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">err = json.Unmarshal(v["incomingStorage"], &amp;c.IncomingStorage)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(v["outgoingStorage"], &amp;c.OutgoingStorage)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(v["requestStatusDirty"], &amp;c.RequestStatusDirty)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(v["lastStepPowerProduced"], &amp;c.LastStepPowerProduced)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">err = json.Unmarshal(v["lastStepPowerNeeded"], &amp;c.LastStepPowerNeeded)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">var tmp struct {
+                Type string `json:"$type"`
+        }
+        err = json.Unmarshal(v["productionLogic"], &amp;tmp)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">switch tmp.Type </span>{
+        case "FactoryProductionLogic, old":<span class="cov8" title="1">
+                c.Type = TYPE_FACTORY
+                var fProd FactoryProductionLogic
+                err = json.Unmarshal(v["productionLogic"], &amp;fProd)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">c.ProductionLogic = fProd</span>
+        case "Habitat, old":<span class="cov8" title="1">
+                c.Type = TYPE_HABITAT
+                var hProd HabitatProductionLogic
+                err = json.Unmarshal(v["productionLogic"], &amp;hProd)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">c.ProductionLogic = hProd</span>
+        case "StorehouseProductionLogic, old":<span class="cov8" title="1">
+                c.Type = TYPE_STOREHOUSE</span>
+        case "ResearchProductionLogic, old":<span class="cov8" title="1">
+                c.Type = TYPE_RESEARCH</span>
+        default:<span class="cov0" title="0">
+                c.Type = TYPE_UNKNOWN</span>
+        }
+        <span class="cov8" title="1">if c.Type &gt; 1 </span><span class="cov8" title="1">{
+                var raw json.RawMessage
+                err = json.Unmarshal(v["productionLogic"], &amp;raw)
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">c.ProductionLogic = raw</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package save
+
+import (
+        "encoding/json"
+        "errors"
+        "fmt"
+        "os"
+)
+
+type Savegame struct {
+        Changed bool
+
+        path   string
+        prefix string
+        data   *SaveData
+}
+
+// Load the savegame from the path
+func LoadSavegame(path string) (*Savegame, error) <span class="cov0" title="0">{
+        prefix, buf, err := readSaveFile(path)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">var data SaveData
+        err = json.Unmarshal(buf, &amp;data)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return &amp;Savegame{
+                Changed: false,
+                path:    path,
+                prefix:  prefix,
+                data:    &amp;data,
+        }, nil</span>
+}
+
+func (s *Savegame) Path() string <span class="cov0" title="0">{
+        return s.path
+}</span>
+
+func (s *Savegame) Prefix() string <span class="cov0" title="0">{
+        return s.prefix
+}</span>
+
+func (s *Savegame) Data() *SaveData <span class="cov0" title="0">{
+        return s.data
+}</span>
+
+// Save the savegame to the Path
+func (s *Savegame) Save() error <span class="cov0" title="0">{
+        data, err := marshalJSON(s.Data())
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">fullSave := s.prefix + data
+        err = os.WriteFile(s.Path(), []byte(fullSave), 0644)
+        return err</span>
+}
+
+// Create a backup of the save file, returns the path of the backup
+func (s *Savegame) Backup() (string, error) <span class="cov0" title="0">{
+        dst := s.Path() + ".backup"
+        i := 0
+        _, err := os.Stat(dst)
+        for !errors.Is(err, os.ErrNotExist) </span><span class="cov0" title="0">{
+                i++
+                dst = s.Path() + ".backup_" + fmt.Sprint(i)
+                _, err = os.Stat(dst)
+        }</span>
+
+        <span class="cov0" title="0">input, err := os.ReadFile(s.Path())
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">err = os.WriteFile(dst, input, 0644)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">return dst, nil</span>
+}
+
+// Print the relevant information about the savegame
+func (s *Savegame) Print() <span class="cov0" title="0">{
+        fmt.Println("Noop Savegame.Print()")
+}</span>
+
+// Unlocks all research
+func (s *Savegame) UnlockAllResearch() <span class="cov0" title="0">{
+        for key := range s.Data().ResearchManager.ResearchProgress </span><span class="cov0" title="0">{
+                s.Data().ResearchManager.ResearchProgress[key] = maxResearchProgress[key]
+        }</span>
+        <span class="cov0" title="0">s.Changed = true</span>
+}
+
+// Increase the starter workers ot the given count, return resulting number of starting workers
+func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="0">{
+        oldNextID := s.Data().NextID
+        for len(s.Data().Market.StarterWorkers) &lt; count </span><span class="cov0" title="0">{
+                newWorker := Worker{
+                        Home: 0,
+                        ID:   s.Data().NextID,
+                }
+                s.Data().NextID++
+                s.Data().Market.StarterWorkers = append(s.Data().Market.StarterWorkers, newWorker)
+        }</span>
+
+        <span class="cov0" title="0">s.Changed = true
+        return (s.Data().NextID - oldNextID)</span>
+}
+
+// Get a resource by name
+func (s *Savegame) GetResource(key string) int64 <span class="cov0" title="0">{
+        return s.Data().Resources[key] / RESOURCE_FACTOR
+}</span>
+
+// Set the given resource
+func (s *Savegame) SetResource(key string, value int) error <span class="cov0" title="0">{
+        if _, ok := s.Data().Resources[key]; ok </span><span class="cov0" title="0">{
+                s.Data().Resources[key] = int64(value) * RESOURCE_FACTOR
+                s.Changed = true
+                return nil
+        }</span> else<span class="cov0" title="0"> {
+                return NewErrMissingKey("resources", key)
+        }</span>
+}
+
+type EditBuildingsOptions struct {
+        HabitatWorkers   bool
+        HabitatStorage   bool
+        IndustrialRobots bool
+        FactoryStorage   bool
+}
+
+// Edit the buildings with the given configuration
+func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" title="0">{
+        if opt.HabitatWorkers </span><span class="cov0" title="0">{
+                fmt.Println("Noop HabitatWorkers")
+        }</span>
+        <span class="cov0" title="0">if opt.IndustrialRobots </span><span class="cov0" title="0">{
+                fmt.Println("Noop IndustrialRobots")
+        }</span>
+        <span class="cov0" title="0">buildings := s.Data().Buildings
+        for i := 0; i &lt; len(buildings); i++ </span><span class="cov0" title="0">{
+                if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_HABITAT </span><span class="cov0" title="0">{
+                        if opt.HabitatStorage </span><span class="cov0" title="0">{
+                                buildings[i] = maxBuildingStorage(buildings[i])
+                        }</span>
+                }
+
+                <span class="cov0" title="0">if opt.FactoryStorage &amp;&amp; buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span><span class="cov0" title="0">{
+                        buildings[i] = maxBuildingStorage(buildings[i])
+                }</span>
+        }
+        <span class="cov0" title="0">s.Changed = true</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package save
+
+import (
+        "bytes"
+        "encoding/json"
+        "fmt"
+        "os"
+        "strings"
+)
+
+func readSaveFile(path string) (string, []byte, error) <span class="cov8" title="1">{
+        buf, err := os.ReadFile(path)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", nil, err
+        }</span>
+        <span class="cov8" title="1">fullSave := string(buf)
+        i := strings.Index(fullSave, "{")
+        if i &lt; 0 </span><span class="cov0" title="0">{
+                return "", nil, fmt.Errorf("could not find start of json-body")
+        }</span>
+        <span class="cov8" title="1">return fullSave[:i], []byte(fullSave[i:]), nil</span>
+}
+
+func maxBuildingStorage(building Building) Building <span class="cov0" title="0">{
+        if building.ConsumerProducer == nil </span><span class="cov0" title="0">{
+                return building
+        }</span>
+        <span class="cov0" title="0">for i := range building.ConsumerProducer.IncomingStorage </span><span class="cov0" title="0">{
+                building.ConsumerProducer.IncomingStorage[i] = BUILDING_MAX_STORAGE
+        }</span>
+        <span class="cov0" title="0">return building</span>
+}
+
+func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
+        buf := new(bytes.Buffer)
+        enc := json.NewEncoder(buf)
+
+        enc.SetEscapeHTML(false)
+        enc.SetIndent("", "  ")
+
+        err := enc.Encode(v)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return buf.String(), nil</span>
+}
+</pre>
 		
 		</div>
 	</body>
