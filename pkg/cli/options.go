@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
@@ -48,11 +49,27 @@ func init() {
 	flag.BoolVar(&noBackup, "nobackup", false, "Do not create a backup of the save")
 }
 
+func getGitRevision(settings []debug.BuildSetting) string {
+	for _, v := range settings {
+		if v.Key == "vcs.revision" {
+			return v.Value
+		}
+	}
+	return "(devel)"
+}
+
 func ParseCLI() *CLIOptions {
 	flag.Parse()
 
 	if version {
-		fmt.Printf("Latest tested game version: %s\n", save.GAME_VERSION)
+		if buildinfo, ok := debug.ReadBuildInfo(); ok {
+			fmt.Println("Version: " + getGitRevision(buildinfo.Settings))
+			fmt.Println(buildinfo.GoVersion)
+		} else {
+			fmt.Println("Failed to read BuildInfo")
+		}
+		fmt.Println(save.GAME_VERSION)
+
 		os.Exit(0)
 	}
 
