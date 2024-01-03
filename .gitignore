@@ -1,6 +1,5 @@
-# Test savegame files
-*.sav
-*.backup*
+# Backups of save files
+*.sav.backup*
 
 # Generated go-test coverage reports
 coverprofiles/

@@ -19,4 +19,5 @@ fi
 
 pushd "${base_dir}" >/dev/null
 
-GOOS="${GOOS}" GOARCH="${GOARCH}" go build "${GO_BUILD_FLAGS}" -o "${output_name}" ./...
+echo "Building $(basename "${output_name}")"
+GOOS="${GOOS}" GOARCH="${GOARCH}" go build "${GO_BUILD_FLAGS}" -o "${output_name}" ./cmd/save-editor/...
