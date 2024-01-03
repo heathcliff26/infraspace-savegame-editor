@@ -4,6 +4,10 @@ name: Run golangci
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      version:
+        description: "The version number to embed"
+        type: string
   push:
     branches: [main]
     paths:
@@ -72,6 +76,8 @@ jobs:
           cache-dependency-path: go.sum
 
       - name: Build Artifact
+        env:
+          RELEASE_VERSION: "${{ inputs.version }}"
         run: GOOS="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" hack/build.sh
 
       - name: Upload Artifact
