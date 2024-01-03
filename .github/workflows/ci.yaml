@@ -13,8 +13,9 @@ on:
     paths:
       - "go.mod"
       - "go.sum"
-      - "*.go"
       - ".golangci.yml"
+      - "*.go"
+      - "**/*.go"
   pull_request:
     branches: [main]
   merge_group:
