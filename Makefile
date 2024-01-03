@@ -4,11 +4,11 @@ GO_BUILD_FLAGS ?= -ldflags="-w -s"
 
 default: build
 
-build:
-	( GOOS="$(GOOS)" GOARCH="$(GOARCH)" GO_BUILD_FLAGS=$(GO_BUILD_FLAGS) hack/build.sh )
-
 test:
 	go test -v ./...
+
+build: test
+	( GOOS="$(GOOS)" GOARCH="$(GOARCH)" GO_BUILD_FLAGS=$(GO_BUILD_FLAGS) hack/build.sh )
 
 coverprofile:
 	hack/coverprofile.sh
