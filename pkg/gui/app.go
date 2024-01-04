@@ -1,0 +1,387 @@
+package gui
+
+import (
+	"fmt"
+	"image/color"
+	"os"
+	"path/filepath"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/storage"
+	"fyne.io/fyne/v2/widget"
+	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
+	"github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
+)
+
+var TEXT_COLOR = color.White
+
+const ENTRY_WIDTH = 120
+
+type GUI struct {
+	App               fyne.App
+	Main              fyne.Window
+	Title             string
+	Menu              *fyne.MainMenu
+	Save              *save.Savegame
+	Backup            bool
+	Resources         []Resource
+	Research          []ResearchItem
+	UnlockAllResearch *widget.Check
+	OtherOptions      OtherOptions
+	ActionButtons     []*widget.Button
+}
+
+func New() *GUI {
+	a := app.New()
+	title := version.Version().Name
+	main := a.NewWindow(title)
+	g := &GUI{
+		App:    a,
+		Main:   main,
+		Title:  title,
+		Backup: true,
+	}
+
+	g.Main.SetMainMenu(g.makeMenu())
+
+	resourcesBox := g.makeResourcesBox()
+	researchBox := g.makeResearchBox()
+	optionsBox := g.makeOptionsBox()
+	actionButtons := g.makeActionButtons()
+	g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, optionsBox, actionButtons))
+	g.Main.SetFixedSize(true)
+
+	g.Main.Show()
+
+	return g
+}
+
+func (g *GUI) Run() {
+	g.App.Run()
+}
+
+func (g *GUI) DisplayError(err error) {
+	dialog.ShowError(err, g.Main)
+}
+
+func (g *GUI) loadSavegame(uri fyne.URIReadCloser, err error) {
+	if err != nil {
+		g.DisplayError(err)
+		return
+	}
+	if uri == nil {
+		return
+	}
+
+	path := uri.URI().Path()
+	g.Save, err = save.LoadSavegame(path)
+	if err != nil {
+		g.DisplayError(err)
+		return
+	}
+
+	g.ReloadFromSave()
+	fmt.Println("Successfully loaded save file: " + path)
+
+	newTitle := g.Title + " - " + filepath.Base(path)
+	fmt.Println("Setting title to: " + newTitle) // Leaving this here for debug, since it keeps panicking here
+	g.Main.SetTitle(newTitle)
+	for _, b := range g.ActionButtons {
+		b.Enable()
+	}
+}
+
+func (g *GUI) writeSavegame() {
+	abortDialog := func(err error) {
+		msg := fmt.Sprintf("Encountered an error while saving: %v. No changes have been written to the save-file", err)
+		dialog.NewInformation("Error", msg, g.Main).Show()
+	}
+
+	for _, resource := range g.Resources {
+		value, err := resource.Value.Get()
+		if err != nil {
+			abortDialog(err)
+			return
+		}
+		err = g.Save.SetResource(resource.Name, value)
+		if err != nil {
+			abortDialog(err)
+			return
+		}
+	}
+
+	if g.UnlockAllResearch.Checked {
+		g.Save.UnlockAllResearch()
+	} else {
+		for _, research := range g.Research {
+			if research.Checkbox.Checked {
+				g.Save.UnlockResearch(research.Name)
+			} else {
+				g.Save.LockResearch(research.Name)
+			}
+		}
+	}
+
+	starterWorkerCount, err := g.OtherOptions.StarterWorker.Value.Get()
+	if err != nil {
+		abortDialog(err)
+		return
+	}
+	if starterWorkerCount > g.Save.GetStarterWorkerCount() {
+		g.Save.AddStarterWorkers(starterWorkerCount)
+	}
+
+	buildingOptions := save.EditBuildingsOptions{
+		HabitatWorkers:   g.OtherOptions.HabitatWorkers.Checked,
+		HabitatStorage:   g.OtherOptions.HabitatStorage.Checked,
+		IndustrialRobots: g.OtherOptions.IndustrialRobots.Checked,
+		FactoryStorage:   g.OtherOptions.FactoryStorage.Checked,
+	}
+	g.Save.EditBuildings(buildingOptions)
+
+	if g.Save.Changed {
+		if g.Backup {
+			path, err := g.Save.Backup()
+			if err != nil {
+				abortDialog(err)
+				return
+			}
+			dialog.NewInformation("Created Backup", "Created backup of save at "+path, g.Main).Show()
+		}
+
+		err = g.Save.Save()
+		if err != nil {
+			abortDialog(err)
+			return
+		}
+	} else {
+		dialog.NewInformation("Info", "Please make some changes first.", g.Main).Show()
+	}
+}
+
+func (g *GUI) ReloadFromSave() {
+	for _, resource := range g.Resources {
+		value, ok := g.Save.GetResource(resource.Name)
+		if !ok {
+			g.DisplayError(fmt.Errorf("unkown resource name: %s", resource.Name))
+		}
+		err := resource.Value.Set(value)
+		if err != nil {
+			g.DisplayError(err)
+			return
+		}
+		resource.Entry.Refresh()
+	}
+
+	unlockedResearch := g.Save.GetUnlockedResearch()
+	for _, item := range g.Research {
+		item.Checkbox.Enable()
+		for _, name := range unlockedResearch {
+			if name == item.Checkbox.Text {
+				item.Checkbox.Checked = true
+				item.Checkbox.Refresh()
+				break
+			}
+		}
+	}
+	g.UnlockAllResearch.Checked = false
+	g.UnlockAllResearch.Refresh()
+
+	err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
+	if err != nil {
+		g.DisplayError(err)
+		return
+	}
+	g.OtherOptions.StarterWorker.Entry.Refresh()
+}
+
+func (g *GUI) makeMenu() *fyne.MainMenu {
+	loadSavegame := func() {
+		dir, err := save.DefaultSaveLocation()
+		if !g.App.Metadata().Release {
+			// When developing, you likely have a copy of the save in the current directory
+			dir, err = os.Getwd()
+		}
+		if err != nil {
+			g.DisplayError(err)
+			return
+		}
+
+		uri, err := storage.ParseURI("file://" + dir)
+		if err != nil {
+			g.DisplayError(fmt.Errorf("failed to create URI from Path \"%s\": %v", dir, err))
+			return
+		}
+
+		listURI, err := storage.ListerForURI(uri)
+		if err != nil {
+			g.DisplayError(err)
+			return
+		}
+
+		dialog := dialog.NewFileOpen(g.loadSavegame, g.Main)
+		dialog.SetLocation(listURI)
+		dialog.SetFilter(storage.NewExtensionFileFilter([]string{".sav"}))
+		dialog.Resize(fyne.NewSize(800, 600))
+		dialog.Show()
+	}
+	openSave := fyne.NewMenuItem("Load Save", loadSavegame)
+
+	backup := fyne.NewMenuItem("Backup", nil)
+	backup.Checked = g.Backup
+	backup.Action = func() {
+		backup.Checked = !backup.Checked
+		g.Backup = backup.Checked
+		g.Menu.Refresh()
+	}
+
+	fileMenu := fyne.NewMenu("File", openSave, fyne.NewMenuItemSeparator(), backup)
+
+	about := fyne.NewMenuItem("About", nil)
+	about.Action = func() {
+		vInfo := dialog.NewCustom(version.Version().Name, "close", getVersionContent(), g.Main)
+		vInfo.Show()
+	}
+
+	helpMenu := fyne.NewMenu("Help", about)
+
+	g.Menu = fyne.NewMainMenu(fileMenu, helpMenu)
+	return g.Menu
+}
+
+type Resource struct {
+	Name  string
+	Value binding.Int
+	Entry *widget.Entry
+}
+
+func (g *GUI) makeResourcesBox() fyne.CanvasObject {
+	resources := []Resource{{Name: "concrete"}, {Name: "steel"}, {Name: "car"}, {Name: "adamantine"}}
+
+	content := make([]fyne.CanvasObject, len(resources))
+	for i := 0; i < len(resources); i++ {
+		label := canvas.NewText(resources[i].Name+": ", TEXT_COLOR)
+		resources[i].Value = binding.NewInt()
+		resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
+		size := resources[i].Entry.MinSize()
+		size.Width = ENTRY_WIDTH
+		wrappedEntry := container.NewGridWrap(size, resources[i].Entry)
+		content[i] = container.NewHBox(label, wrappedEntry)
+	}
+
+	g.Resources = resources
+	return container.NewPadded(container.NewGridWithColumns(len(content), content...))
+}
+
+type ResearchItem struct {
+	Name     string
+	Checkbox *widget.Check
+}
+
+func (g *GUI) makeResearchBox() fyne.CanvasObject {
+	researchNames := save.ResearchNames()
+	items := make([]ResearchItem, len(researchNames))
+	widgets := make([]fyne.CanvasObject, len(researchNames))
+	for i := 0; i < len(researchNames); i++ {
+		items[i] = ResearchItem{Name: researchNames[i]}
+		items[i].Checkbox = widget.NewCheck(researchNames[i], nil)
+		widgets[i] = items[i].Checkbox
+	}
+	g.Research = items
+
+	rows := make([]fyne.CanvasObject, 0, (len(widgets)/10)+1)
+	for i := 0; i < len(widgets); {
+		row := make([]fyne.CanvasObject, 0, 10)
+		for x := 0; x < 10; x++ {
+			if i < len(widgets) {
+				row = append(row, widgets[i])
+				i++
+			} else {
+				row = append(row, layout.NewSpacer())
+				break
+			}
+		}
+		rows = append(rows, container.NewVBox(row...))
+	}
+	researchGrid := container.NewHBox(rows...)
+
+	changedUnlockAll := func(checked bool) {
+		for _, item := range g.Research {
+			if checked {
+				item.Checkbox.Disable()
+			} else {
+				item.Checkbox.Enable()
+			}
+		}
+	}
+	widgetAll := widget.NewCheck("Unlock all Research", changedUnlockAll)
+	g.UnlockAllResearch = widgetAll
+
+	return container.New(layout.NewPaddedLayout(), container.NewVBox(widgetAll, researchGrid))
+}
+
+type OtherOptions struct {
+	StarterWorker struct {
+		Value binding.Int
+		Entry *widget.Entry
+	}
+	HabitatWorkers   *widget.Check
+	HabitatStorage   *widget.Check
+	IndustrialRobots *widget.Check
+	FactoryStorage   *widget.Check
+}
+
+func (g *GUI) makeOptionsBox() fyne.CanvasObject {
+	g.OtherOptions = OtherOptions{
+		HabitatWorkers:   widget.NewCheck("Fill all habitats with workers", nil),
+		HabitatStorage:   widget.NewCheck("Fill the storage of all habitats", nil),
+		IndustrialRobots: widget.NewCheck("Fill all robot factories with stock", nil),
+		FactoryStorage:   widget.NewCheck("Fill the storage of all factory buildings", nil),
+	}
+
+	g.OtherOptions.FactoryStorage.OnChanged = func(b bool) {
+		if b {
+			g.OtherOptions.IndustrialRobots.Checked = b
+			g.OtherOptions.IndustrialRobots.Disable()
+		} else {
+			g.OtherOptions.IndustrialRobots.Enable()
+		}
+		g.OtherOptions.IndustrialRobots.Refresh()
+	}
+
+	g.OtherOptions.StarterWorker.Value = binding.NewInt()
+	g.OtherOptions.StarterWorker.Entry = widget.NewEntryWithData(binding.IntToString(g.OtherOptions.StarterWorker.Value))
+	size := g.OtherOptions.StarterWorker.Entry.MinSize()
+	size.Width = ENTRY_WIDTH
+	wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
+	starterWorkerLabel := canvas.NewText("Increase starter worker count: ", TEXT_COLOR)
+	starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
+
+	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.IndustrialRobots)
+
+	return container.NewPadded(container.NewVBox(starterWorkerBox, checkboxes))
+}
+
+func (g *GUI) makeActionButtons() fyne.CanvasObject {
+	resetWarning := func() {
+		dialog.NewConfirm("Warning", "This will reload all values from the save", func(b bool) {
+			if b {
+				g.ReloadFromSave()
+			}
+		}, g.Main).Show()
+	}
+	reset := widget.NewButton("Reset", resetWarning)
+	reset.Disable()
+	saveFile := widget.NewButton("Save", g.writeSavegame)
+	saveFile.Disable()
+
+	g.ActionButtons = []*widget.Button{reset, saveFile}
+
+	return container.NewPadded(container.NewCenter(container.NewHBox(reset, saveFile)))
+}

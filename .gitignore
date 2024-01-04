@@ -1,9 +1,13 @@
 # Backups of save files
 *.sav.backup*
 
+# Save files in the root folder
+/*.sav
+
 # Generated go-test coverage reports
 coverprofiles/
 
 # Generated artifacts
-bin/
-out/
+/bin
+/dist
+/fyne-cross

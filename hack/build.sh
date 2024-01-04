@@ -9,13 +9,9 @@ bin_dir="${base_dir}/bin"
 GOOS="${GOOS:-$(go env GOOS)}"
 GOARCH="${GOARCH:-$(go env GOARCH)}"
 
-GO_LD_FLAGS="${GO_LD_FLAGS:-"-w -s"} -X github.com/heathcliff26/infraspace-savegame-editor/pkg/cli.GitCommit=$(git rev-parse HEAD)"
+GO_LD_FLAGS="${GO_LD_FLAGS:-"-w -s"}"
 
-if [ ! -z "${RELEASE_VERSION}" ]; then
-    GO_LD_FLAGS="${GO_LD_FLAGS} -X github.com/heathcliff26/infraspace-savegame-editor/pkg/cli.Version=${RELEASE_VERSION}"
-fi
-
-output_name="${bin_dir}/infraspace-savegame-editor_${GOOS}_${GOARCH}"
+output_name="${bin_dir}/infraspace-savegame-editor"
 
 if [ "${GOOS}" == "windows" ]; then
     output_name="${output_name}.exe"
