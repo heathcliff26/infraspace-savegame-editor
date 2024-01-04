@@ -35,13 +35,16 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
         with:
-          path: out
+          path: bin
           merge-multiple: true
+
+      - name: Compress artifacts
+        run: hack/compress-artifacts.sh
 
       - uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # v1.13.0
         with:
           allowUpdates: ${{ inputs.update }}
-          artifacts: "out/infraspace-savegame-editor_*"
+          artifacts: "bin/*.tar.gz,bin/*.zip"
           artifactErrorsFailBuild: true
           draft: ${{ inputs.draft }}
           generateReleaseNotes: true
