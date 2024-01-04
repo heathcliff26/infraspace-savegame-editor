@@ -106,9 +106,9 @@ type Worker struct {
 }
 
 type ResearchManager struct {
-	ResearchProgress map[string]uint `json:"researchProgress"`
-	CurrentResearch  string          `json:"currentResearch"`
-	ResearchQueue    []string        `json:"researchQueue"`
+	ResearchProgress map[string]int64 `json:"researchProgress"`
+	CurrentResearch  json.RawMessage  `json:"currentResearch"`
+	ResearchQueue    []string         `json:"researchQueue"`
 }
 
 type NewWorldPersistent struct {

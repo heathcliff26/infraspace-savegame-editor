@@ -1,13 +1,14 @@
 ---
-name: Run golangci
+name: CI
 
 on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      version:
-        description: "The version number to embed"
-        type: string
+      release:
+        description: "Is a release"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths:
@@ -32,12 +33,16 @@ jobs:
           go-version: 'stable'
           cache-dependency-path: go.sum
 
+      - name: Install package dependencies
+        run:
+          sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
+
+      # TODO: Find out how to run this with the action instead. Right now it fails because of missing dependencies
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
-        with:
-          version: latest
-          args: --config=.golangci.yml
-          skip-cache: true
+        run:
+          set -e
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
+          golangci-lint -v
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -50,6 +55,10 @@ jobs:
           go-version: 'stable'
           cache-dependency-path: go.sum
 
+      - name: Install package dependencies
+        run:
+          sudo apt-get install -y gcc libgl1-mesa-dev xorg-dev
+
       - name: run tests
         run: go test -v ./...
 
@@ -60,14 +69,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch: amd64
-            os: windows
-          - arch: arm64
-            os: windows
-          - arch: amd64
-            os: linux
-          - arch: arm64
-            os: linux
+          - os: windows
+          - os: linux
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
@@ -78,13 +81,12 @@ jobs:
 
       - name: Build Artifact
         env:
-          RELEASE_VERSION: "${{ inputs.version }}"
-        run: GOOS="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" hack/build.sh
+          BUILD_RELEASE: ${{ inputs.release }}
+        run: hack/fyne-cross.sh "${{ matrix.os }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
-          name: "infraspace-savegame-editor_${{ matrix.os }}_${{ matrix.arch }}"
-          path: "bin/infraspace-savegame-editor_*"
+          path: "fyne-cross/dist/infraspace-savegame-editor_${{ matrix.os }}-*"
           retention-days: 1
           if-no-files-found: error

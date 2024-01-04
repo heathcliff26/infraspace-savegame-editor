@@ -36,18 +36,6 @@ func LoadSavegame(path string) (*Savegame, error) {
 	}, nil
 }
 
-func (s *Savegame) Path() string {
-	return s.path
-}
-
-func (s *Savegame) Prefix() string {
-	return s.prefix
-}
-
-func (s *Savegame) Data() *SaveData {
-	return s.data
-}
-
 // Save the savegame to the Path
 func (s *Savegame) Save() error {
 	data, err := marshalJSON(s.Data())
@@ -84,23 +72,67 @@ func (s *Savegame) Backup() (string, error) {
 	return dst, nil
 }
 
-// Print the relevant information about the savegame
-func (s *Savegame) Print() {
-	fmt.Println("Noop Savegame.Print()")
+func (s *Savegame) Path() string {
+	return s.path
+}
+
+func (s *Savegame) Prefix() string {
+	return s.prefix
+}
+
+func (s *Savegame) Data() *SaveData {
+	return s.data
+}
+
+// Get a resource by name
+func (s *Savegame) GetResource(key string) (int, bool) {
+	value, ok := s.Data().Resources[key]
+	return int(value / RESOURCE_FACTOR), ok
+}
+
+// Get unlocked research
+func (s *Savegame) GetUnlockedResearch() []string {
+	res := make([]string, 0, len(maxResearchProgress))
+	for k, v := range maxResearchProgress {
+		if s.Data().ResearchManager.ResearchProgress[k] == v {
+			res = append(res, k)
+		}
+	}
+	return res
+}
+
+// Get the current number of starter workers
+func (s *Savegame) GetStarterWorkerCount() int {
+	return len(s.Data().Market.StarterWorkers)
+}
+
+// Unlock research by name
+func (s *Savegame) UnlockResearch(name string) {
+	if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] {
+		s.Data().ResearchManager.ResearchProgress[name] = maxResearchProgress[name]
+		s.Changed = true
+	}
+}
+
+// Lock Research by name, if currently unlocked
+func (s *Savegame) LockResearch(name string) {
+	if s.Data().ResearchManager.ResearchProgress[name] == maxResearchProgress[name] {
+		s.Data().ResearchManager.ResearchProgress[name] = 0
+		s.Changed = true
+	}
 }
 
 // Unlocks all research
 func (s *Savegame) UnlockAllResearch() {
-	for key := range s.Data().ResearchManager.ResearchProgress {
-		s.Data().ResearchManager.ResearchProgress[key] = maxResearchProgress[key]
+	for name := range s.Data().ResearchManager.ResearchProgress {
+		s.UnlockResearch(name)
 	}
-	s.Changed = true
 }
 
-// Increase the starter workers ot the given count, return resulting number of starting workers
+// Increase the starter workers to the given count, return number of added workers
 func (s *Savegame) AddStarterWorkers(count int) int64 {
 	oldNextID := s.Data().NextID
-	for len(s.Data().Market.StarterWorkers) < count {
+	for s.GetStarterWorkerCount() < count {
 		newWorker := Worker{
 			Home: 0,
 			ID:   s.Data().NextID,
@@ -109,13 +141,11 @@ func (s *Savegame) AddStarterWorkers(count int) int64 {
 		s.Data().Market.StarterWorkers = append(s.Data().Market.StarterWorkers, newWorker)
 	}
 
-	s.Changed = true
-	return (s.Data().NextID - oldNextID)
-}
-
-// Get a resource by name
-func (s *Savegame) GetResource(key string) int64 {
-	return s.Data().Resources[key] / RESOURCE_FACTOR
+	diff := (s.Data().NextID - oldNextID)
+	if diff > 0 {
+		s.Changed = true
+	}
+	return diff
 }
 
 // Set the given resource

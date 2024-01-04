@@ -21,7 +21,8 @@ jobs:
   build:
     uses: ./.github/workflows/ci.yaml
     with:
-      version: "${{ inputs.version }}"
+      inputs:
+        release: true
 
   release:
     runs-on: ubuntu-latest
@@ -35,16 +36,13 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
         with:
-          path: bin
+          path: dist
           merge-multiple: true
-
-      - name: Compress artifacts
-        run: hack/compress-artifacts.sh
 
       - uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # v1.13.0
         with:
           allowUpdates: ${{ inputs.update }}
-          artifacts: "bin/*.tar.gz,bin/*.zip"
+          artifacts: "dist/*.tar.gz,dist/*.zip"
           artifactErrorsFailBuild: true
           draft: ${{ inputs.draft }}
           generateReleaseNotes: true

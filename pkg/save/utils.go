@@ -5,8 +5,47 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
+
+func ResourceNames() []string {
+	list := make([]string, len(researchNames))
+	copy(list, resourceNames)
+	return list
+}
+
+func ResearchNames() []string {
+	list := make([]string, len(researchNames))
+	copy(list, researchNames)
+	return list
+}
+
+func DefaultSaveLocation() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	var path string
+	switch runtime.GOOS {
+	case "windows":
+		path = saveFolderWindows(home)
+	case "linux":
+		path = filepath.Join(home, "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
+		path = saveFolderWindows(path)
+	}
+	if _, err := os.Stat(path); path != "" && !os.IsNotExist(err) {
+		return path, nil
+	} else {
+		return home, nil
+	}
+}
+
+func saveFolderWindows(root string) string {
+	return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
+}
 
 func readSaveFile(path string) (string, []byte, error) {
 	buf, err := os.ReadFile(path)
