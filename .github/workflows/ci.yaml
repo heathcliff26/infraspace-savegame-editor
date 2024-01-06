@@ -70,7 +70,14 @@ jobs:
       matrix:
         include:
           - os: windows
+            arch: amd64
+          - os: windows
+            arch: arm64
           - os: linux
+            arch: amd64
+          - os: linux
+            arch: arm64
+
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
@@ -82,11 +89,22 @@ jobs:
       - name: Build Artifact
         env:
           BUILD_RELEASE: ${{ inputs.release }}
-        run: hack/fyne-cross.sh "${{ matrix.os }}"
+        run: hack/fyne-cross.sh "${{ matrix.os }}" "${{ matrix.arch }}"
+
+      - name: Get artifact file ending
+        id: artifact-file-ending
+        run: |
+          if [ "${{ matrix.os }}" == "windows" ]; then
+            echo "file-ending=zip" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.os }}" == "linux" ]; then
+            echo "file-ending=tar.gz" >> $GITHUB_OUTPUT
+          fi
+
 
       - name: Upload Artifact
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
-          path: "fyne-cross/dist/infraspace-savegame-editor_${{ matrix.os }}-*"
+          name: "infraspace-savegame-editor_${{ matrix.os }}-${{ matrix.arch }}.${{ steps.artifact-file-ending.outputs.file-ending }}"
+          path: "fyne-cross/dist/infraspace-savegame-editor_${{ matrix.os }}-${{ matrix.arch }}.${{ steps.artifact-file-ending.outputs.file-ending }}"
           retention-days: 1
           if-no-files-found: error
