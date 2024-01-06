@@ -7,6 +7,7 @@ on:
     branches: ["main"]
     paths:
       - "*.go"
+      - "**/*.go"
 
 jobs:
   generate-reports:
