@@ -61,7 +61,7 @@
 				
 				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (61.9%)</option>
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (56.4%)</option>
 				
 				</select>
 			</div>
@@ -200,9 +200,9 @@ type Worker struct {
 }
 
 type ResearchManager struct {
-        ResearchProgress map[string]uint `json:"researchProgress"`
-        CurrentResearch  string          `json:"currentResearch"`
-        ResearchQueue    []string        `json:"researchQueue"`
+        ResearchProgress map[string]int64 `json:"researchProgress"`
+        CurrentResearch  json.RawMessage  `json:"currentResearch"`
+        ResearchQueue    []string         `json:"researchQueue"`
 }
 
 type NewWorldPersistent struct {
@@ -345,18 +345,6 @@ func LoadSavegame(path string) (*Savegame, error) <span class="cov0" title="0">{
         }, nil</span>
 }
 
-func (s *Savegame) Path() string <span class="cov0" title="0">{
-        return s.path
-}</span>
-
-func (s *Savegame) Prefix() string <span class="cov0" title="0">{
-        return s.prefix
-}</span>
-
-func (s *Savegame) Data() *SaveData <span class="cov0" title="0">{
-        return s.data
-}</span>
-
 // Save the savegame to the Path
 func (s *Savegame) Save() error <span class="cov0" title="0">{
         data, err := marshalJSON(s.Data())
@@ -393,23 +381,67 @@ func (s *Savegame) Backup() (string, error) <span class="cov0" title="0">{
         <span class="cov0" title="0">return dst, nil</span>
 }
 
-// Print the relevant information about the savegame
-func (s *Savegame) Print() <span class="cov0" title="0">{
-        fmt.Println("Noop Savegame.Print()")
+func (s *Savegame) Path() string <span class="cov0" title="0">{
+        return s.path
 }</span>
+
+func (s *Savegame) Prefix() string <span class="cov0" title="0">{
+        return s.prefix
+}</span>
+
+func (s *Savegame) Data() *SaveData <span class="cov0" title="0">{
+        return s.data
+}</span>
+
+// Get a resource by name
+func (s *Savegame) GetResource(key string) (int, bool) <span class="cov0" title="0">{
+        value, ok := s.Data().Resources[key]
+        return int(value / RESOURCE_FACTOR), ok
+}</span>
+
+// Get unlocked research
+func (s *Savegame) GetUnlockedResearch() []string <span class="cov0" title="0">{
+        res := make([]string, 0, len(maxResearchProgress))
+        for k, v := range maxResearchProgress </span><span class="cov0" title="0">{
+                if s.Data().ResearchManager.ResearchProgress[k] == v </span><span class="cov0" title="0">{
+                        res = append(res, k)
+                }</span>
+        }
+        <span class="cov0" title="0">return res</span>
+}
+
+// Get the current number of starter workers
+func (s *Savegame) GetStarterWorkerCount() int <span class="cov0" title="0">{
+        return len(s.Data().Market.StarterWorkers)
+}</span>
+
+// Unlock research by name
+func (s *Savegame) UnlockResearch(name string) <span class="cov0" title="0">{
+        if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] </span><span class="cov0" title="0">{
+                s.Data().ResearchManager.ResearchProgress[name] = maxResearchProgress[name]
+                s.Changed = true
+        }</span>
+}
+
+// Lock Research by name, if currently unlocked
+func (s *Savegame) LockResearch(name string) <span class="cov0" title="0">{
+        if s.Data().ResearchManager.ResearchProgress[name] == maxResearchProgress[name] </span><span class="cov0" title="0">{
+                s.Data().ResearchManager.ResearchProgress[name] = 0
+                s.Changed = true
+        }</span>
+}
 
 // Unlocks all research
 func (s *Savegame) UnlockAllResearch() <span class="cov0" title="0">{
-        for key := range s.Data().ResearchManager.ResearchProgress </span><span class="cov0" title="0">{
-                s.Data().ResearchManager.ResearchProgress[key] = maxResearchProgress[key]
+        for name := range s.Data().ResearchManager.ResearchProgress </span><span class="cov0" title="0">{
+                s.UnlockResearch(name)
         }</span>
-        <span class="cov0" title="0">s.Changed = true</span>
 }
 
-// Increase the starter workers ot the given count, return resulting number of starting workers
+// Increase the starter workers to the given count, return number of added workers
 func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="0">{
         oldNextID := s.Data().NextID
-        for len(s.Data().Market.StarterWorkers) &lt; count </span><span class="cov0" title="0">{
+        for s.GetStarterWorkerCount() &lt; count </span><span class="cov0" title="0">{
                 newWorker := Worker{
                         Home: 0,
                         ID:   s.Data().NextID,
@@ -418,14 +450,12 @@ func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="
                 s.Data().Market.StarterWorkers = append(s.Data().Market.StarterWorkers, newWorker)
         }</span>
 
-        <span class="cov0" title="0">s.Changed = true
-        return (s.Data().NextID - oldNextID)</span>
+        <span class="cov0" title="0">diff := (s.Data().NextID - oldNextID)
+        if diff &gt; 0 </span><span class="cov0" title="0">{
+                s.Changed = true
+        }</span>
+        <span class="cov0" title="0">return diff</span>
 }
-
-// Get a resource by name
-func (s *Savegame) GetResource(key string) int64 <span class="cov0" title="0">{
-        return s.Data().Resources[key] / RESOURCE_FACTOR
-}</span>
 
 // Set the given resource
 func (s *Savegame) SetResource(key string, value int) error <span class="cov0" title="0">{
@@ -476,8 +506,47 @@ import (
         "encoding/json"
         "fmt"
         "os"
+        "path/filepath"
+        "runtime"
         "strings"
 )
+
+func ResourceNames() []string <span class="cov0" title="0">{
+        list := make([]string, len(researchNames))
+        copy(list, resourceNames)
+        return list
+}</span>
+
+func ResearchNames() []string <span class="cov0" title="0">{
+        list := make([]string, len(researchNames))
+        copy(list, researchNames)
+        return list
+}</span>
+
+func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
+        home, err := os.UserHomeDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">var path string
+        switch runtime.GOOS </span>{
+        case "windows":<span class="cov0" title="0">
+                path = saveFolderWindows(home)</span>
+        case "linux":<span class="cov8" title="1">
+                path = filepath.Join(home, "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
+                path = saveFolderWindows(path)</span>
+        }
+        <span class="cov8" title="1">if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
+                return path, nil
+        }</span> else<span class="cov8" title="1"> {
+                return home, nil
+        }</span>
+}
+
+func saveFolderWindows(root string) string <span class="cov8" title="1">{
+        return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
+}</span>
 
 func readSaveFile(path string) (string, []byte, error) <span class="cov8" title="1">{
         buf, err := os.ReadFile(path)
