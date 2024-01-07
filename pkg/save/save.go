@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 )
 
 type Savegame struct {
@@ -131,21 +132,27 @@ func (s *Savegame) UnlockAllResearch() {
 
 // Increase the starter workers to the given count, return number of added workers
 func (s *Savegame) AddStarterWorkers(count int) int64 {
+	var diff int64
+	diff, s.Data().Market.StarterWorkers = s.addWorkers(count, s.Data().Market.StarterWorkers)
+
+	if diff > 0 {
+		s.Changed = true
+	}
+	return diff
+}
+
+// Adds workes to the given array until it's length matches count
+func (s *Savegame) addWorkers(count int, workers []Worker) (int64, []Worker) {
 	oldNextID := s.Data().NextID
-	for s.GetStarterWorkerCount() < count {
+	for len(workers) < count {
 		newWorker := Worker{
 			Home: 0,
 			ID:   s.Data().NextID,
 		}
 		s.Data().NextID++
-		s.Data().Market.StarterWorkers = append(s.Data().Market.StarterWorkers, newWorker)
+		workers = append(workers, newWorker)
 	}
-
-	diff := (s.Data().NextID - oldNextID)
-	if diff > 0 {
-		s.Changed = true
-	}
-	return diff
+	return (s.Data().NextID - oldNextID), workers
 }
 
 // Set the given resource
@@ -168,23 +175,33 @@ type EditBuildingsOptions struct {
 
 // Edit the buildings with the given configuration
 func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
-	if opt.HabitatWorkers {
-		fmt.Println("Noop HabitatWorkers")
-	}
-	if opt.IndustrialRobots {
-		fmt.Println("Noop IndustrialRobots")
-	}
-	buildings := s.Data().Buildings
-	for i := 0; i < len(buildings); i++ {
-		if buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_HABITAT {
-			if opt.HabitatStorage {
+	if !reflect.DeepEqual(opt, EditBuildingsOptions{}) {
+		if opt.IndustrialRobots {
+			fmt.Println("Noop IndustrialRobots")
+		}
+		buildings := s.Data().Buildings
+		for i := 0; i < len(buildings); i++ {
+			if buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_HABITAT {
+				if opt.HabitatStorage {
+					buildings[i] = maxBuildingStorage(buildings[i])
+				}
+				if opt.HabitatWorkers {
+					buildings[i] = s.fillHabitatWorkers(buildings[i])
+				}
+			}
+
+			if opt.FactoryStorage && buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_FACTORY {
 				buildings[i] = maxBuildingStorage(buildings[i])
 			}
 		}
-
-		if opt.FactoryStorage && buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_FACTORY {
-			buildings[i] = maxBuildingStorage(buildings[i])
-		}
+		s.Changed = true
 	}
-	s.Changed = true
+}
+
+func (s *Savegame) fillHabitatWorkers(b Building) Building {
+	prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
+	count := int(prodLogic.MaxInhabitants)
+	_, prodLogic.Workers = s.addWorkers(count, prodLogic.Workers)
+	b.ConsumerProducer.ProductionLogic = prodLogic
+	return b
 }
