@@ -28,18 +28,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
+      - name: Extract Version
+        id: version
+        run: |
+          set -ex
+          version="$(cat FyneApp.toml | grep Version | grep -P -o "[0-9]+\.[0-9]+\.[0-9]+")"
+          echo "version=v${version}" >> $GITHUB_OUTPUT
+
       - name: Download artifacts
         uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
         with:
           path: dist
           merge-multiple: true
-
-      - name: Extract Version
-        id: version
-        run: |
-          set -e
-          version="$(cat FyneApp.toml | grep Version | grep -P -o "v[0-9]+\.[0-9]+\.[0-9]+")"
-          echo "version=${version}" >> $GITHUB_OUTPUT
 
       - uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # v1.13.0
         with:
