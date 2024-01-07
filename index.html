@@ -291,7 +291,7 @@ func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
 func (g *GUI) makeMenu() *fyne.MainMenu <span class="cov8" title="1">{
         loadSavegame := func() </span><span class="cov0" title="0">{
                 dir, err := save.DefaultSaveLocation()
-                if !g.App.Metadata().Release </span><span class="cov0" title="0">{
+                if !version.RELEASE </span><span class="cov0" title="0">{
                         // When developing, you likely have a copy of the save in the current directory
                         dir, err = os.Getwd()
                 }</span>
