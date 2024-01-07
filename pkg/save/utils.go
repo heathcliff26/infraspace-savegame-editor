@@ -11,7 +11,7 @@ import (
 )
 
 func ResourceNames() []string {
-	list := make([]string, len(researchNames))
+	list := make([]string, len(resourceNames))
 	copy(list, resourceNames)
 	return list
 }

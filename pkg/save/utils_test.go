@@ -1,12 +1,31 @@
 package save
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestResourceNames(t *testing.T) {
+	res := ResourceNames()
+
+	assert := assert.New(t)
+
+	assert.Equal(resourceNames, res)
+	assert.NotSame(resourceNames, res)
+}
+
+func TestResearchNames(t *testing.T) {
+	res := ResearchNames()
+
+	assert := assert.New(t)
+
+	assert.Equal(researchNames, res)
+	assert.NotSame(researchNames, res)
+}
 
 func TestDefaultSaveLocation(t *testing.T) {
 	path, err := DefaultSaveLocation()
@@ -49,4 +68,39 @@ func TestReadSaveFile(t *testing.T) {
 			assert.Equal(tCase.Prefix, prefix)
 		})
 	}
+}
+
+func TestMaxBuildingStorage(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(Building{}, maxBuildingStorage(Building{}), "Should not change empty struct")
+
+	b := Building{
+		ConsumerProducer: &ConsumerProducer{
+			IncomingStorage: []int64{0, 0, 4, 10},
+		},
+	}
+
+	res := maxBuildingStorage(b)
+
+	assert.Equal(b, res, "Should not be changed since ConsumerProducer is a pointer")
+
+	expectedStorage := []int64{BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE}
+	assert.Equal(expectedStorage, res.ConsumerProducer.IncomingStorage)
+}
+
+func TestMarshalJSON(t *testing.T) {
+	input := "{\n"
+	input += "  \"<disabledDueToMods>k__BackingField\": 0\n"
+	input += "}\n"
+
+	assert := assert.New(t)
+
+	var data json.RawMessage
+
+	err := json.Unmarshal([]byte(input), &data)
+	assert.Nil(err)
+	res, err := marshalJSON(data)
+	assert.Nil(err)
+	assert.Equal(input, res)
 }
