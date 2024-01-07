@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (36.0%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (35.1%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
 				
@@ -225,10 +225,10 @@ func (g *GUI) writeSavegame() <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">buildingOptions := save.EditBuildingsOptions{
-                HabitatWorkers:   g.OtherOptions.HabitatWorkers.Checked,
-                HabitatStorage:   g.OtherOptions.HabitatStorage.Checked,
-                IndustrialRobots: g.OtherOptions.IndustrialRobots.Checked,
-                FactoryStorage:   g.OtherOptions.FactoryStorage.Checked,
+                HabitatWorkers: g.OtherOptions.HabitatWorkers.Checked,
+                HabitatStorage: g.OtherOptions.HabitatStorage.Checked,
+                FactoryStorage: g.OtherOptions.FactoryStorage.Checked,
+                UpgradesOnly:   g.OtherOptions.UpgradesOnly.Checked,
         }
         g.Save.EditBuildings(buildingOptions)
 
@@ -418,23 +418,31 @@ type OtherOptions struct {
                 Value binding.Int
                 Entry *widget.Entry
         }
-        HabitatWorkers   *widget.Check
-        HabitatStorage   *widget.Check
-        IndustrialRobots *widget.Check
-        FactoryStorage   *widget.Check
+        HabitatWorkers *widget.Check
+        HabitatStorage *widget.Check
+        FactoryStorage *widget.Check
+        UpgradesOnly   *widget.Check
 }
 
 func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
         g.OtherOptions = OtherOptions{
-                HabitatWorkers:   widget.NewCheck("Fill all habitats with workers", nil),
-                HabitatStorage:   widget.NewCheck("Fill the storage of all habitats", nil),
-                IndustrialRobots: widget.NewCheck("Fill all robot factories with stock", nil),
-                FactoryStorage:   widget.NewCheck("Fill the storage of all factory buildings", nil),
+                HabitatWorkers: widget.NewCheck("Fill all habitats with workers", nil),
+                HabitatStorage: widget.NewCheck("Fill the storage of all habitats", nil),
+                FactoryStorage: widget.NewCheck("Fill the storage of all factories", nil),
+                UpgradesOnly:   widget.NewCheck("Fill only upgrades factories", nil),
         }
 
-        g.OtherOptions.IndustrialRobots.Disable()
+        g.OtherOptions.FactoryStorage.OnChanged = func(b bool) </span><span class="cov0" title="0">{
+                if b </span><span class="cov0" title="0">{
+                        g.OtherOptions.UpgradesOnly.Checked = b
+                        g.OtherOptions.UpgradesOnly.Disable()
+                }</span> else<span class="cov0" title="0"> {
+                        g.OtherOptions.UpgradesOnly.Enable()
+                }</span>
+                <span class="cov0" title="0">g.OtherOptions.UpgradesOnly.Refresh()</span>
+        }
 
-        g.OtherOptions.StarterWorker.Value = binding.NewInt()
+        <span class="cov8" title="1">g.OtherOptions.StarterWorker.Value = binding.NewInt()
         g.OtherOptions.StarterWorker.Entry = widget.NewEntryWithData(binding.IntToString(g.OtherOptions.StarterWorker.Value))
         size := g.OtherOptions.StarterWorker.Entry.MinSize()
         size.Width = ENTRY_WIDTH
@@ -442,10 +450,10 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
         starterWorkerLabel := canvas.NewText("Increase starter worker count: ", TEXT_COLOR)
         starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 
-        checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.IndustrialRobots)
+        checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
 
-        return newBorder(container.NewVBox(starterWorkerBox, checkboxes))
-}</span>
+        return newBorder(container.NewVBox(starterWorkerBox, checkboxes))</span>
+}
 
 func (g *GUI) makeActionButtons() fyne.CanvasObject <span class="cov8" title="1">{
         resetWarning := func() </span><span class="cov0" title="0">{
@@ -912,19 +920,16 @@ func (s *Savegame) SetResource(key string, value int) error <span class="cov0" t
 }
 
 type EditBuildingsOptions struct {
-        HabitatWorkers   bool
-        HabitatStorage   bool
-        IndustrialRobots bool
-        FactoryStorage   bool
+        HabitatWorkers bool
+        HabitatStorage bool
+        FactoryStorage bool
+        UpgradesOnly   bool
 }
 
 // Edit the buildings with the given configuration
 func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" title="0">{
         if !reflect.DeepEqual(opt, EditBuildingsOptions{}) </span><span class="cov0" title="0">{
-                if opt.IndustrialRobots </span><span class="cov0" title="0">{
-                        fmt.Println("Noop IndustrialRobots")
-                }</span>
-                <span class="cov0" title="0">buildings := s.Data().Buildings
+                buildings := s.Data().Buildings
                 for i := 0; i &lt; len(buildings); i++ </span><span class="cov0" title="0">{
                         if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_HABITAT </span><span class="cov0" title="0">{
                                 if opt.HabitatStorage </span><span class="cov0" title="0">{
@@ -935,9 +940,13 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
                                 }</span>
                         }
 
-                        <span class="cov0" title="0">if opt.FactoryStorage &amp;&amp; buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span><span class="cov0" title="0">{
-                                buildings[i] = maxFactoryStorage(buildings[i])
-                        }</span>
+                        <span class="cov0" title="0">if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span><span class="cov0" title="0">{
+                                if opt.FactoryStorage </span><span class="cov0" title="0">{
+                                        buildings[i] = maxFactoryStorage(buildings[i])
+                                }</span> else<span class="cov0" title="0"> if opt.UpgradesOnly &amp;&amp; (buildings[i].BuildingName == "industrialRobotFactory" || buildings[i].BuildingName == "highTechWorkshop") </span><span class="cov0" title="0">{
+                                        buildings[i] = maxFactoryStorage(buildings[i])
+                                }</span>
+                        }
                 }
                 <span class="cov0" title="0">s.Changed = true</span>
         }
