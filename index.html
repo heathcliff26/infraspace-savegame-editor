@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (35.1%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (36.0%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
 				
@@ -65,7 +65,7 @@
 				
 				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (84.6%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (87.2%)</option>
 				
 				</select>
 			</div>
@@ -432,17 +432,9 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
                 FactoryStorage:   widget.NewCheck("Fill the storage of all factory buildings", nil),
         }
 
-        g.OtherOptions.FactoryStorage.OnChanged = func(b bool) </span><span class="cov0" title="0">{
-                if b </span><span class="cov0" title="0">{
-                        g.OtherOptions.IndustrialRobots.Checked = b
-                        g.OtherOptions.IndustrialRobots.Disable()
-                }</span> else<span class="cov0" title="0"> {
-                        g.OtherOptions.IndustrialRobots.Enable()
-                }</span>
-                <span class="cov0" title="0">g.OtherOptions.IndustrialRobots.Refresh()</span>
-        }
+        g.OtherOptions.IndustrialRobots.Disable()
 
-        <span class="cov8" title="1">g.OtherOptions.StarterWorker.Value = binding.NewInt()
+        g.OtherOptions.StarterWorker.Value = binding.NewInt()
         g.OtherOptions.StarterWorker.Entry = widget.NewEntryWithData(binding.IntToString(g.OtherOptions.StarterWorker.Value))
         size := g.OtherOptions.StarterWorker.Entry.MinSize()
         size.Width = ENTRY_WIDTH
@@ -452,8 +444,8 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
 
         checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.IndustrialRobots)
 
-        return newBorder(container.NewVBox(starterWorkerBox, checkboxes))</span>
-}
+        return newBorder(container.NewVBox(starterWorkerBox, checkboxes))
+}</span>
 
 func (g *GUI) makeActionButtons() fyne.CanvasObject <span class="cov8" title="1">{
         resetWarning := func() </span><span class="cov0" title="0">{
@@ -936,7 +928,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
                 for i := 0; i &lt; len(buildings); i++ </span><span class="cov0" title="0">{
                         if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_HABITAT </span><span class="cov0" title="0">{
                                 if opt.HabitatStorage </span><span class="cov0" title="0">{
-                                        buildings[i] = maxBuildingStorage(buildings[i])
+                                        buildings[i] = maxHabitatStorage(buildings[i])
                                 }</span>
                                 <span class="cov0" title="0">if opt.HabitatWorkers </span><span class="cov0" title="0">{
                                         buildings[i] = s.fillHabitatWorkers(buildings[i])
@@ -944,7 +936,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
                         }
 
                         <span class="cov0" title="0">if opt.FactoryStorage &amp;&amp; buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span><span class="cov0" title="0">{
-                                buildings[i] = maxBuildingStorage(buildings[i])
+                                buildings[i] = maxFactoryStorage(buildings[i])
                         }</span>
                 }
                 <span class="cov0" title="0">s.Changed = true</span>
@@ -1022,12 +1014,28 @@ func readSaveFile(path string) (string, []byte, error) <span class="cov8" title=
         <span class="cov8" title="1">return fullSave[:i], []byte(fullSave[i:]), nil</span>
 }
 
-func maxBuildingStorage(building Building) Building <span class="cov8" title="1">{
+func maxFactoryStorage(building Building) Building <span class="cov8" title="1">{
         if building.ConsumerProducer == nil </span><span class="cov8" title="1">{
                 return building
         }</span>
-        <span class="cov8" title="1">for i := range building.ConsumerProducer.IncomingStorage </span><span class="cov8" title="1">{
-                building.ConsumerProducer.IncomingStorage[i] = BUILDING_MAX_STORAGE
+        <span class="cov8" title="1">building.ConsumerProducer.IncomingStorage = maxStorage(building.ConsumerProducer.IncomingStorage)
+        building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
+        return building</span>
+}
+
+func maxStorage(storage []int64) []int64 <span class="cov8" title="1">{
+        for i := range storage </span><span class="cov8" title="1">{
+                storage[i] = BUILDING_MAX_STORAGE
+        }</span>
+        <span class="cov8" title="1">return storage</span>
+}
+
+func maxHabitatStorage(building Building) Building <span class="cov8" title="1">{
+        if building.ConsumerProducer == nil || building.ConsumerProducer.Type != TYPE_HABITAT </span><span class="cov8" title="1">{
+                return building
+        }</span>
+        <span class="cov8" title="1">for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage </span><span class="cov8" title="1">{
+                building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = BUILDING_MAX_STORAGE
         }</span>
         <span class="cov8" title="1">return building</span>
 }
