@@ -351,15 +351,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 		FactoryStorage:   widget.NewCheck("Fill the storage of all factory buildings", nil),
 	}
 
-	g.OtherOptions.FactoryStorage.OnChanged = func(b bool) {
-		if b {
-			g.OtherOptions.IndustrialRobots.Checked = b
-			g.OtherOptions.IndustrialRobots.Disable()
-		} else {
-			g.OtherOptions.IndustrialRobots.Enable()
-		}
-		g.OtherOptions.IndustrialRobots.Refresh()
-	}
+	g.OtherOptions.IndustrialRobots.Disable()
 
 	g.OtherOptions.StarterWorker.Value = binding.NewInt()
 	g.OtherOptions.StarterWorker.Entry = widget.NewEntryWithData(binding.IntToString(g.OtherOptions.StarterWorker.Value))
