@@ -64,10 +64,16 @@ func maxBuildingStorage(building Building) Building {
 	if building.ConsumerProducer == nil {
 		return building
 	}
-	for i := range building.ConsumerProducer.IncomingStorage {
-		building.ConsumerProducer.IncomingStorage[i] = BUILDING_MAX_STORAGE
-	}
+	building.ConsumerProducer.IncomingStorage = maxStorage(building.ConsumerProducer.IncomingStorage)
+	building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
 	return building
+}
+
+func maxStorage(storage []int64) []int64 {
+	for i := range storage {
+		storage[i] = BUILDING_MAX_STORAGE
+	}
+	return storage
 }
 
 func marshalJSON(v any) (string, error) {

@@ -78,6 +78,7 @@ func TestMaxBuildingStorage(t *testing.T) {
 	b := Building{
 		ConsumerProducer: &ConsumerProducer{
 			IncomingStorage: []int64{0, 0, 4, 10},
+			OutgoingStorage: []int64{0, 3, 7, 10},
 		},
 	}
 
@@ -87,6 +88,7 @@ func TestMaxBuildingStorage(t *testing.T) {
 
 	expectedStorage := []int64{BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE}
 	assert.Equal(expectedStorage, res.ConsumerProducer.IncomingStorage)
+	assert.Equal(expectedStorage, res.ConsumerProducer.OutgoingStorage)
 }
 
 func TestMarshalJSON(t *testing.T) {
