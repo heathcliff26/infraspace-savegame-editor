@@ -70,10 +70,10 @@ func TestReadSaveFile(t *testing.T) {
 	}
 }
 
-func TestMaxBuildingStorage(t *testing.T) {
+func TestMaxFactoryStorage(t *testing.T) {
 	assert := assert.New(t)
 
-	assert.Equal(Building{}, maxBuildingStorage(Building{}), "Should not change empty struct")
+	assert.Equal(Building{}, maxFactoryStorage(Building{}), "Should not change empty struct")
 
 	b := Building{
 		ConsumerProducer: &ConsumerProducer{
@@ -82,13 +82,49 @@ func TestMaxBuildingStorage(t *testing.T) {
 		},
 	}
 
-	res := maxBuildingStorage(b)
+	res := maxFactoryStorage(b)
 
 	assert.Equal(b, res, "Should not be changed since ConsumerProducer is a pointer")
 
 	expectedStorage := []int64{BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE, BUILDING_MAX_STORAGE}
 	assert.Equal(expectedStorage, res.ConsumerProducer.IncomingStorage)
 	assert.Equal(expectedStorage, res.ConsumerProducer.OutgoingStorage)
+}
+
+func TestMaxHabitatStorage(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal(Building{}, maxHabitatStorage(Building{}), "Should not change empty struct")
+
+	b := Building{
+		ConsumerProducer: &ConsumerProducer{
+			Type: TYPE_HABITAT,
+			ProductionLogic: HabitatProductionLogic{
+				Storage: map[string]float64{
+					"culturePoints": 0,
+					"oxygen":        0,
+					"parkPoints":    0,
+					"schoolPoints":  0,
+					"survivalFood":  0,
+					"water":         0,
+				},
+			},
+		},
+	}
+
+	res := maxHabitatStorage(b)
+
+	assert.Equal(b, res, "Should not be changed since ConsumerProducer is a pointer")
+
+	expectedStorage := map[string]float64{
+		"culturePoints": BUILDING_MAX_STORAGE,
+		"oxygen":        BUILDING_MAX_STORAGE,
+		"parkPoints":    BUILDING_MAX_STORAGE,
+		"schoolPoints":  BUILDING_MAX_STORAGE,
+		"survivalFood":  BUILDING_MAX_STORAGE,
+		"water":         BUILDING_MAX_STORAGE,
+	}
+	assert.Equal(expectedStorage, res.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage)
 }
 
 func TestMarshalJSON(t *testing.T) {
