@@ -332,7 +332,7 @@ func (g *GUI) makeMenu() *fyne.MainMenu <span class="cov8" title="1">{
 
         about := fyne.NewMenuItem("About", nil)
         about.Action = func() </span><span class="cov0" title="0">{
-                vInfo := dialog.NewCustom(version.Version().Name, "close", getVersionContent(), g.Main)
+                vInfo := dialog.NewCustom(g.Title, "close", getVersionContent(), g.Main)
                 vInfo.Show()
         }</span>
 
