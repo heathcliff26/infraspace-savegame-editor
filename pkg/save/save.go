@@ -183,7 +183,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 		for i := 0; i < len(buildings); i++ {
 			if buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_HABITAT {
 				if opt.HabitatStorage {
-					buildings[i] = maxBuildingStorage(buildings[i])
+					buildings[i] = maxHabitatStorage(buildings[i])
 				}
 				if opt.HabitatWorkers {
 					buildings[i] = s.fillHabitatWorkers(buildings[i])
@@ -191,7 +191,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 			}
 
 			if opt.FactoryStorage && buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_FACTORY {
-				buildings[i] = maxBuildingStorage(buildings[i])
+				buildings[i] = maxFactoryStorage(buildings[i])
 			}
 		}
 		s.Changed = true

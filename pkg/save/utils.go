@@ -60,7 +60,7 @@ func readSaveFile(path string) (string, []byte, error) {
 	return fullSave[:i], []byte(fullSave[i:]), nil
 }
 
-func maxBuildingStorage(building Building) Building {
+func maxFactoryStorage(building Building) Building {
 	if building.ConsumerProducer == nil {
 		return building
 	}
@@ -74,6 +74,16 @@ func maxStorage(storage []int64) []int64 {
 		storage[i] = BUILDING_MAX_STORAGE
 	}
 	return storage
+}
+
+func maxHabitatStorage(building Building) Building {
+	if building.ConsumerProducer == nil || building.ConsumerProducer.Type != TYPE_HABITAT {
+		return building
+	}
+	for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage {
+		building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = BUILDING_MAX_STORAGE
+	}
+	return building
 }
 
 func marshalJSON(v any) (string, error) {
