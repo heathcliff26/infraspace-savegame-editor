@@ -12,17 +12,12 @@ on:
         description: "Update existing release"
         type: boolean
         default: false
-      version:
-        description: "The version of the release"
-        type: string
-        required: true
 
 jobs:
   build:
     uses: ./.github/workflows/ci.yaml
     with:
-      inputs:
-        release: true
+      release: true
 
   release:
     runs-on: ubuntu-latest
@@ -39,6 +34,13 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Extract Version
+        id: version
+        run: |
+          set -e
+          version="$(cat FyneApp.toml | grep Version | grep -P -o "v[0-9]+\.[0-9]+\.[0-9]+")"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
       - uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # v1.13.0
         with:
           allowUpdates: ${{ inputs.update }}
@@ -46,4 +48,4 @@ jobs:
           artifactErrorsFailBuild: true
           draft: ${{ inputs.draft }}
           generateReleaseNotes: true
-          tag: "${{ inputs.version }}"
+          tag: "${{ steps.version.outputs.version }}"
