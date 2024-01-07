@@ -3,7 +3,7 @@ package save
 const (
 	GAME_VERSION         = "1.33.423"
 	RESOURCE_FACTOR      = 100
-	BUILDING_MAX_STORAGE = 100
+	BUILDING_MAX_STORAGE = 1000
 )
 
 const (
