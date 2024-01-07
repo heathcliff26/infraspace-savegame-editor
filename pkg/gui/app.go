@@ -19,9 +19,15 @@ import (
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
 )
 
-var TEXT_COLOR = color.White
+var (
+	TEXT_COLOR   = color.White
+	BORDER_COLOR = color.White
+)
 
-const ENTRY_WIDTH = 120
+const (
+	ENTRY_WIDTH = 120
+	BORDER_SIZE = 1
+)
 
 type GUI struct {
 	App               fyne.App
@@ -276,7 +282,7 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 	}
 
 	g.Resources = resources
-	return container.NewPadded(container.NewGridWithColumns(len(content), content...))
+	return newBorder(container.NewGridWithColumns(len(content), content...))
 }
 
 type ResearchItem struct {
@@ -309,7 +315,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 		}
 		rows = append(rows, container.NewVBox(row...))
 	}
-	researchGrid := container.NewHBox(rows...)
+	researchGrid := newBorder(container.NewHBox(rows...))
 
 	changedUnlockAll := func(checked bool) {
 		for _, item := range g.Research {
@@ -323,7 +329,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 	widgetAll := widget.NewCheck("Unlock all Research", changedUnlockAll)
 	g.UnlockAllResearch = widgetAll
 
-	return container.New(layout.NewPaddedLayout(), container.NewVBox(widgetAll, researchGrid))
+	return newBorder(container.NewVBox(widgetAll, researchGrid))
 }
 
 type OtherOptions struct {
@@ -365,7 +371,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 
 	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.IndustrialRobots)
 
-	return container.NewPadded(container.NewVBox(starterWorkerBox, checkboxes))
+	return newBorder(container.NewVBox(starterWorkerBox, checkboxes))
 }
 
 func (g *GUI) makeActionButtons() fyne.CanvasObject {

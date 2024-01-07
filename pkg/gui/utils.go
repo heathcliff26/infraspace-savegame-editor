@@ -26,3 +26,18 @@ func getVersionContent() fyne.CanvasObject {
 
 	return container.NewPadded(container.NewHBox(row1, row2))
 }
+
+func makeBorderStrip() fyne.CanvasObject {
+	rec := canvas.NewRectangle(BORDER_COLOR)
+	rec.SetMinSize(fyne.NewSize(BORDER_SIZE, BORDER_SIZE))
+	return rec
+}
+
+func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject {
+	top := makeBorderStrip()
+	left := makeBorderStrip()
+	bottom := makeBorderStrip()
+	right := makeBorderStrip()
+	border := container.NewBorder(top, bottom, left, right, content...)
+	return container.NewPadded(border)
+}
