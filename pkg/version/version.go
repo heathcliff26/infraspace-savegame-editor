@@ -11,6 +11,8 @@ import (
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
+const RELEASE = true
+
 type version struct {
 	Name, Version, Commit, Go, GameVersion string
 }
@@ -34,13 +36,13 @@ func Version() version {
 
 	result := version{
 		Name:        name,
-		Version:     metadata.Version,
+		Version:     "v" + metadata.Version,
 		Commit:      commit,
 		Go:          runtime.Version(),
 		GameVersion: save.GAME_VERSION,
 	}
 
-	if !metadata.Release {
+	if !RELEASE {
 		result.Version += "-devel"
 	}
 

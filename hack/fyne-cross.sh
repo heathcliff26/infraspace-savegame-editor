@@ -13,14 +13,9 @@ if [ ! -f "${fyne_cross}" ]; then
     go install github.com/fyne-io/fyne-cross@latest
 fi
 
-flags=""
-if [ "${BUILD_RELEASE}" == "true" ]; then
-    flags="-release"
-fi
-
 pushd "${base_dir}" >/dev/null
 
-${fyne_cross} "${os}" -arch="${arches}" ${flags} ./cmd/save-editor/
+${fyne_cross} "${os}" -arch="${arches}" ./cmd/save-editor/
 
 IFS=',' read -ra arch_array <<<"${arches}"
 
