@@ -251,7 +251,7 @@ func (g *GUI) makeMenu() *fyne.MainMenu {
 
 	about := fyne.NewMenuItem("About", nil)
 	about.Action = func() {
-		vInfo := dialog.NewCustom(version.Version().Name, "close", getVersionContent(), g.Main)
+		vInfo := dialog.NewCustom(g.Title, "close", getVersionContent(), g.Main)
 		vInfo.Show()
 	}
 
