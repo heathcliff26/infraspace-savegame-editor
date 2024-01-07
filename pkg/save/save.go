@@ -167,18 +167,15 @@ func (s *Savegame) SetResource(key string, value int) error {
 }
 
 type EditBuildingsOptions struct {
-	HabitatWorkers   bool
-	HabitatStorage   bool
-	IndustrialRobots bool
-	FactoryStorage   bool
+	HabitatWorkers bool
+	HabitatStorage bool
+	FactoryStorage bool
+	UpgradesOnly   bool
 }
 
 // Edit the buildings with the given configuration
 func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 	if !reflect.DeepEqual(opt, EditBuildingsOptions{}) {
-		if opt.IndustrialRobots {
-			fmt.Println("Noop IndustrialRobots")
-		}
 		buildings := s.Data().Buildings
 		for i := 0; i < len(buildings); i++ {
 			if buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_HABITAT {
@@ -190,8 +187,12 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 				}
 			}
 
-			if opt.FactoryStorage && buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_FACTORY {
-				buildings[i] = maxFactoryStorage(buildings[i])
+			if buildings[i].ConsumerProducer != nil && buildings[i].ConsumerProducer.Type == TYPE_FACTORY {
+				if opt.FactoryStorage {
+					buildings[i] = maxFactoryStorage(buildings[i])
+				} else if opt.UpgradesOnly && (buildings[i].BuildingName == "industrialRobotFactory" || buildings[i].BuildingName == "highTechWorkshop") {
+					buildings[i] = maxFactoryStorage(buildings[i])
+				}
 			}
 		}
 		s.Changed = true

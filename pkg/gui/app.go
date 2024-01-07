@@ -144,10 +144,10 @@ func (g *GUI) writeSavegame() {
 	}
 
 	buildingOptions := save.EditBuildingsOptions{
-		HabitatWorkers:   g.OtherOptions.HabitatWorkers.Checked,
-		HabitatStorage:   g.OtherOptions.HabitatStorage.Checked,
-		IndustrialRobots: g.OtherOptions.IndustrialRobots.Checked,
-		FactoryStorage:   g.OtherOptions.FactoryStorage.Checked,
+		HabitatWorkers: g.OtherOptions.HabitatWorkers.Checked,
+		HabitatStorage: g.OtherOptions.HabitatStorage.Checked,
+		FactoryStorage: g.OtherOptions.FactoryStorage.Checked,
+		UpgradesOnly:   g.OtherOptions.UpgradesOnly.Checked,
 	}
 	g.Save.EditBuildings(buildingOptions)
 
@@ -337,21 +337,29 @@ type OtherOptions struct {
 		Value binding.Int
 		Entry *widget.Entry
 	}
-	HabitatWorkers   *widget.Check
-	HabitatStorage   *widget.Check
-	IndustrialRobots *widget.Check
-	FactoryStorage   *widget.Check
+	HabitatWorkers *widget.Check
+	HabitatStorage *widget.Check
+	FactoryStorage *widget.Check
+	UpgradesOnly   *widget.Check
 }
 
 func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 	g.OtherOptions = OtherOptions{
-		HabitatWorkers:   widget.NewCheck("Fill all habitats with workers", nil),
-		HabitatStorage:   widget.NewCheck("Fill the storage of all habitats", nil),
-		IndustrialRobots: widget.NewCheck("Fill all robot factories with stock", nil),
-		FactoryStorage:   widget.NewCheck("Fill the storage of all factory buildings", nil),
+		HabitatWorkers: widget.NewCheck("Fill all habitats with workers", nil),
+		HabitatStorage: widget.NewCheck("Fill the storage of all habitats", nil),
+		FactoryStorage: widget.NewCheck("Fill the storage of all factories", nil),
+		UpgradesOnly:   widget.NewCheck("Fill only upgrades factories", nil),
 	}
 
-	g.OtherOptions.IndustrialRobots.Disable()
+	g.OtherOptions.FactoryStorage.OnChanged = func(b bool) {
+		if b {
+			g.OtherOptions.UpgradesOnly.Checked = b
+			g.OtherOptions.UpgradesOnly.Disable()
+		} else {
+			g.OtherOptions.UpgradesOnly.Enable()
+		}
+		g.OtherOptions.UpgradesOnly.Refresh()
+	}
 
 	g.OtherOptions.StarterWorker.Value = binding.NewInt()
 	g.OtherOptions.StarterWorker.Entry = widget.NewEntryWithData(binding.IntToString(g.OtherOptions.StarterWorker.Value))
@@ -361,7 +369,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 	starterWorkerLabel := canvas.NewText("Increase starter worker count: ", TEXT_COLOR)
 	starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 
-	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.IndustrialRobots)
+	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
 
 	return newBorder(container.NewVBox(starterWorkerBox, checkboxes))
 }
