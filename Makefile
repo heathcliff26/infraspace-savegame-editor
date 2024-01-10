@@ -4,6 +4,9 @@ GO_LD_FLAGS ?= "-w -s"
 
 default: build
 
+lint:
+	golangci-lint run -v --timeout 300s
+
 test:
 	go test -v ./...
 
@@ -20,5 +23,6 @@ coverprofile:
 	default \
 	build \
 	test \
+	lint \
 	coverprofile \
 	$(NULL)
