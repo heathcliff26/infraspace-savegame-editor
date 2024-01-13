@@ -275,10 +275,19 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 		label := canvas.NewText(resources[i].Name+": ", TEXT_COLOR)
 		resources[i].Value = binding.NewInt()
 		resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
+		r := resources[i]
+		button := widget.NewButton("1 mio.", func() {
+			err := r.Value.Set(1000000)
+			if err != nil {
+				dialog.NewError(err, g.Main).Show()
+				return
+			}
+			r.Entry.Refresh()
+		})
 		size := resources[i].Entry.MinSize()
 		size.Width = ENTRY_WIDTH
 		wrappedEntry := container.NewGridWrap(size, resources[i].Entry)
-		content[i] = container.NewHBox(label, wrappedEntry)
+		content[i] = container.NewHBox(label, wrappedEntry, button)
 	}
 
 	g.Resources = resources
