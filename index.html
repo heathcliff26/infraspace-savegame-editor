@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (35.1%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.8%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
 				
@@ -356,11 +356,20 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject <span class="cov8" title="1">
                 label := canvas.NewText(resources[i].Name+": ", TEXT_COLOR)
                 resources[i].Value = binding.NewInt()
                 resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
-                size := resources[i].Entry.MinSize()
+                r := resources[i]
+                button := widget.NewButton("1 mio.", func() </span><span class="cov0" title="0">{
+                        err := r.Value.Set(1000000)
+                        if err != nil </span><span class="cov0" title="0">{
+                                dialog.NewError(err, g.Main).Show()
+                                return
+                        }</span>
+                        <span class="cov0" title="0">r.Entry.Refresh()</span>
+                })
+                <span class="cov8" title="1">size := resources[i].Entry.MinSize()
                 size.Width = ENTRY_WIDTH
                 wrappedEntry := container.NewGridWrap(size, resources[i].Entry)
-                content[i] = container.NewHBox(label, wrappedEntry)
-        }</span>
+                content[i] = container.NewHBox(label, wrappedEntry, button)</span>
+        }
 
         <span class="cov8" title="1">g.Resources = resources
         return newBorder(container.NewGridWithColumns(len(content), content...))</span>
