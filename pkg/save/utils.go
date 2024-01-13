@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -81,7 +82,7 @@ func maxHabitatStorage(building Building) Building {
 		return building
 	}
 	for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage {
-		building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = BUILDING_MAX_STORAGE
+		building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = json.Number(strconv.Itoa(BUILDING_MAX_STORAGE))
 	}
 	return building
 }

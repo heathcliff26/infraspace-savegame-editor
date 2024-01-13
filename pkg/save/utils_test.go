@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -104,13 +105,13 @@ func TestMaxHabitatStorage(t *testing.T) {
 		ConsumerProducer: &ConsumerProducer{
 			Type: TYPE_HABITAT,
 			ProductionLogic: HabitatProductionLogic{
-				Storage: map[string]float64{
-					"culturePoints": 0,
-					"oxygen":        0,
-					"parkPoints":    0,
-					"schoolPoints":  0,
-					"survivalFood":  0,
-					"water":         0,
+				Storage: map[string]json.Number{
+					"culturePoints": "0",
+					"oxygen":        "0",
+					"parkPoints":    "0",
+					"schoolPoints":  "0",
+					"survivalFood":  "0",
+					"water":         "0",
 				},
 			},
 		},
@@ -120,13 +121,14 @@ func TestMaxHabitatStorage(t *testing.T) {
 
 	assert.Equal(b, res, "Should not be changed since ConsumerProducer is a pointer")
 
-	expectedStorage := map[string]float64{
-		"culturePoints": BUILDING_MAX_STORAGE,
-		"oxygen":        BUILDING_MAX_STORAGE,
-		"parkPoints":    BUILDING_MAX_STORAGE,
-		"schoolPoints":  BUILDING_MAX_STORAGE,
-		"survivalFood":  BUILDING_MAX_STORAGE,
-		"water":         BUILDING_MAX_STORAGE,
+	buildingMaxStorage := strconv.Itoa(BUILDING_MAX_STORAGE)
+	expectedStorage := map[string]json.Number{
+		"culturePoints": json.Number(buildingMaxStorage),
+		"oxygen":        json.Number(buildingMaxStorage),
+		"parkPoints":    json.Number(buildingMaxStorage),
+		"schoolPoints":  json.Number(buildingMaxStorage),
+		"survivalFood":  json.Number(buildingMaxStorage),
+		"water":         json.Number(buildingMaxStorage),
 	}
 	assert.Equal(expectedStorage, res.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage)
 }
