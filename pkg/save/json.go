@@ -9,8 +9,8 @@ type SaveData struct {
 	MapGenVersion              int64               `json:"mapGenVersion"`
 	NextID                     int64               `json:"nextID"`
 	SimulationFrame            int64               `json:"simulationFrame"`
-	TotalGameTime              float64             `json:"totalGameTime"`
-	TotalPlayTime              float64             `json:"totalPlayTime"`
+	TotalGameTime              json.Number         `json:"totalGameTime"`
+	TotalPlayTime              json.Number         `json:"totalPlayTime"`
 	SaveFixGracePeriodActive   bool                `json:"saveFixGracePeriodActive"`
 	WorldSettings              json.RawMessage     `json:"worldSettings"`
 	Buildings                  []Building          `json:"buildings"`
@@ -50,9 +50,9 @@ type Building struct {
 	Pipes                   json.RawMessage `json:"pipes"`
 	ID                      int
 	Position                json.RawMessage   `json:"position"`
-	Rotation                float64           `json:"rotation"`
+	Rotation                json.Number       `json:"rotation"`
 	ConsumerProducer        *ConsumerProducer `json:"consumerProducer"`
-	MissingResourceDuration float64           `json:"missingResourceDuration"`
+	MissingResourceDuration json.Number       `json:"missingResourceDuration"`
 	Upgrades                json.RawMessage   `json:"upgrades"`
 	IntegratedNetEdges      json.RawMessage   `json:"integratedNetEdges"`
 	TextModule              json.RawMessage   `json:"textModule"`
@@ -64,8 +64,8 @@ type ConsumerProducer struct {
 	IncomingStorage       []int64     `json:"incomingStorage"`
 	OutgoingStorage       []int64     `json:"outgoingStorage"`
 	RequestStatusDirty    bool        `json:"requestStatusDirty"`
-	LastStepPowerProduced float64     `json:"lastStepPowerProduced"`
-	LastStepPowerNeeded   float64     `json:"lastStepPowerNeeded"`
+	LastStepPowerProduced json.Number `json:"lastStepPowerProduced"`
+	LastStepPowerNeeded   json.Number `json:"lastStepPowerNeeded"`
 
 	Type BuildingType `json:"-"`
 }
@@ -76,23 +76,23 @@ type FactoryProductionLogic struct {
 	Type                 string          `json:"$type"`
 	ProductionDefinition json.RawMessage `json:"productionDefinition"`
 	LogicOverride        json.RawMessage `json:"logicOverride"`
-	TerraformRadius      float64         `json:"terraformRadius"`
+	TerraformRadius      json.Number     `json:"terraformRadius"`
 	TerraformType        json.RawMessage `json:"terraformType"`
 	ProductionTimeStep   int64           `json:"productionTimeStep"`
 }
 
 type HabitatProductionLogic struct {
-	Type                    string             `json:"$type"`
-	Storage                 map[string]float64 `json:"storage"`
-	MaxInhabitants          int64              `json:"maxInhabitants"`
-	HabitatLevel            int64              `json:"habitatLevel"`
-	Upgrade                 string             `json:"upgrade"`
-	Downgrade               json.RawMessage    `json:"downgrade"`
-	PowerNeededForTenPeople float64            `json:"powerNeededForTenPeople"`
-	TargetInhabitants       float64            `json:"targetInhabitants"`
-	UpgradeCountdown        float64            `json:"upgradeCountdown"`
-	DowngradeCountdown      float64            `json:"downgradeCountdown"`
-	Workers                 []Worker           `json:"workers"`
+	Type                    string                 `json:"$type"`
+	Storage                 map[string]json.Number `json:"storage"`
+	MaxInhabitants          int64                  `json:"maxInhabitants"`
+	HabitatLevel            int64                  `json:"habitatLevel"`
+	Upgrade                 string                 `json:"upgrade"`
+	Downgrade               json.RawMessage        `json:"downgrade"`
+	PowerNeededForTenPeople json.Number            `json:"powerNeededForTenPeople"`
+	TargetInhabitants       json.Number            `json:"targetInhabitants"`
+	UpgradeCountdown        json.Number            `json:"upgradeCountdown"`
+	DowngradeCountdown      json.Number            `json:"downgradeCountdown"`
+	Workers                 []Worker               `json:"workers"`
 }
 
 type Market struct {
@@ -120,9 +120,9 @@ type NewWorldPersistent struct {
 
 type EnvironmentObject struct {
 	ID                  int64
-	ObjectName          string  `json:"objectName"`
-	Health              float64 `json:"health"`
-	TransformCompressed string  `json:"transformCompressed"`
+	ObjectName          string      `json:"objectName"`
+	Health              json.Number `json:"health"`
+	TransformCompressed string      `json:"transformCompressed"`
 }
 
 type AchievementsManager struct {
