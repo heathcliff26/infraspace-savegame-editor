@@ -4,5 +4,5 @@ Website = "https://github.com/heathcliff26/infraspace-savegame-editor"
 Icon = "Icon.png"
 Name = "InfraSpace Savegame Editor"
 ID = "com.github.heathcliff26.infraspace-savegame-editor"
-Version = "1.0.1"
+Version = "1.0.2"
 Build = 1
