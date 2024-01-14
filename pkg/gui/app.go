@@ -190,13 +190,8 @@ func (g *GUI) ReloadFromSave() {
 	unlockedResearch := g.Save.GetUnlockedResearch()
 	for _, item := range g.Research {
 		item.Checkbox.Enable()
-		for _, name := range unlockedResearch {
-			if name == item.Checkbox.Text {
-				item.Checkbox.Checked = true
-				item.Checkbox.Refresh()
-				break
-			}
-		}
+		item.Checkbox.Checked = slices.Contains(unlockedResearch, item.Name)
+		item.Checkbox.Refresh()
 	}
 	g.UnlockAllResearch.Checked = false
 	g.UnlockAllResearch.Refresh()
