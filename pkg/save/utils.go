@@ -72,7 +72,10 @@ func maxFactoryStorage(building Building) Building {
 		return building
 	}
 	building.ConsumerProducer.IncomingStorage = maxStorage(building.ConsumerProducer.IncomingStorage)
-	building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
+	if building.BuildingName != "spaceShipConstructionFacility" {
+		building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
+	}
+
 	return building
 }
 
