@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -30,17 +31,18 @@ const (
 )
 
 type GUI struct {
-	App               fyne.App
-	Main              fyne.Window
-	Title             string
-	Menu              *fyne.MainMenu
-	Save              *save.Savegame
-	Backup            bool
-	Resources         []Resource
-	Research          []ResearchItem
-	UnlockAllResearch *widget.Check
-	OtherOptions      OtherOptions
-	ActionButtons     []*widget.Button
+	App                 fyne.App
+	Main                fyne.Window
+	Title               string
+	Menu                *fyne.MainMenu
+	Save                *save.Savegame
+	Backup              bool
+	Resources           []Resource
+	Research            []ResearchItem
+	UnlockAllResearch   *widget.Check
+	UnlockResearchQueue *widget.Button
+	OtherOptions        OtherOptions
+	ActionButtons       []*widget.Button
 }
 
 func New() *GUI {
@@ -198,6 +200,7 @@ func (g *GUI) ReloadFromSave() {
 	}
 	g.UnlockAllResearch.Checked = false
 	g.UnlockAllResearch.Refresh()
+	g.UnlockResearchQueue.Enable()
 
 	err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
 	if err != nil {
@@ -326,7 +329,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 	}
 	researchGrid := newBorder(container.NewHBox(rows...))
 
-	changedUnlockAll := func(checked bool) {
+	g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) {
 		for _, item := range g.Research {
 			if checked {
 				item.Checkbox.Disable()
@@ -334,11 +337,22 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 				item.Checkbox.Enable()
 			}
 		}
-	}
-	widgetAll := widget.NewCheck("Unlock all Research", changedUnlockAll)
-	g.UnlockAllResearch = widgetAll
+	})
 
-	return newBorder(container.NewVBox(widgetAll, researchGrid))
+	g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() {
+		queue := g.Save.GetResearchQueue()
+		for _, research := range g.Research {
+			if slices.Contains(queue, research.Name) {
+				research.Checkbox.Checked = true
+				research.Checkbox.Refresh()
+			}
+		}
+	})
+	g.UnlockResearchQueue.Disable()
+
+	actions := container.NewHBox(g.UnlockAllResearch, g.UnlockResearchQueue)
+
+	return newBorder(container.NewVBox(actions, researchGrid))
 }
 
 type OtherOptions struct {
