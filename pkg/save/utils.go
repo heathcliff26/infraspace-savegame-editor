@@ -23,6 +23,12 @@ func ResearchNames() []string {
 	return list
 }
 
+func SpaceshipParts() []string {
+	list := make([]string, len(spaceshipParts))
+	copy(list, spaceshipParts)
+	return list
+}
+
 func DefaultSaveLocation() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {

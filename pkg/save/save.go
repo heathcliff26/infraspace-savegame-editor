@@ -112,6 +112,17 @@ func (s *Savegame) GetStarterWorkerCount() int {
 	return len(s.Data().Market.StarterWorkers)
 }
 
+// Get the repaired spaceship parts
+func (s *Savegame) GetRepairedSpaceshipParts() []string {
+	res := make([]string, 0, len(spaceshipParts))
+	for _, part := range s.Data().Spaceship.Parts {
+		if part.CurrentSteps == SPACESHIP_UNLOCK_VALUE {
+			res = append(res, part.Name)
+		}
+	}
+	return res
+}
+
 // Unlock research by name
 func (s *Savegame) UnlockResearch(name string) {
 	if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] {
@@ -204,10 +215,22 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 	}
 }
 
+// Fill a habitat with workers
 func (s *Savegame) fillHabitatWorkers(b Building) Building {
 	prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
 	count := int(prodLogic.MaxInhabitants)
 	_, prodLogic.Workers = s.addWorkers(count, prodLogic.Workers)
 	b.ConsumerProducer.ProductionLogic = prodLogic
 	return b
+}
+
+// Repair the specified spaceship part
+func (s *Savegame) RepairSpaceshipPart(name string) {
+	for i := 0; i < len(s.Data().Spaceship.Parts); i++ {
+		if s.Data().Spaceship.Parts[i].Name == name {
+			s.Data().Spaceship.Parts[i].CurrentSteps = SPACESHIP_UNLOCK_VALUE
+			s.Changed = true
+			break
+		}
+	}
 }

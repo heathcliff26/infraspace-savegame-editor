@@ -28,6 +28,15 @@ func TestResearchNames(t *testing.T) {
 	assert.NotSame(researchNames, res)
 }
 
+func TestSpaceshipParts(t *testing.T) {
+	res := SpaceshipParts()
+
+	assert := assert.New(t)
+
+	assert.Equal(spaceshipParts, res)
+	assert.NotSame(spaceshipParts, res)
+}
+
 func TestDefaultSaveLocation(t *testing.T) {
 	path, err := DefaultSaveLocation()
 	if err != nil {

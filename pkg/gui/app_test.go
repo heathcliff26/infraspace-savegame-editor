@@ -72,6 +72,25 @@ func TestNewGUI(t *testing.T) {
 		}
 		assert.ElementsMatch(save.ResearchNames(), names)
 	})
+	t.Run("SpaceshipParts", func(t *testing.T) {
+		g.makeSpaceshipBox()
+
+		assert := assert.New(t)
+
+		if !assert.NotEmpty(g.SpaceshipParts) {
+			t.FailNow()
+		}
+
+		names := make([]string, len(g.SpaceshipParts))
+		for i, part := range g.SpaceshipParts {
+			names[i] = part.Name
+			if !assert.NotNil(part.Checkbox) {
+				t.FailNow()
+			}
+			assert.False(part.Checkbox.Checked)
+		}
+		assert.ElementsMatch(save.SpaceshipParts(), names)
+	})
 	t.Run("OtherOptions", func(t *testing.T) {
 		g.makeOptionsBox()
 		// TODO
