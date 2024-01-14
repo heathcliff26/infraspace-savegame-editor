@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.1%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.6%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
 				
@@ -271,14 +271,9 @@ func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
         <span class="cov0" title="0">unlockedResearch := g.Save.GetUnlockedResearch()
         for _, item := range g.Research </span><span class="cov0" title="0">{
                 item.Checkbox.Enable()
-                for _, name := range unlockedResearch </span><span class="cov0" title="0">{
-                        if name == item.Checkbox.Text </span><span class="cov0" title="0">{
-                                item.Checkbox.Checked = true
-                                item.Checkbox.Refresh()
-                                break</span>
-                        }
-                }
-        }
+                item.Checkbox.Checked = slices.Contains(unlockedResearch, item.Name)
+                item.Checkbox.Refresh()
+        }</span>
         <span class="cov0" title="0">g.UnlockAllResearch.Checked = false
         g.UnlockAllResearch.Refresh()
         g.UnlockResearchQueue.Enable()
