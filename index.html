@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.8%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.1%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
 				
@@ -86,6 +86,7 @@ import (
         "image/color"
         "os"
         "path/filepath"
+        "slices"
 
         "fyne.io/fyne/v2"
         "fyne.io/fyne/v2/app"
@@ -111,17 +112,18 @@ const (
 )
 
 type GUI struct {
-        App               fyne.App
-        Main              fyne.Window
-        Title             string
-        Menu              *fyne.MainMenu
-        Save              *save.Savegame
-        Backup            bool
-        Resources         []Resource
-        Research          []ResearchItem
-        UnlockAllResearch *widget.Check
-        OtherOptions      OtherOptions
-        ActionButtons     []*widget.Button
+        App                 fyne.App
+        Main                fyne.Window
+        Title               string
+        Menu                *fyne.MainMenu
+        Save                *save.Savegame
+        Backup              bool
+        Resources           []Resource
+        Research            []ResearchItem
+        UnlockAllResearch   *widget.Check
+        UnlockResearchQueue *widget.Button
+        OtherOptions        OtherOptions
+        ActionButtons       []*widget.Button
 }
 
 func New() *GUI <span class="cov0" title="0">{
@@ -279,6 +281,7 @@ func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
         }
         <span class="cov0" title="0">g.UnlockAllResearch.Checked = false
         g.UnlockAllResearch.Refresh()
+        g.UnlockResearchQueue.Enable()
 
         err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
         if err != nil </span><span class="cov0" title="0">{
@@ -407,7 +410,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject <span class="cov8" title="1">{
         }
         <span class="cov8" title="1">researchGrid := newBorder(container.NewHBox(rows...))
 
-        changedUnlockAll := func(checked bool) </span><span class="cov8" title="1">{
+        g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) </span><span class="cov8" title="1">{
                 for _, item := range g.Research </span><span class="cov8" title="1">{
                         if checked </span><span class="cov8" title="1">{
                                 item.Checkbox.Disable()
@@ -415,11 +418,22 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject <span class="cov8" title="1">{
                                 item.Checkbox.Enable()
                         }</span>
                 }
-        }
-        <span class="cov8" title="1">widgetAll := widget.NewCheck("Unlock all Research", changedUnlockAll)
-        g.UnlockAllResearch = widgetAll
+        })
 
-        return newBorder(container.NewVBox(widgetAll, researchGrid))</span>
+        <span class="cov8" title="1">g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() </span><span class="cov0" title="0">{
+                queue := g.Save.GetResearchQueue()
+                for _, research := range g.Research </span><span class="cov0" title="0">{
+                        if slices.Contains(queue, research.Name) </span><span class="cov0" title="0">{
+                                research.Checkbox.Checked = true
+                                research.Checkbox.Refresh()
+                        }</span>
+                }
+        })
+        <span class="cov8" title="1">g.UnlockResearchQueue.Disable()
+
+        actions := container.NewHBox(g.UnlockAllResearch, g.UnlockResearchQueue)
+
+        return newBorder(container.NewVBox(actions, researchGrid))</span>
 }
 
 type OtherOptions struct {
@@ -863,6 +877,11 @@ func (s *Savegame) GetUnlockedResearch() []string <span class="cov0" title="0">{
         }
         <span class="cov0" title="0">return res</span>
 }
+
+// Get research queue
+func (s *Savegame) GetResearchQueue() []string <span class="cov0" title="0">{
+        return s.Data().ResearchManager.ResearchQueue
+}</span>
 
 // Get the current number of starter workers
 func (s *Savegame) GetStarterWorkerCount() int <span class="cov0" title="0">{
