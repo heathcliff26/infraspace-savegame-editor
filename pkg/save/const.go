@@ -1,9 +1,10 @@
 package save
 
 const (
-	GAME_VERSION         = "1.33.425"
-	RESOURCE_FACTOR      = 100
-	BUILDING_MAX_STORAGE = 1000
+	GAME_VERSION           = "1.33.425"
+	RESOURCE_FACTOR        = 100
+	BUILDING_MAX_STORAGE   = 1000
+	SPACESHIP_UNLOCK_VALUE = 1
 )
 
 const (
@@ -146,4 +147,21 @@ var researchNames = []string{
 	"groundAcidityRegulation",
 	"ammoniaExtraction",
 	"magneticFieldGeneration",
+}
+
+var spaceshipParts = []string{
+	"bridge",
+	"communicationArray",
+	"computerDeck",
+	"ftlEngine",
+	"ftlFuelCells",
+	"ftlTurbine",
+	"orbitalScanners",
+	"passengerDeck",
+	"hull",
+	"radiationShield",
+	"storageDeck",
+	"telescope",
+	"thermalSystems",
+	"laserCannon",
 }

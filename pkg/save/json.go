@@ -30,7 +30,7 @@ type SaveData struct {
 	TrainLineManager           json.RawMessage     `json:"trainLineManager"`
 	Trains                     json.RawMessage     `json:"trains"`
 	CarCarriers                json.RawMessage     `json:"carCarriers"`
-	Spaceship                  json.RawMessage     `json:"spaceship"`
+	Spaceship                  Spaceship           `json:"spaceship"`
 	PipeComponentManager       json.RawMessage     `json:"pipeComponentManager"`
 	ScriptMods                 json.RawMessage     `json:"scriptMods"`
 	NewWorldPersistent         NewWorldPersistent  `json:"newWorldPersistent"`
@@ -109,6 +109,18 @@ type ResearchManager struct {
 	ResearchProgress map[string]int64 `json:"researchProgress"`
 	CurrentResearch  json.RawMessage  `json:"currentResearch"`
 	ResearchQueue    []string         `json:"researchQueue"`
+}
+
+type Spaceship struct {
+	CurrentlyRepairedPartName json.RawMessage `json:"currentlyRepairedPartName"`
+	Parts                     []struct {
+		Type           string          `json:"$type,omitempty"`
+		TargetPosition json.RawMessage `json:"targetPosition,omitempty"`
+		Timer          json.Number     `json:"timer,omitempty"`
+		Name           string          `json:"name"`
+		CurrentSteps   int64           `json:"currentSteps"`
+	} `json:"parts"`
+	CurrentlyRepairedPartNameKBackingField json.RawMessage `json:"<currentlyRepairedPartName>k__BackingField"`
 }
 
 type NewWorldPersistent struct {

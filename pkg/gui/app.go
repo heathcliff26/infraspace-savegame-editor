@@ -38,9 +38,10 @@ type GUI struct {
 	Save                *save.Savegame
 	Backup              bool
 	Resources           []Resource
-	Research            []ResearchItem
+	Research            []NamedCheckbox
 	UnlockAllResearch   *widget.Check
 	UnlockResearchQueue *widget.Button
+	SpaceshipParts      []NamedCheckbox
 	OtherOptions        OtherOptions
 	ActionButtons       []*widget.Button
 }
@@ -60,9 +61,10 @@ func New() *GUI {
 
 	resourcesBox := g.makeResourcesBox()
 	researchBox := g.makeResearchBox()
+	spaceshipBox := g.makeSpaceshipBox()
 	optionsBox := g.makeOptionsBox()
 	actionButtons := g.makeActionButtons()
-	g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, optionsBox, actionButtons))
+	g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, spaceshipBox, optionsBox, actionButtons))
 	g.Main.SetFixedSize(true)
 
 	g.Main.Show()
@@ -136,6 +138,12 @@ func (g *GUI) writeSavegame() {
 		}
 	}
 
+	for _, part := range g.SpaceshipParts {
+		if part.Checkbox.Checked {
+			g.Save.RepairSpaceshipPart(part.Name)
+		}
+	}
+
 	starterWorkerCount, err := g.OtherOptions.StarterWorker.Value.Get()
 	if err != nil {
 		abortDialog(err)
@@ -196,6 +204,17 @@ func (g *GUI) ReloadFromSave() {
 	g.UnlockAllResearch.Checked = false
 	g.UnlockAllResearch.Refresh()
 	g.UnlockResearchQueue.Enable()
+
+	repairedSpaceshipParts := g.Save.GetRepairedSpaceshipParts()
+	for _, item := range g.SpaceshipParts {
+		item.Checkbox.Checked = slices.Contains(repairedSpaceshipParts, item.Name)
+		if item.Checkbox.Checked {
+			item.Checkbox.Disable()
+		} else {
+			item.Checkbox.Enable()
+		}
+		item.Checkbox.Refresh()
+	}
 
 	err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
 	if err != nil {
@@ -292,20 +311,13 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 	return newBorder(container.NewGridWithColumns(len(content), content...))
 }
 
-type ResearchItem struct {
+type NamedCheckbox struct {
 	Name     string
 	Checkbox *widget.Check
 }
 
 func (g *GUI) makeResearchBox() fyne.CanvasObject {
-	researchNames := save.ResearchNames()
-	items := make([]ResearchItem, len(researchNames))
-	widgets := make([]fyne.CanvasObject, len(researchNames))
-	for i := 0; i < len(researchNames); i++ {
-		items[i] = ResearchItem{Name: researchNames[i]}
-		items[i].Checkbox = widget.NewCheck(researchNames[i], nil)
-		widgets[i] = items[i].Checkbox
-	}
+	items, widgets := createNamedCheckboxes(save.ResearchNames())
 	g.Research = items
 
 	rows := make([]fyne.CanvasObject, 0, (len(widgets)/10)+1)
@@ -348,6 +360,13 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 	actions := container.NewHBox(g.UnlockAllResearch, g.UnlockResearchQueue)
 
 	return newBorder(container.NewVBox(actions, researchGrid))
+}
+
+func (g *GUI) makeSpaceshipBox() fyne.CanvasObject {
+	items, widgets := createNamedCheckboxes(save.SpaceshipParts())
+	g.SpaceshipParts = items
+
+	return newBorder(container.NewGridWithColumns(7, widgets...))
 }
 
 type OtherOptions struct {
