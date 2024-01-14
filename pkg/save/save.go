@@ -102,6 +102,11 @@ func (s *Savegame) GetUnlockedResearch() []string {
 	return res
 }
 
+// Get research queue
+func (s *Savegame) GetResearchQueue() []string {
+	return s.Data().ResearchManager.ResearchQueue
+}
+
 // Get the current number of starter workers
 func (s *Savegame) GetStarterWorkerCount() int {
 	return len(s.Data().Market.StarterWorkers)
