@@ -55,9 +55,9 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.6%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
 				
-				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (39.1%)</option>
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (53.3%)</option>
 				
 				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
 				
@@ -65,7 +65,7 @@
 				
 				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (87.2%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (88.0%)</option>
 				
 				</select>
 			</div>
@@ -119,9 +119,10 @@ type GUI struct {
         Save                *save.Savegame
         Backup              bool
         Resources           []Resource
-        Research            []ResearchItem
+        Research            []NamedCheckbox
         UnlockAllResearch   *widget.Check
         UnlockResearchQueue *widget.Button
+        SpaceshipParts      []NamedCheckbox
         OtherOptions        OtherOptions
         ActionButtons       []*widget.Button
 }
@@ -141,9 +142,10 @@ func New() *GUI <span class="cov0" title="0">{
 
         resourcesBox := g.makeResourcesBox()
         researchBox := g.makeResearchBox()
+        spaceshipBox := g.makeSpaceshipBox()
         optionsBox := g.makeOptionsBox()
         actionButtons := g.makeActionButtons()
-        g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, optionsBox, actionButtons))
+        g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, spaceshipBox, optionsBox, actionButtons))
         g.Main.SetFixedSize(true)
 
         g.Main.Show()
@@ -217,6 +219,12 @@ func (g *GUI) writeSavegame() <span class="cov0" title="0">{
                 }
         }
 
+        <span class="cov0" title="0">for _, part := range g.SpaceshipParts </span><span class="cov0" title="0">{
+                if part.Checkbox.Checked </span><span class="cov0" title="0">{
+                        g.Save.RepairSpaceshipPart(part.Name)
+                }</span>
+        }
+
         <span class="cov0" title="0">starterWorkerCount, err := g.OtherOptions.StarterWorker.Value.Get()
         if err != nil </span><span class="cov0" title="0">{
                 abortDialog(err)
@@ -278,7 +286,18 @@ func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
         g.UnlockAllResearch.Refresh()
         g.UnlockResearchQueue.Enable()
 
-        err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
+        repairedSpaceshipParts := g.Save.GetRepairedSpaceshipParts()
+        for _, item := range g.SpaceshipParts </span><span class="cov0" title="0">{
+                item.Checkbox.Checked = slices.Contains(repairedSpaceshipParts, item.Name)
+                if item.Checkbox.Checked </span><span class="cov0" title="0">{
+                        item.Checkbox.Disable()
+                }</span> else<span class="cov0" title="0"> {
+                        item.Checkbox.Enable()
+                }</span>
+                <span class="cov0" title="0">item.Checkbox.Refresh()</span>
+        }
+
+        <span class="cov0" title="0">err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
         if err != nil </span><span class="cov0" title="0">{
                 g.DisplayError(err)
                 return
@@ -373,21 +392,14 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject <span class="cov8" title="1">
         return newBorder(container.NewGridWithColumns(len(content), content...))</span>
 }
 
-type ResearchItem struct {
+type NamedCheckbox struct {
         Name     string
         Checkbox *widget.Check
 }
 
 func (g *GUI) makeResearchBox() fyne.CanvasObject <span class="cov8" title="1">{
-        researchNames := save.ResearchNames()
-        items := make([]ResearchItem, len(researchNames))
-        widgets := make([]fyne.CanvasObject, len(researchNames))
-        for i := 0; i &lt; len(researchNames); i++ </span><span class="cov8" title="1">{
-                items[i] = ResearchItem{Name: researchNames[i]}
-                items[i].Checkbox = widget.NewCheck(researchNames[i], nil)
-                widgets[i] = items[i].Checkbox
-        }</span>
-        <span class="cov8" title="1">g.Research = items
+        items, widgets := createNamedCheckboxes(save.ResearchNames())
+        g.Research = items
 
         rows := make([]fyne.CanvasObject, 0, (len(widgets)/10)+1)
         for i := 0; i &lt; len(widgets); </span><span class="cov8" title="1">{
@@ -430,6 +442,13 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject <span class="cov8" title="1">{
 
         return newBorder(container.NewVBox(actions, researchGrid))</span>
 }
+
+func (g *GUI) makeSpaceshipBox() fyne.CanvasObject <span class="cov8" title="1">{
+        items, widgets := createNamedCheckboxes(save.SpaceshipParts())
+        g.SpaceshipParts = items
+
+        return newBorder(container.NewGridWithColumns(7, widgets...))
+}</span>
 
 type OtherOptions struct {
         StarterWorker struct {
@@ -498,9 +517,11 @@ import (
         "fyne.io/fyne/v2"
         "fyne.io/fyne/v2/canvas"
         "fyne.io/fyne/v2/container"
+        "fyne.io/fyne/v2/widget"
         "github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
 )
 
+// Create the content for the version dialog
 func getVersionContent() fyne.CanvasObject <span class="cov0" title="0">{
         v := version.Version()
 
@@ -521,12 +542,14 @@ func getVersionContent() fyne.CanvasObject <span class="cov0" title="0">{
         return container.NewPadded(container.NewHBox(row1, row2))
 }</span>
 
+// Create a line for the border
 func makeBorderStrip() fyne.CanvasObject <span class="cov8" title="1">{
         rec := canvas.NewRectangle(BORDER_COLOR)
         rec.SetMinSize(fyne.NewSize(BORDER_SIZE, BORDER_SIZE))
         return rec
 }</span>
 
+// Wrap the objects in a box with border lines
 func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject <span class="cov8" title="1">{
         top := makeBorderStrip()
         left := makeBorderStrip()
@@ -535,6 +558,18 @@ func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject <span class="cov8
         border := container.NewBorder(top, bottom, left, right, content...)
         return container.NewPadded(border)
 }</span>
+
+// Create NamedCheckboxes from a list of names
+func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject) <span class="cov8" title="1">{
+        items := make([]NamedCheckbox, len(names))
+        widgets := make([]fyne.CanvasObject, len(names))
+        for i := 0; i &lt; len(names); i++ </span><span class="cov8" title="1">{
+                items[i] = NamedCheckbox{Name: names[i]}
+                items[i].Checkbox = widget.NewCheck(names[i], nil)
+                widgets[i] = items[i].Checkbox
+        }</span>
+        <span class="cov8" title="1">return items, widgets</span>
+}
 </pre>
 		
 		<pre class="file" id="file2" style="display: none">package save
@@ -586,7 +621,7 @@ type SaveData struct {
         TrainLineManager           json.RawMessage     `json:"trainLineManager"`
         Trains                     json.RawMessage     `json:"trains"`
         CarCarriers                json.RawMessage     `json:"carCarriers"`
-        Spaceship                  json.RawMessage     `json:"spaceship"`
+        Spaceship                  Spaceship           `json:"spaceship"`
         PipeComponentManager       json.RawMessage     `json:"pipeComponentManager"`
         ScriptMods                 json.RawMessage     `json:"scriptMods"`
         NewWorldPersistent         NewWorldPersistent  `json:"newWorldPersistent"`
@@ -665,6 +700,18 @@ type ResearchManager struct {
         ResearchProgress map[string]int64 `json:"researchProgress"`
         CurrentResearch  json.RawMessage  `json:"currentResearch"`
         ResearchQueue    []string         `json:"researchQueue"`
+}
+
+type Spaceship struct {
+        CurrentlyRepairedPartName json.RawMessage `json:"currentlyRepairedPartName"`
+        Parts                     []struct {
+                Type           string          `json:"$type,omitempty"`
+                TargetPosition json.RawMessage `json:"targetPosition,omitempty"`
+                Timer          json.Number     `json:"timer,omitempty"`
+                Name           string          `json:"name"`
+                CurrentSteps   int64           `json:"currentSteps"`
+        } `json:"parts"`
+        CurrentlyRepairedPartNameKBackingField json.RawMessage `json:"&lt;currentlyRepairedPartName&gt;k__BackingField"`
 }
 
 type NewWorldPersistent struct {
@@ -883,6 +930,17 @@ func (s *Savegame) GetStarterWorkerCount() int <span class="cov0" title="0">{
         return len(s.Data().Market.StarterWorkers)
 }</span>
 
+// Get the repaired spaceship parts
+func (s *Savegame) GetRepairedSpaceshipParts() []string <span class="cov0" title="0">{
+        res := make([]string, 0, len(spaceshipParts))
+        for _, part := range s.Data().Spaceship.Parts </span><span class="cov0" title="0">{
+                if part.CurrentSteps == SPACESHIP_UNLOCK_VALUE </span><span class="cov0" title="0">{
+                        res = append(res, part.Name)
+                }</span>
+        }
+        <span class="cov0" title="0">return res</span>
+}
+
 // Unlock research by name
 func (s *Savegame) UnlockResearch(name string) <span class="cov0" title="0">{
         if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] </span><span class="cov0" title="0">{
@@ -975,6 +1033,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
         }
 }
 
+// Fill a habitat with workers
 func (s *Savegame) fillHabitatWorkers(b Building) Building <span class="cov0" title="0">{
         prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
         count := int(prodLogic.MaxInhabitants)
@@ -982,6 +1041,17 @@ func (s *Savegame) fillHabitatWorkers(b Building) Building <span class="cov0" ti
         b.ConsumerProducer.ProductionLogic = prodLogic
         return b
 }</span>
+
+// Repair the specified spaceship part
+func (s *Savegame) RepairSpaceshipPart(name string) <span class="cov0" title="0">{
+        for i := 0; i &lt; len(s.Data().Spaceship.Parts); i++ </span><span class="cov0" title="0">{
+                if s.Data().Spaceship.Parts[i].Name == name </span><span class="cov0" title="0">{
+                        s.Data().Spaceship.Parts[i].CurrentSteps = SPACESHIP_UNLOCK_VALUE
+                        s.Changed = true
+                        break</span>
+                }
+        }
+}
 </pre>
 		
 		<pre class="file" id="file5" style="display: none">package save
@@ -1006,6 +1076,12 @@ func ResourceNames() []string <span class="cov8" title="1">{
 func ResearchNames() []string <span class="cov8" title="1">{
         list := make([]string, len(researchNames))
         copy(list, researchNames)
+        return list
+}</span>
+
+func SpaceshipParts() []string <span class="cov8" title="1">{
+        list := make([]string, len(spaceshipParts))
+        copy(list, spaceshipParts)
         return list
 }</span>
 
