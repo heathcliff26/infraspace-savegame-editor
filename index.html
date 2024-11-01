@@ -690,6 +690,7 @@ type SaveData struct {
         Resources                  map[string]int64    `json:"resources"`
         GoalManager                json.RawMessage     `json:"goalManager"`
         ResearchManager            ResearchManager     `json:"researchManager"`
+        UpgradeManager             json.RawMessage     `json:"upgradeManager,omitempty"`
         PopulationManager          json.RawMessage     `json:"populationManager"`
         Statistics                 json.RawMessage     `json:"statistics"`
         Camera                     json.RawMessage     `json:"camera"`
