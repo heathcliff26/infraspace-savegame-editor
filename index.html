@@ -753,7 +753,7 @@ type HabitatProductionLogic struct {
         Storage                 map[string]json.Number `json:"storage"`
         MaxInhabitants          int64                  `json:"maxInhabitants"`
         HabitatLevel            int64                  `json:"habitatLevel"`
-        Upgrade                 string                 `json:"upgrade"`
+        Upgrade                 json.RawMessage        `json:"upgrade"`
         Downgrade               json.RawMessage        `json:"downgrade"`
         PowerNeededForTenPeople json.Number            `json:"powerNeededForTenPeople"`
         TargetInhabitants       json.Number            `json:"targetInhabitants"`
