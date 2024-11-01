@@ -149,7 +149,7 @@ func (s *Savegame) UnlockAllResearch() {
 // Increase the starter workers to the given count, return number of added workers
 func (s *Savegame) AddStarterWorkers(count int) int64 {
 	var diff int64
-	diff, s.Data().Market.StarterWorkers = s.addWorkers(count, s.Data().Market.StarterWorkers)
+	diff, s.Data().Market.StarterWorkers = s.addWorkers(count, 0, s.Data().Market.StarterWorkers)
 
 	if diff > 0 {
 		s.Changed = true
@@ -158,11 +158,11 @@ func (s *Savegame) AddStarterWorkers(count int) int64 {
 }
 
 // Adds workes to the given array until it's length matches count
-func (s *Savegame) addWorkers(count int, workers []Worker) (int64, []Worker) {
+func (s *Savegame) addWorkers(count int, homeID int64, workers []Worker) (int64, []Worker) {
 	oldNextID := s.Data().NextID
 	for len(workers) < count {
 		newWorker := Worker{
-			Home: 0,
+			Home: homeID,
 			ID:   s.Data().NextID,
 		}
 		s.Data().NextID++
@@ -219,7 +219,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
 func (s *Savegame) fillHabitatWorkers(b Building) Building {
 	prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
 	count := int(prodLogic.MaxInhabitants)
-	_, prodLogic.Workers = s.addWorkers(count, prodLogic.Workers)
+	_, prodLogic.Workers = s.addWorkers(count, b.ID, prodLogic.Workers)
 	b.ConsumerProducer.ProductionLogic = prodLogic
 	return b
 }

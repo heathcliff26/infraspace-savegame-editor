@@ -45,11 +45,11 @@ type SaveData struct {
 }
 
 type Building struct {
-	BuildingName            string          `json:"buildingName"`
-	CustomName              json.RawMessage `json:"customName"`
-	Road                    int64           `json:"road"`
-	Pipes                   json.RawMessage `json:"pipes"`
-	ID                      int
+	BuildingName            string            `json:"buildingName"`
+	CustomName              json.RawMessage   `json:"customName"`
+	Road                    int64             `json:"road"`
+	Pipes                   json.RawMessage   `json:"pipes"`
+	ID                      int64             `json:"ID"`
 	Position                json.RawMessage   `json:"position"`
 	Rotation                json.Number       `json:"rotation"`
 	ConsumerProducer        *ConsumerProducer `json:"consumerProducer"`
