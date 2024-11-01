@@ -67,12 +67,16 @@ func TestReadSaveFile(t *testing.T) {
 			Prefix: "\ufeffInfraSpace\nInfraSpace 1.33.423\nCampaignMap\n01/03/2024 11:54:08\n",
 		},
 		{
-			Name:   "1.33.425",
+			Name:   "1.35.425",
 			Prefix: "\ufeffInfraSpace\nInfraSpace 1.35.425\nCampaignMap\n01/13/2024 16:23:48\n",
 		},
 		{
-			Name:   "1.33.426",
+			Name:   "1.35.426",
 			Prefix: "\ufeffInfraSpace\nInfraSpace 1.35.426\nCampaignMap\n01/14/2024 12:06:20\n",
+		},
+		{
+			Name:   "1.49.446",
+			Prefix: "\ufeffInfraSpace\nInfraSpace 1.49.446\nCampaignMap\n11/01/2024 09:06:42\n",
 		},
 	}
 
