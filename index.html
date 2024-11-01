@@ -712,11 +712,11 @@ type SaveData struct {
 }
 
 type Building struct {
-        BuildingName            string          `json:"buildingName"`
-        CustomName              json.RawMessage `json:"customName"`
-        Road                    int64           `json:"road"`
-        Pipes                   json.RawMessage `json:"pipes"`
-        ID                      int
+        BuildingName            string            `json:"buildingName"`
+        CustomName              json.RawMessage   `json:"customName"`
+        Road                    int64             `json:"road"`
+        Pipes                   json.RawMessage   `json:"pipes"`
+        ID                      int64             `json:"ID"`
         Position                json.RawMessage   `json:"position"`
         Rotation                json.Number       `json:"rotation"`
         ConsumerProducer        *ConsumerProducer `json:"consumerProducer"`
@@ -1044,7 +1044,7 @@ func (s *Savegame) UnlockAllResearch() <span class="cov0" title="0">{
 // Increase the starter workers to the given count, return number of added workers
 func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="0">{
         var diff int64
-        diff, s.Data().Market.StarterWorkers = s.addWorkers(count, s.Data().Market.StarterWorkers)
+        diff, s.Data().Market.StarterWorkers = s.addWorkers(count, 0, s.Data().Market.StarterWorkers)
 
         if diff &gt; 0 </span><span class="cov0" title="0">{
                 s.Changed = true
@@ -1053,11 +1053,11 @@ func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="
 }
 
 // Adds workes to the given array until it's length matches count
-func (s *Savegame) addWorkers(count int, workers []Worker) (int64, []Worker) <span class="cov0" title="0">{
+func (s *Savegame) addWorkers(count int, homeID int64, workers []Worker) (int64, []Worker) <span class="cov0" title="0">{
         oldNextID := s.Data().NextID
         for len(workers) &lt; count </span><span class="cov0" title="0">{
                 newWorker := Worker{
-                        Home: 0,
+                        Home: homeID,
                         ID:   s.Data().NextID,
                 }
                 s.Data().NextID++
@@ -1114,7 +1114,7 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
 func (s *Savegame) fillHabitatWorkers(b Building) Building <span class="cov0" title="0">{
         prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
         count := int(prodLogic.MaxInhabitants)
-        _, prodLogic.Workers = s.addWorkers(count, prodLogic.Workers)
+        _, prodLogic.Workers = s.addWorkers(count, b.ID, prodLogic.Workers)
         b.ConsumerProducer.ProductionLogic = prodLogic
         return b
 }</span>
