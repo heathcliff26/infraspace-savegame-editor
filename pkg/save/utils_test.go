@@ -16,7 +16,7 @@ func TestResourceNames(t *testing.T) {
 	assert := assert.New(t)
 
 	assert.Equal(resourceNames, res)
-	assert.NotSame(resourceNames, res)
+	assert.NotSame(&resourceNames[0], &res[0])
 }
 
 func TestResearchNames(t *testing.T) {
@@ -25,7 +25,7 @@ func TestResearchNames(t *testing.T) {
 	assert := assert.New(t)
 
 	assert.Equal(researchNames, res)
-	assert.NotSame(researchNames, res)
+	assert.NotSame(&researchNames[0], &res[0])
 }
 
 func TestSpaceshipParts(t *testing.T) {
@@ -34,7 +34,7 @@ func TestSpaceshipParts(t *testing.T) {
 	assert := assert.New(t)
 
 	assert.Equal(spaceshipParts, res)
-	assert.NotSame(spaceshipParts, res)
+	assert.NotSame(&spaceshipParts[0], &res[0])
 }
 
 func TestDefaultSaveLocation(t *testing.T) {
