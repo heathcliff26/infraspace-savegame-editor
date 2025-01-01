@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -87,7 +89,12 @@ func TestReadSaveFile(t *testing.T) {
 			assert := assert.New(t)
 
 			assert.Nil(err)
-			assert.Equal(tCase.Prefix, prefix)
+
+			expectedPrefix := tCase.Prefix
+			if runtime.GOOS == "windows" {
+				expectedPrefix = strings.ReplaceAll(expectedPrefix, "\n", "\r\n")
+			}
+			assert.Equal(expectedPrefix, prefix)
 		})
 	}
 }
