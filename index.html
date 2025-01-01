@@ -71,7 +71,7 @@
 				
 				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.5%)</option>
 				
-				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (75.0%)</option>
+				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
 				
 				<option value="file9">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
 				
@@ -1239,13 +1239,20 @@ func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
                 return "", err
         }</span>
 
-        <span class="cov8" title="1">path := filepath.Join(home, "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
-        path = saveFolderWindows(path)
-        if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
-                return path, nil
-        }</span> else<span class="cov8" title="1"> {
-                return home, nil
-        }</span>
+        <span class="cov8" title="1">paths := []string{
+                ".local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
+                "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
+                ".var/app/com.valvesoftware.Steam/data/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
+        }
+
+        for _, path := range paths </span><span class="cov8" title="1">{
+                path = filepath.Join(home, path)
+                path = saveFolderWindows(path)
+                if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
+                        return path, nil
+                }</span>
+        }
+        <span class="cov8" title="1">return home, nil</span>
 }
 </pre>
 		
