@@ -69,9 +69,11 @@
 				
 				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (88.2%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.5%)</option>
 				
-				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
+				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (75.0%)</option>
+				
+				<option value="file9">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
 				
 				</select>
 			</div>
@@ -1139,7 +1141,6 @@ import (
         "fmt"
         "os"
         "path/filepath"
-        "runtime"
         "strconv"
         "strings"
 )
@@ -1161,27 +1162,6 @@ func SpaceshipParts() []string <span class="cov8" title="1">{
         copy(list, spaceshipParts)
         return list
 }</span>
-
-func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
-        home, err := os.UserHomeDir()
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
-
-        <span class="cov8" title="1">var path string
-        switch runtime.GOOS </span>{
-        case "windows":<span class="cov0" title="0">
-                path = saveFolderWindows(home)</span>
-        case "linux":<span class="cov8" title="1">
-                path = filepath.Join(home, "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
-                path = saveFolderWindows(path)</span>
-        }
-        <span class="cov8" title="1">if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
-                return path, nil
-        }</span> else<span class="cov8" title="1"> {
-                return home, nil
-        }</span>
-}
 
 func saveFolderWindows(root string) string <span class="cov8" title="1">{
         return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
@@ -1244,7 +1224,32 @@ func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package version
+		<pre class="file" id="file8" style="display: none">//go:build linux
+
+package save
+
+import (
+        "os"
+        "path/filepath"
+)
+
+func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
+        home, err := os.UserHomeDir()
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">path := filepath.Join(home, "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
+        path = saveFolderWindows(path)
+        if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
+                return path, nil
+        }</span> else<span class="cov8" title="1"> {
+                return home, nil
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package version
 
 import (
         "os"
