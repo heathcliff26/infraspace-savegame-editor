@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+
+Name=Infraspace Savegame Editor
+Comment=A minesweeper implementation in golang
+Categories=Utility;
+Keywords=infraspace;
+
+Icon=@BASE_DIR/io.github.heathcliff26.infraspace-savegame-editor.png
+Exec=@BASE_DIR/infraspace-savegame-editor
+Terminal=false
