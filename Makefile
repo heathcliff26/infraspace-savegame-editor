@@ -19,10 +19,18 @@ build-all:
 coverprofile:
 	hack/coverprofile.sh
 
+fmt:
+	gofmt -s -w ./cmd ./pkg
+
+validate:
+	hack/validate.sh
+
 .PHONY: \
 	default \
 	build \
 	test \
 	lint \
 	coverprofile \
+	fmt \
+	validate \
 	$(NULL)
