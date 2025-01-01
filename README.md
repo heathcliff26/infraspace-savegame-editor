@@ -17,7 +17,9 @@ Notes:
 ### Main Window
 
 ![](images/MainWindow.png)
+![](images/SaveEditing.png)
 
 ### File Menu
 
 ![](images/FileMenu.png)
+![](images/FileDialog.png)
