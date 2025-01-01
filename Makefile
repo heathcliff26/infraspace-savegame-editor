@@ -25,6 +25,9 @@ fmt:
 validate:
 	hack/validate.sh
 
+clean:
+	hack/clean.sh
+
 .PHONY: \
 	default \
 	build \
@@ -33,4 +36,5 @@ validate:
 	coverprofile \
 	fmt \
 	validate \
+	clean \
 	$(NULL)
