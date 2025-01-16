@@ -4,6 +4,7 @@
 
 # Generated go-test coverage reports
 coverprofiles/
+coverprofile.out
 
 # Generated artifacts
 bin/
