@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>save-editor: Go Coverage Report</title>
+		<title>gui: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,25 +55,21 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/cmd/save-editor/main.go (0.0%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
 				
-				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/cmd/trim-save/main.go (0.0%)</option>
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (53.3%)</option>
 				
-				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
+				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
 				
-				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (53.3%)</option>
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
 				
-				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
+				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.5%)</option>
 				
-				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
+				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.5%)</option>
-				
-				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
-				
-				<option value="file9">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
 				
 				</select>
 			</div>
@@ -87,77 +83,7 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package main
-
-import (
-        "github.com/heathcliff26/infraspace-savegame-editor/pkg/gui"
-)
-
-func main() <span class="cov0" title="0">{
-        app := gui.New()
-        app.Run()
-}</span>
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">package main
-
-import (
-        "fmt"
-        "os"
-
-        "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-)
-
-func main() <span class="cov0" title="0">{
-        if len(os.Args) != 2 </span><span class="cov0" title="0">{
-                fmt.Fprintf(os.Stderr, "Receveived wrong number of arguments, expected 1 but got %d", len(os.Args))
-                os.Exit(1)
-        }</span>
-        <span class="cov0" title="0">s, err := save.LoadSavegame(os.Args[1])
-        if err != nil </span><span class="cov0" title="0">{
-                fmt.Fprintf(os.Stderr, "Failed to load savegame: %v\n", err)
-                os.Exit(1)
-        }</span>
-
-        // This is about 34 MB
-        <span class="cov0" title="0">s.Data().NewWorldPersistent.HeightData = ""
-
-        // There can be entries with about 1MB apiece in these arrays
-        s.Data().NewWorldPersistent.AlphaData = trimStrings(s.Data().NewWorldPersistent.AlphaData)
-        s.Data().NewWorldPersistent.DetailData = trimStrings(s.Data().NewWorldPersistent.DetailData)
-
-        bPath, err := s.Backup()
-        if err != nil </span><span class="cov0" title="0">{
-                fmt.Fprintf(os.Stderr, "Failed to backup savegame: %v\n", err)
-                os.Exit(1)
-        }</span>
-        <span class="cov0" title="0">fmt.Println("Created backup of save file at " + bPath)
-
-        err = s.Save()
-        if err != nil </span><span class="cov0" title="0">{
-                fmt.Fprintf(os.Stderr, "Failed to load savegame: %v\n", err)
-                os.Exit(1)
-        }</span>
-        <span class="cov0" title="0">fmt.Println("Successfully trimmed savefile")</span>
-}
-
-func trimStrings(list []string) []string <span class="cov0" title="0">{
-        d := 0
-        for i := range list </span><span class="cov0" title="0">{
-                if len(list[i-d]) &gt; 50 </span><span class="cov0" title="0">{
-                        if len(list)-1 == i-d </span><span class="cov0" title="0">{
-                                list = list[:i-d]
-                        }</span> else<span class="cov0" title="0"> {
-                                list = append(list[:i-d], list[i+1-d:]...)
-                        }</span>
-                        <span class="cov0" title="0">d++</span>
-                }
-        }
-        <span class="cov0" title="0">return list</span>
-}
-</pre>
-		
-		<pre class="file" id="file2" style="display: none">package gui
+		<pre class="file" id="file0" style="display: none">package gui
 
 import (
         "fmt"
@@ -589,7 +515,7 @@ func (g *GUI) makeActionButtons() fyne.CanvasObject <span class="cov8" title="1"
 }
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package gui
+		<pre class="file" id="file1" style="display: none">package gui
 
 import (
         "fyne.io/fyne/v2"
@@ -650,7 +576,7 @@ func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package save
+		<pre class="file" id="file2" style="display: none">package save
 
 import "fmt"
 
@@ -667,7 +593,7 @@ func (e *ErrMissingKey) Error() string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package save
+		<pre class="file" id="file3" style="display: none">package save
 
 import (
         "encoding/json"
@@ -895,7 +821,7 @@ func (c *ConsumerProducer) UnmarshalJSON(data []byte) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package save
+		<pre class="file" id="file4" style="display: none">package save
 
 import (
         "encoding/json"
@@ -1133,7 +1059,7 @@ func (s *Savegame) RepairSpaceshipPart(name string) <span class="cov0" title="0"
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package save
+		<pre class="file" id="file5" style="display: none">package save
 
 import (
         "bytes"
@@ -1224,7 +1150,7 @@ func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">//go:build linux
+		<pre class="file" id="file6" style="display: none">//go:build linux
 
 package save
 
@@ -1256,7 +1182,7 @@ func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package version
+		<pre class="file" id="file7" style="display: none">package version
 
 import (
         "os"
