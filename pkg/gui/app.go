@@ -2,14 +2,12 @@ package gui
 
 import (
 	"fmt"
-	"image/color"
 	"os"
 	"path/filepath"
 	"slices"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
@@ -17,11 +15,6 @@ import (
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-)
-
-var (
-	TEXT_COLOR   = color.White
-	BORDER_COLOR = color.White
 )
 
 const (
@@ -288,7 +281,7 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 
 	content := make([]fyne.CanvasObject, len(resources))
 	for i := 0; i < len(resources); i++ {
-		label := canvas.NewText(resources[i].Name+": ", TEXT_COLOR)
+		label := widget.NewLabel(resources[i].Name + ": ")
 		resources[i].Value = binding.NewInt()
 		resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
 		r := resources[i]
@@ -402,7 +395,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 	size := g.OtherOptions.StarterWorker.Entry.MinSize()
 	size.Width = ENTRY_WIDTH
 	wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
-	starterWorkerLabel := canvas.NewText("Increase starter worker count: ", TEXT_COLOR)
+	starterWorkerLabel := widget.NewLabel("Increase starter worker count: ")
 	starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 
 	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)

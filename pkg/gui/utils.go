@@ -2,26 +2,17 @@ package gui
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
-// Create a line for the border
-func makeBorderStrip() fyne.CanvasObject {
-	rec := canvas.NewRectangle(BORDER_COLOR)
-	rec.SetMinSize(fyne.NewSize(BORDER_SIZE, BORDER_SIZE))
-	return rec
-}
-
 // Wrap the objects in a box with border lines
 func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject {
-	top := makeBorderStrip()
-	left := makeBorderStrip()
-	bottom := makeBorderStrip()
-	right := makeBorderStrip()
-	border := container.NewBorder(top, bottom, left, right, content...)
-	return container.NewPadded(border)
+	contentContainer := container.NewThemeOverride(container.NewPadded(content...), theme.DefaultTheme())
+	border := widget.NewCard("", "", contentContainer)
+
+	return container.NewThemeOverride(border, borderTheme{})
 }
 
 // Create NamedCheckboxes from a list of names
