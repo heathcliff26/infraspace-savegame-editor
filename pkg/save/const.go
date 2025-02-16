@@ -1,7 +1,7 @@
 package save
 
 const (
-	GAME_VERSION           = "1.49.446"
+	GAME_VERSION           = "1.50.448"
 	RESOURCE_FACTOR        = 100
 	BUILDING_MAX_STORAGE   = 1000
 	SPACESHIP_UNLOCK_VALUE = 1
