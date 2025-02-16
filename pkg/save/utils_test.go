@@ -162,6 +162,10 @@ func TestMarshalJSON(t *testing.T) {
 	input += "  \"<disabledDueToMods>k__BackingField\": 0\n"
 	input += "}\n"
 
+	output := "{\r\n"
+	output += "  \"<disabledDueToMods>k__BackingField\": 0\r\n"
+	output += "}\r\n"
+
 	assert := assert.New(t)
 
 	var data json.RawMessage
@@ -170,5 +174,5 @@ func TestMarshalJSON(t *testing.T) {
 	assert.Nil(err)
 	res, err := marshalJSON(data)
 	assert.Nil(err)
-	assert.Equal(input, res)
+	assert.Equal(output, res)
 }

@@ -85,5 +85,7 @@ func marshalJSON(v any) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return buf.String(), nil
+
+	res := buf.String()
+	return strings.ReplaceAll(res, "\n", "\r\n"), nil
 }
