@@ -1,7 +1,5 @@
 SHELL := bash
 
-GO_LD_FLAGS ?= "-w -s"
-
 default: build
 
 lint:
@@ -11,7 +9,7 @@ test:
 	go test -v -coverprofile=coverprofile.out -coverpkg "./pkg/..." ./...
 
 build:
-	( GOOS="$(GOOS)" GOARCH="$(GOARCH)" GO_BUILD_FLAGS=$(GO_BUILD_FLAGS) hack/build.sh )
+	hack/build.sh
 
 build-all:
 	hack/build-all.sh
