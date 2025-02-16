@@ -22,10 +22,14 @@ Notes:
 
 ### Main Window
 
-![](images/MainWindow.png)
-![](images/SaveEditing.png)
+![](images/dark/MainWindow.png#gh-dark-mode-only)
+![](images/light/MainWindow.png#gh-light-mode-only)
+![](images/dark/SaveEditing.png#gh-dark-mode-only)
+![](images/light/SaveEditing.png#gh-light-mode-only)
 
 ### File Menu
 
-![](images/FileMenu.png)
-![](images/FileDialog.png)
+![](images/dark/FileMenu.png#gh-dark-mode-only)
+![](images/light/FileMenu.png#gh-light-mode-only)
+![](images/dark/FileDialog.png#gh-dark-mode-only)
+![](images/light/FileDialog.png#gh-light-mode-only)
