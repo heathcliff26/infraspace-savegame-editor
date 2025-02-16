@@ -17,7 +17,6 @@ import (
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-	"github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
 )
 
 var (
@@ -33,7 +32,7 @@ const (
 type GUI struct {
 	App                 fyne.App
 	Main                fyne.Window
-	Title               string
+	Version             Version
 	Menu                *fyne.MainMenu
 	Save                *save.Savegame
 	Backup              bool
@@ -48,13 +47,13 @@ type GUI struct {
 
 func New() *GUI {
 	a := app.New()
-	title := version.Version().Name
-	main := a.NewWindow(title)
+	version := NewVersionFromApp(a)
+	main := a.NewWindow(version.Name)
 	g := &GUI{
-		App:    a,
-		Main:   main,
-		Title:  title,
-		Backup: true,
+		App:     a,
+		Main:    main,
+		Version: version,
+		Backup:  true,
 	}
 
 	g.Main.SetMainMenu(g.makeMenu())
@@ -99,7 +98,7 @@ func (g *GUI) loadSavegame(uri fyne.URIReadCloser, err error) {
 	g.ReloadFromSave()
 	fmt.Println("Successfully loaded save file: " + path)
 
-	newTitle := g.Title + " - " + filepath.Base(path)
+	newTitle := g.Version.Name + " - " + filepath.Base(path)
 	fmt.Println("Setting title to: " + newTitle) // Leaving this here for debug, since it keeps panicking here
 	g.Main.SetTitle(newTitle)
 	for _, b := range g.ActionButtons {
@@ -227,7 +226,7 @@ func (g *GUI) ReloadFromSave() {
 func (g *GUI) makeMenu() *fyne.MainMenu {
 	loadSavegame := func() {
 		dir, err := save.DefaultSaveLocation()
-		if !version.RELEASE {
+		if !RELEASE {
 			// When developing, you likely have a copy of the save in the current directory
 			dir, err = os.Getwd()
 		}
@@ -268,7 +267,7 @@ func (g *GUI) makeMenu() *fyne.MainMenu {
 
 	about := fyne.NewMenuItem("About", nil)
 	about.Action = func() {
-		vInfo := dialog.NewCustom(g.Title, "close", getVersionContent(), g.Main)
+		vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
 		vInfo.Show()
 	}
 
