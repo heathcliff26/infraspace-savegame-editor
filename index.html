@@ -57,19 +57,19 @@
 				
 				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
 				
-				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (53.3%)</option>
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (100.0%)</option>
 				
-				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
+				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/version.go (41.4%)</option>
 				
-				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
 				
-				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
+				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
+				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/version/version.go (0.0%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
 				
 				</select>
 			</div>
@@ -102,7 +102,6 @@ import (
         "fyne.io/fyne/v2/storage"
         "fyne.io/fyne/v2/widget"
         "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-        "github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
 )
 
 var (
@@ -118,7 +117,7 @@ const (
 type GUI struct {
         App                 fyne.App
         Main                fyne.Window
-        Title               string
+        Version             Version
         Menu                *fyne.MainMenu
         Save                *save.Savegame
         Backup              bool
@@ -133,13 +132,13 @@ type GUI struct {
 
 func New() *GUI <span class="cov0" title="0">{
         a := app.New()
-        title := version.Version().Name
-        main := a.NewWindow(title)
+        version := NewVersionFromApp(a)
+        main := a.NewWindow(version.Name)
         g := &amp;GUI{
-                App:    a,
-                Main:   main,
-                Title:  title,
-                Backup: true,
+                App:     a,
+                Main:    main,
+                Version: version,
+                Backup:  true,
         }
 
         g.Main.SetMainMenu(g.makeMenu())
@@ -184,7 +183,7 @@ func (g *GUI) loadSavegame(uri fyne.URIReadCloser, err error) <span class="cov0"
         <span class="cov0" title="0">g.ReloadFromSave()
         fmt.Println("Successfully loaded save file: " + path)
 
-        newTitle := g.Title + " - " + filepath.Base(path)
+        newTitle := g.Version.Name + " - " + filepath.Base(path)
         fmt.Println("Setting title to: " + newTitle) // Leaving this here for debug, since it keeps panicking here
         g.Main.SetTitle(newTitle)
         for _, b := range g.ActionButtons </span><span class="cov0" title="0">{
@@ -312,7 +311,7 @@ func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
 func (g *GUI) makeMenu() *fyne.MainMenu <span class="cov8" title="1">{
         loadSavegame := func() </span><span class="cov0" title="0">{
                 dir, err := save.DefaultSaveLocation()
-                if !version.RELEASE </span><span class="cov0" title="0">{
+                if !RELEASE </span><span class="cov0" title="0">{
                         // When developing, you likely have a copy of the save in the current directory
                         dir, err = os.Getwd()
                 }</span>
@@ -353,7 +352,7 @@ func (g *GUI) makeMenu() *fyne.MainMenu <span class="cov8" title="1">{
 
         about := fyne.NewMenuItem("About", nil)
         about.Action = func() </span><span class="cov0" title="0">{
-                vInfo := dialog.NewCustom(g.Title, "close", getVersionContent(), g.Main)
+                vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
                 vInfo.Show()
         }</span>
 
@@ -522,29 +521,7 @@ import (
         "fyne.io/fyne/v2/canvas"
         "fyne.io/fyne/v2/container"
         "fyne.io/fyne/v2/widget"
-        "github.com/heathcliff26/infraspace-savegame-editor/pkg/version"
 )
-
-// Create the content for the version dialog
-func getVersionContent() fyne.CanvasObject <span class="cov0" title="0">{
-        v := version.Version()
-
-        r1 := make([]fyne.CanvasObject, 4)
-        r2 := make([]fyne.CanvasObject, 4)
-        r1[0] = canvas.NewText("Version:", TEXT_COLOR)
-        r2[0] = canvas.NewText(v.Version, TEXT_COLOR)
-        r1[1] = canvas.NewText("Commit:", TEXT_COLOR)
-        r2[1] = canvas.NewText(v.Commit, TEXT_COLOR)
-        r1[2] = canvas.NewText("Go:", TEXT_COLOR)
-        r2[2] = canvas.NewText(v.Go, TEXT_COLOR)
-        r1[3] = canvas.NewText("InfraSpace:", TEXT_COLOR)
-        r2[3] = canvas.NewText(v.GameVersion, TEXT_COLOR)
-
-        row1 := container.NewVBox(r1...)
-        row2 := container.NewVBox(r2...)
-
-        return container.NewPadded(container.NewHBox(row1, row2))
-}</span>
 
 // Create a line for the border
 func makeBorderStrip() fyne.CanvasObject <span class="cov8" title="1">{
@@ -576,7 +553,83 @@ func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject
 }
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package save
+		<pre class="file" id="file2" style="display: none">package gui
+
+import (
+        "os"
+        "path/filepath"
+        "runtime"
+        "runtime/debug"
+        "strings"
+
+        "fyne.io/fyne/v2"
+        "fyne.io/fyne/v2/canvas"
+        "fyne.io/fyne/v2/container"
+        "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
+)
+
+const RELEASE = true
+
+type Version struct {
+        Name, Version, Commit, Go, GameVersion string
+}
+
+func NewVersionFromApp(app fyne.App) Version <span class="cov8" title="1">{
+        var commit string
+        buildinfo, _ := debug.ReadBuildInfo()
+        for _, item := range buildinfo.Settings </span><span class="cov8" title="1">{
+                if item.Key == "vcs.revision" </span><span class="cov0" title="0">{
+                        commit = item.Value
+                        break</span>
+                }
+        }
+        <span class="cov8" title="1">if len(commit) &gt; 7 </span><span class="cov0" title="0">{
+                commit = commit[:7]
+        }</span>
+
+        <span class="cov8" title="1">metadata := app.Metadata()
+
+        name, _ := strings.CutSuffix(metadata.Name, ".exe")
+        if name == "" </span><span class="cov8" title="1">{
+                name = filepath.Base(os.Args[0])
+        }</span>
+
+        <span class="cov8" title="1">result := Version{
+                Name:        name,
+                Version:     "v" + metadata.Version,
+                Commit:      commit,
+                Go:          runtime.Version(),
+                GameVersion: save.GAME_VERSION,
+        }
+
+        if !RELEASE </span><span class="cov0" title="0">{
+                result.Version += "-devel"
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+
+// Create the content for the version dialog
+func (v Version) CreateContent() fyne.CanvasObject <span class="cov0" title="0">{
+        r1 := make([]fyne.CanvasObject, 4)
+        r2 := make([]fyne.CanvasObject, 4)
+        r1[0] = canvas.NewText("Version:", TEXT_COLOR)
+        r2[0] = canvas.NewText(v.Version, TEXT_COLOR)
+        r1[1] = canvas.NewText("Commit:", TEXT_COLOR)
+        r2[1] = canvas.NewText(v.Commit, TEXT_COLOR)
+        r1[2] = canvas.NewText("Go:", TEXT_COLOR)
+        r2[2] = canvas.NewText(v.Go, TEXT_COLOR)
+        r1[3] = canvas.NewText("InfraSpace:", TEXT_COLOR)
+        r2[3] = canvas.NewText(v.GameVersion, TEXT_COLOR)
+
+        row1 := container.NewVBox(r1...)
+        row2 := container.NewVBox(r2...)
+
+        return container.NewPadded(container.NewHBox(row1, row2))
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package save
 
 import "fmt"
 
@@ -593,7 +646,7 @@ func (e *ErrMissingKey) Error() string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package save
+		<pre class="file" id="file4" style="display: none">package save
 
 import (
         "encoding/json"
@@ -821,7 +874,7 @@ func (c *ConsumerProducer) UnmarshalJSON(data []byte) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package save
+		<pre class="file" id="file5" style="display: none">package save
 
 import (
         "encoding/json"
@@ -1059,7 +1112,7 @@ func (s *Savegame) RepairSpaceshipPart(name string) <span class="cov0" title="0"
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package save
+		<pre class="file" id="file6" style="display: none">package save
 
 import (
         "bytes"
@@ -1152,7 +1205,7 @@ func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">//go:build linux
+		<pre class="file" id="file7" style="display: none">//go:build linux
 
 package save
 
@@ -1182,67 +1235,6 @@ func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
         }
         <span class="cov8" title="1">return home, nil</span>
 }
-</pre>
-		
-		<pre class="file" id="file7" style="display: none">package version
-
-import (
-        "os"
-        "path/filepath"
-        "runtime"
-        "runtime/debug"
-        "strings"
-
-        "fyne.io/fyne/v2/app"
-        "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-)
-
-const RELEASE = true
-
-type version struct {
-        Name, Version, Commit, Go, GameVersion string
-}
-
-func Version() version <span class="cov0" title="0">{
-        var commit string
-        buildinfo, _ := debug.ReadBuildInfo()
-        for _, item := range buildinfo.Settings </span><span class="cov0" title="0">{
-                if item.Key == "vcs.revision" </span><span class="cov0" title="0">{
-                        commit = item.Value
-                        break</span>
-                }
-        }
-
-        <span class="cov0" title="0">metadata := app.New().Metadata()
-
-        name, _ := strings.CutSuffix(metadata.Name, ".exe")
-        if name == "" </span><span class="cov0" title="0">{
-                name = filepath.Base(os.Args[0])
-        }</span>
-
-        <span class="cov0" title="0">result := version{
-                Name:        name,
-                Version:     "v" + metadata.Version,
-                Commit:      commit,
-                Go:          runtime.Version(),
-                GameVersion: save.GAME_VERSION,
-        }
-
-        if !RELEASE </span><span class="cov0" title="0">{
-                result.Version += "-devel"
-        }</span>
-
-        <span class="cov0" title="0">return result</span>
-}
-
-func (v version) String() string <span class="cov0" title="0">{
-        result := v.Name + "\n"
-        result += "Version:    " + v.Version + "\n"
-        result += "Commit:     " + v.Commit + "\n"
-        result += "Go:         " + v.Go + "\n"
-        result += "InfraSpace: " + v.GameVersion + "\n"
-        return result
-}</span>
 </pre>
 		
 		</div>
