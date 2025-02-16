@@ -57,19 +57,21 @@
 				
 				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
 				
-				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (100.0%)</option>
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/theme.go (88.9%)</option>
 				
-				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/version.go (41.4%)</option>
+				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (100.0%)</option>
 				
-				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/version.go (44.4%)</option>
 				
-				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
+				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
 				
-				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
+				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
+				
+				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
 				
 				</select>
 			</div>
@@ -87,14 +89,12 @@
 
 import (
         "fmt"
-        "image/color"
         "os"
         "path/filepath"
         "slices"
 
         "fyne.io/fyne/v2"
         "fyne.io/fyne/v2/app"
-        "fyne.io/fyne/v2/canvas"
         "fyne.io/fyne/v2/container"
         "fyne.io/fyne/v2/data/binding"
         "fyne.io/fyne/v2/dialog"
@@ -102,11 +102,6 @@ import (
         "fyne.io/fyne/v2/storage"
         "fyne.io/fyne/v2/widget"
         "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
-)
-
-var (
-        TEXT_COLOR   = color.White
-        BORDER_COLOR = color.White
 )
 
 const (
@@ -373,7 +368,7 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject <span class="cov8" title="1">
 
         content := make([]fyne.CanvasObject, len(resources))
         for i := 0; i &lt; len(resources); i++ </span><span class="cov8" title="1">{
-                label := canvas.NewText(resources[i].Name+": ", TEXT_COLOR)
+                label := widget.NewLabel(resources[i].Name + ": ")
                 resources[i].Value = binding.NewInt()
                 resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
                 r := resources[i]
@@ -487,7 +482,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
         size := g.OtherOptions.StarterWorker.Entry.MinSize()
         size.Width = ENTRY_WIDTH
         wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
-        starterWorkerLabel := canvas.NewText("Increase starter worker count: ", TEXT_COLOR)
+        starterWorkerLabel := widget.NewLabel("Increase starter worker count: ")
         starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 
         checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
@@ -517,27 +512,55 @@ func (g *GUI) makeActionButtons() fyne.CanvasObject <span class="cov8" title="1"
 		<pre class="file" id="file1" style="display: none">package gui
 
 import (
+        "image/color"
+
         "fyne.io/fyne/v2"
-        "fyne.io/fyne/v2/canvas"
+        "fyne.io/fyne/v2/theme"
+)
+
+var _ fyne.Theme = borderTheme{}
+
+type borderTheme struct{}
+
+func (borderTheme) Font(style fyne.TextStyle) fyne.Resource <span class="cov0" title="0">{
+        return theme.DefaultTheme().Font(style)
+}</span>
+
+func (borderTheme) Icon(name fyne.ThemeIconName) fyne.Resource <span class="cov8" title="1">{
+        return theme.DefaultTheme().Icon(name)
+}</span>
+
+func (borderTheme) Size(name fyne.ThemeSizeName) float32 <span class="cov8" title="1">{
+        return theme.DefaultTheme().Size(name)
+}</span>
+
+func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color <span class="cov8" title="1">{
+        if name == theme.ColorNameShadow </span><span class="cov8" title="1">{
+                if variant == theme.VariantLight </span><span class="cov8" title="1">{
+                        return color.Black
+                }</span> else<span class="cov8" title="1"> if variant == theme.VariantDark </span><span class="cov8" title="1">{
+                        return color.White
+                }</span>
+        }
+        <span class="cov8" title="1">return theme.DefaultTheme().Color(name, variant)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package gui
+
+import (
+        "fyne.io/fyne/v2"
         "fyne.io/fyne/v2/container"
+        "fyne.io/fyne/v2/theme"
         "fyne.io/fyne/v2/widget"
 )
 
-// Create a line for the border
-func makeBorderStrip() fyne.CanvasObject <span class="cov8" title="1">{
-        rec := canvas.NewRectangle(BORDER_COLOR)
-        rec.SetMinSize(fyne.NewSize(BORDER_SIZE, BORDER_SIZE))
-        return rec
-}</span>
-
 // Wrap the objects in a box with border lines
 func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject <span class="cov8" title="1">{
-        top := makeBorderStrip()
-        left := makeBorderStrip()
-        bottom := makeBorderStrip()
-        right := makeBorderStrip()
-        border := container.NewBorder(top, bottom, left, right, content...)
-        return container.NewPadded(border)
+        contentContainer := container.NewThemeOverride(container.NewPadded(content...), theme.DefaultTheme())
+        border := widget.NewCard("", "", contentContainer)
+
+        return container.NewThemeOverride(border, borderTheme{})
 }</span>
 
 // Create NamedCheckboxes from a list of names
@@ -553,7 +576,7 @@ func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject
 }
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package gui
+		<pre class="file" id="file3" style="display: none">package gui
 
 import (
         "os"
@@ -563,8 +586,7 @@ import (
         "strings"
 
         "fyne.io/fyne/v2"
-        "fyne.io/fyne/v2/canvas"
-        "fyne.io/fyne/v2/container"
+        "fyne.io/fyne/v2/widget"
         "github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
@@ -611,25 +633,36 @@ func NewVersionFromApp(app fyne.App) Version <span class="cov8" title="1">{
 
 // Create the content for the version dialog
 func (v Version) CreateContent() fyne.CanvasObject <span class="cov0" title="0">{
-        r1 := make([]fyne.CanvasObject, 4)
-        r2 := make([]fyne.CanvasObject, 4)
-        r1[0] = canvas.NewText("Version:", TEXT_COLOR)
-        r2[0] = canvas.NewText(v.Version, TEXT_COLOR)
-        r1[1] = canvas.NewText("Commit:", TEXT_COLOR)
-        r2[1] = canvas.NewText(v.Commit, TEXT_COLOR)
-        r1[2] = canvas.NewText("Go:", TEXT_COLOR)
-        r2[2] = canvas.NewText(v.Go, TEXT_COLOR)
-        r1[3] = canvas.NewText("InfraSpace:", TEXT_COLOR)
-        r2[3] = canvas.NewText(v.GameVersion, TEXT_COLOR)
+        data := [][]string{
+                {"Version:", v.Version},
+                {"Commit:", v.Commit},
+                {"Go:", v.Go},
+                {"InfraSpace:", v.GameVersion},
+        }
 
-        row1 := container.NewVBox(r1...)
-        row2 := container.NewVBox(r2...)
+        versionTable := widget.NewTable(
+                func() (int, int) </span><span class="cov0" title="0">{
+                        return len(data), len(data[0])
+                }</span>,
+                func() fyne.CanvasObject <span class="cov0" title="0">{
+                        return widget.NewLabel("                    ")
+                }</span>,
+                func(i widget.TableCellID, o fyne.CanvasObject) <span class="cov0" title="0">{
+                        o.(*widget.Label).SetText(data[i.Row][i.Col])
+                }</span>,
+        )
 
-        return container.NewPadded(container.NewHBox(row1, row2))
-}</span>
+        <span class="cov0" title="0">versionTable.ShowHeaderRow = false
+        versionTable.ShowHeaderColumn = false
+        versionTable.StickyRowCount = len(data) - 1
+        versionTable.StickyColumnCount = len(data[0]) - 1
+        versionTable.HideSeparators = true
+
+        return versionTable</span>
+}
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package save
+		<pre class="file" id="file4" style="display: none">package save
 
 import "fmt"
 
@@ -646,7 +679,7 @@ func (e *ErrMissingKey) Error() string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package save
+		<pre class="file" id="file5" style="display: none">package save
 
 import (
         "encoding/json"
@@ -874,7 +907,7 @@ func (c *ConsumerProducer) UnmarshalJSON(data []byte) error <span class="cov8" t
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package save
+		<pre class="file" id="file6" style="display: none">package save
 
 import (
         "encoding/json"
@@ -1112,7 +1145,7 @@ func (s *Savegame) RepairSpaceshipPart(name string) <span class="cov0" title="0"
 }
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package save
+		<pre class="file" id="file7" style="display: none">package save
 
 import (
         "bytes"
@@ -1205,7 +1238,7 @@ func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">//go:build linux
+		<pre class="file" id="file8" style="display: none">//go:build linux
 
 package save
 
