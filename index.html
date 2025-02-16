@@ -65,7 +65,7 @@
 				
 				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.5%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
 				
 				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
 				
@@ -1146,7 +1146,9 @@ func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
-        <span class="cov8" title="1">return buf.String(), nil</span>
+
+        <span class="cov8" title="1">res := buf.String()
+        return strings.ReplaceAll(res, "\n", "\r\n"), nil</span>
 }
 </pre>
 		
