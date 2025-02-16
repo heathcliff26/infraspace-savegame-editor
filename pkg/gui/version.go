@@ -8,8 +8,7 @@ import (
 	"strings"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
@@ -56,19 +55,30 @@ func NewVersionFromApp(app fyne.App) Version {
 
 // Create the content for the version dialog
 func (v Version) CreateContent() fyne.CanvasObject {
-	r1 := make([]fyne.CanvasObject, 4)
-	r2 := make([]fyne.CanvasObject, 4)
-	r1[0] = canvas.NewText("Version:", TEXT_COLOR)
-	r2[0] = canvas.NewText(v.Version, TEXT_COLOR)
-	r1[1] = canvas.NewText("Commit:", TEXT_COLOR)
-	r2[1] = canvas.NewText(v.Commit, TEXT_COLOR)
-	r1[2] = canvas.NewText("Go:", TEXT_COLOR)
-	r2[2] = canvas.NewText(v.Go, TEXT_COLOR)
-	r1[3] = canvas.NewText("InfraSpace:", TEXT_COLOR)
-	r2[3] = canvas.NewText(v.GameVersion, TEXT_COLOR)
+	data := [][]string{
+		{"Version:", v.Version},
+		{"Commit:", v.Commit},
+		{"Go:", v.Go},
+		{"InfraSpace:", v.GameVersion},
+	}
 
-	row1 := container.NewVBox(r1...)
-	row2 := container.NewVBox(r2...)
+	versionTable := widget.NewTable(
+		func() (int, int) {
+			return len(data), len(data[0])
+		},
+		func() fyne.CanvasObject {
+			return widget.NewLabel("                    ")
+		},
+		func(i widget.TableCellID, o fyne.CanvasObject) {
+			o.(*widget.Label).SetText(data[i.Row][i.Col])
+		},
+	)
 
-	return container.NewPadded(container.NewHBox(row1, row2))
+	versionTable.ShowHeaderRow = false
+	versionTable.ShowHeaderColumn = false
+	versionTable.StickyRowCount = len(data) - 1
+	versionTable.StickyColumnCount = len(data[0]) - 1
+	versionTable.HideSeparators = true
+
+	return versionTable
 }
