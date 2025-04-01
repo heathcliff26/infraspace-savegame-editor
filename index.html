@@ -57,7 +57,7 @@
 				
 				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (31.9%)</option>
 				
-				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/theme.go (88.9%)</option>
+				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/theme.go (87.5%)</option>
 				
 				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (100.0%)</option>
 				
@@ -536,11 +536,12 @@ func (borderTheme) Size(name fyne.ThemeSizeName) float32 <span class="cov8" titl
 
 func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color <span class="cov8" title="1">{
         if name == theme.ColorNameShadow </span><span class="cov8" title="1">{
-                if variant == theme.VariantLight </span><span class="cov8" title="1">{
-                        return color.Black
-                }</span> else<span class="cov8" title="1"> if variant == theme.VariantDark </span><span class="cov8" title="1">{
-                        return color.White
-                }</span>
+                switch variant </span>{
+                case theme.VariantLight:<span class="cov8" title="1">
+                        return color.Black</span>
+                case theme.VariantDark:<span class="cov8" title="1">
+                        return color.White</span>
+                }
         }
         <span class="cov8" title="1">return theme.DefaultTheme().Color(name, variant)</span>
 }
