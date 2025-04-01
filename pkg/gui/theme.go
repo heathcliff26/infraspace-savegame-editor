@@ -25,9 +25,10 @@ func (borderTheme) Size(name fyne.ThemeSizeName) float32 {
 
 func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
 	if name == theme.ColorNameShadow {
-		if variant == theme.VariantLight {
+		switch variant {
+		case theme.VariantLight:
 			return color.Black
-		} else if variant == theme.VariantDark {
+		case theme.VariantDark:
 			return color.White
 		}
 	}
