@@ -23,6 +23,9 @@ fmt:
 validate:
 	hack/validate.sh
 
+update-deps:
+	hack/update-deps.sh
+
 clean:
 	hack/clean.sh
 
@@ -34,5 +37,6 @@ clean:
 	coverprofile \
 	fmt \
 	validate \
+	update-deps \
 	clean \
 	$(NULL)
