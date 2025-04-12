@@ -6,3 +6,6 @@ Name = "InfraSpace Savegame Editor"
 ID = "com.github.heathcliff26.infraspace-savegame-editor"
 Version = "1.2.1"
 Build = 1
+
+[Migrations]
+fyneDo = true
