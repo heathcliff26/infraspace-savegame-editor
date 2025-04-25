@@ -955,6 +955,7 @@ func (s *Savegame) Save() error <span class="cov0" title="0">{
         }</span>
 
         <span class="cov0" title="0">fullSave := s.prefix + data
+        // #nosec G306 -- 0644 permissions are acceptable as the file does not contain sensitive information.
         err = os.WriteFile(s.Path(), []byte(fullSave), 0644)
         return err</span>
 }
@@ -975,6 +976,7 @@ func (s *Savegame) Backup() (string, error) <span class="cov0" title="0">{
                 return "", err
         }</span>
 
+        // #nosec G306 -- 0644 permissions are acceptable as the backup file does not contain sensitive information.
         <span class="cov0" title="0">err = os.WriteFile(dst, input, 0644)
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
@@ -1181,6 +1183,7 @@ func saveFolderWindows(root string) string <span class="cov8" title="1">{
 }</span>
 
 func readSaveFile(path string) (string, []byte, error) <span class="cov8" title="1">{
+        // #nosec G304 -- Local users can decide on their file path themselves.
         buf, err := os.ReadFile(path)
         if err != nil </span><span class="cov0" title="0">{
                 return "", nil, err
