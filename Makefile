@@ -27,6 +27,9 @@ validate: ## Validate that the codebase is clean
 update-deps: ## Update project dependencies
 	hack/update-deps.sh
 
+gosec: ## Scan code for vulnerabilities using gosec
+	gosec ./...
+
 clean: ## Clean up build artifacts
 	hack/clean.sh
 
@@ -45,6 +48,7 @@ help: ## Show this help message
 	fmt \
 	validate \
 	update-deps \
+	gosec \
 	clean \
 	help \
 	$(NULL)
