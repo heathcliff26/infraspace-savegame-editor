@@ -33,6 +33,7 @@ func saveFolderWindows(root string) string {
 }
 
 func readSaveFile(path string) (string, []byte, error) {
+	// #nosec G304 -- Local users can decide on their file path themselves.
 	buf, err := os.ReadFile(path)
 	if err != nil {
 		return "", nil, err

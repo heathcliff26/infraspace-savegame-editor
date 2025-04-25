@@ -45,6 +45,7 @@ func (s *Savegame) Save() error {
 	}
 
 	fullSave := s.prefix + data
+	// #nosec G306 -- 0644 permissions are acceptable as the file does not contain sensitive information.
 	err = os.WriteFile(s.Path(), []byte(fullSave), 0644)
 	return err
 }
@@ -65,6 +66,7 @@ func (s *Savegame) Backup() (string, error) {
 		return "", err
 	}
 
+	// #nosec G306 -- 0644 permissions are acceptable as the backup file does not contain sensitive information.
 	err = os.WriteFile(dst, input, 0644)
 	if err != nil {
 		return "", err
