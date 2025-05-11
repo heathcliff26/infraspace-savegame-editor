@@ -12,8 +12,9 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
+	"github.com/heathcliff26/godialog"
+	fynefallback "github.com/heathcliff26/godialog/fallback/fyne"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
@@ -36,6 +37,15 @@ type GUI struct {
 	SpaceshipParts      []NamedCheckbox
 	OtherOptions        OtherOptions
 	ActionButtons       []*widget.Button
+
+	filedialog godialog.FileDialog
+}
+
+var dialogFileFilters = godialog.FileFilters{
+	{
+		Description: "Savegame (*.sav)",
+		Extensions:  []string{".sav"},
+	},
 }
 
 func New() *GUI {
@@ -61,6 +71,21 @@ func New() *GUI {
 
 	g.Main.Show()
 
+	fd := godialog.NewFileDialog()
+	fd.SetFilters(dialogFileFilters)
+	fd.SetFallback(fynefallback.NewFyneFallbackDialog(g.App))
+	saveLocation, err := save.DefaultSaveLocation()
+	if !RELEASE {
+		// When developing, you likely have a copy of the save in the current directory
+		saveLocation, err = os.Getwd()
+	}
+	if err != nil {
+		g.DisplayError(err)
+	}
+	fd.SetInitialDirectory(saveLocation)
+
+	g.filedialog = fd
+
 	return g
 }
 
@@ -72,31 +97,32 @@ func (g *GUI) DisplayError(err error) {
 	dialog.ShowError(err, g.Main)
 }
 
-func (g *GUI) loadSavegame(uri fyne.URIReadCloser, err error) {
+func (g *GUI) loadSavegame(path string, err error) {
 	if err != nil {
 		g.DisplayError(err)
 		return
 	}
-	if uri == nil {
+	if path == "" {
 		return
 	}
 
-	path := uri.URI().Path()
 	g.Save, err = save.LoadSavegame(path)
 	if err != nil {
 		g.DisplayError(err)
 		return
 	}
 
-	g.ReloadFromSave()
+	fyne.DoAndWait(g.ReloadFromSave)
 	fmt.Println("Successfully loaded save file: " + path)
 
 	newTitle := g.Version.Name + " - " + filepath.Base(path)
 	fmt.Println("Setting title to: " + newTitle) // Leaving this here for debug, since it keeps panicking here
-	g.Main.SetTitle(newTitle)
-	for _, b := range g.ActionButtons {
-		b.Enable()
-	}
+	fyne.Do(func() {
+		g.Main.SetTitle(newTitle)
+		for _, b := range g.ActionButtons {
+			b.Enable()
+		}
+	})
 }
 
 func (g *GUI) writeSavegame() {
@@ -217,36 +243,9 @@ func (g *GUI) ReloadFromSave() {
 }
 
 func (g *GUI) makeMenu() *fyne.MainMenu {
-	loadSavegame := func() {
-		dir, err := save.DefaultSaveLocation()
-		if !RELEASE {
-			// When developing, you likely have a copy of the save in the current directory
-			dir, err = os.Getwd()
-		}
-		if err != nil {
-			g.DisplayError(err)
-			return
-		}
-
-		uri, err := storage.ParseURI("file://" + dir)
-		if err != nil {
-			g.DisplayError(fmt.Errorf("failed to create URI from Path \"%s\": %v", dir, err))
-			return
-		}
-
-		listURI, err := storage.ListerForURI(uri)
-		if err != nil {
-			g.DisplayError(err)
-			return
-		}
-
-		dialog := dialog.NewFileOpen(g.loadSavegame, g.Main)
-		dialog.SetLocation(listURI)
-		dialog.SetFilter(storage.NewExtensionFileFilter([]string{".sav"}))
-		dialog.Resize(fyne.NewSize(800, 600))
-		dialog.Show()
-	}
-	openSave := fyne.NewMenuItem("Load Save", loadSavegame)
+	openSave := fyne.NewMenuItem("Load Save", func() {
+		g.filedialog.Open("Load Save", g.loadSavegame)
+	})
 
 	backup := fyne.NewMenuItem("Backup", nil)
 	backup.Checked = g.Backup
