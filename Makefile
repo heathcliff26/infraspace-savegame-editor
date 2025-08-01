@@ -13,7 +13,7 @@ test:
 
 # Build the binary
 build: tools
-	bin/fyne build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
+	"$(shell pwd)/bin/fyne"  build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
 
 # Build the project for all supported platforms
 build-all:
@@ -30,6 +30,10 @@ fmt:
 # Validate that the codebase is clean
 validate:
 	hack/validate.sh
+
+# Validate the appstream metainfo file
+validate-metainfo:
+	appstreamcli validate io.github.heathcliff26.infraspace-savegame-editor.metainfo.xml
 
 # Update project dependencies
 update-deps:
@@ -63,8 +67,10 @@ help:
 	coverprofile \
 	fmt \
 	validate \
+	validate-metainfo \
 	update-deps \
 	gosec \
 	clean \
+	tools \
 	help \
 	$(NULL)
