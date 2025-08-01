@@ -6,6 +6,6 @@ Comment=A minesweeper implementation in golang
 Categories=Utility;
 Keywords=infraspace;
 
-Icon=@BASE_DIR/io.github.heathcliff26.infraspace-savegame-editor.png
-Exec=@BASE_DIR/infraspace-savegame-editor
+Icon=io.github.heathcliff26.infraspace-savegame-editor
+Exec=infraspace-savegame-editor
 Terminal=false

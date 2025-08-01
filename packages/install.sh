@@ -3,7 +3,12 @@
 base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath)"
 
 APP_ID="io.github.heathcliff26.infraspace-savegame-editor"
-DESKTOP_FILE_TARGET="${HOME}/.local/share/applications/${APP_ID}.desktop"
+BINARY="infraspace-savegame-editor"
+
+bin_dir="$HOME/.local/bin"
+if [ "$(whoami)" == "root" ]; then
+    bin_dir="/usr/local/bin"
+fi
 
 help() {
     echo "Integrate InfraSpace Savegame Editor with common desktop environments."
@@ -14,21 +19,25 @@ help() {
 }
 
 install() {
-    sed -e "s|@BASE_DIR|${base_dir}|g" "${base_dir}/${APP_ID}.desktop" >"${DESKTOP_FILE_TARGET}"
-    echo "Created file: ${DESKTOP_FILE_TARGET}"
+    echo "Installing binary to ${bin_dir}/${BINARY}"
+    cp "${base_dir}/${BINARY}" "${bin_dir}/${BINARY}"
 
-    if command -v xdg-desktop-menu >/dev/null 2>&1; then
-        echo "Forcing desktop menu update"
-        xdg-desktop-menu forceupdate
-        xdg-icon-resource forceupdate
-    else
-        echo "The app will not show up in the menu until the session is restarted"
-    fi
+    echo "Installing desktop file"
+    xdg-desktop-menu install "${base_dir}/${APP_ID}.desktop"
+
+    echo "Installing icon"
+    xdg-icon-resource install --size 512 "${base_dir}/${APP_ID}.png"
+
+    xdg-desktop-menu forceupdate
 }
 
 uninstall() {
-    rm "${DESKTOP_FILE_TARGET}"
-    echo "Removed: ${DESKTOP_FILE_TARGET}"
+    echo "Removing binary"
+    rm "${bin_dir}/${BINARY}"
+
+    echo "Removing desktop file and icon"
+    xdg-desktop-menu uninstall "${APP_ID}.desktop"
+    xdg-icon-resource uninstall --size 512 "${APP_ID}.png"
 }
 
 while [[ "$#" -gt 0 ]]; do

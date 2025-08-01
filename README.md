@@ -18,6 +18,28 @@ Notes:
 - You can reset all changes by pressing reset. This will cause the GUI to reset all selections made
 - If you do not want to create a backup every time you save, unselect `File -> Backup`
 
+## Installation
+
+### Download binary
+
+1. Download the [latest release](https://github.com/heathcliff26/infraspace-savegame-editor/releases/latest)
+2. Unpack the archive
+3. Install the app for your user by running:
+   - You can install it globally by running the script with `sudo`
+```bash
+./install.sh -i
+```
+
+#### Uninstalling
+
+1. Switch to the folder where you have the installation script
+2. Uninstall by running:
+   - Run as `sudo` if you installed it globally
+```bash
+./install.sh -u
+```
+3. Delete the folder.
+
 ## Images
 
 ### Main Window
