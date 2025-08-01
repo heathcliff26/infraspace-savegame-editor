@@ -12,8 +12,8 @@ test:
 	go test -v -coverprofile=coverprofile.out -coverpkg "./pkg/..." ./...
 
 # Build the binary
-build:
-	hack/build.sh
+build: tools
+	bin/fyne build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
 
 # Build the project for all supported platforms
 build-all:
@@ -42,6 +42,10 @@ gosec:
 # Clean up build artifacts
 clean:
 	hack/clean.sh
+
+# Install the tools required for building the app
+tools:
+	GOBIN="$(shell pwd)/bin" go install tool
 
 # Show this help message
 help:

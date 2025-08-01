@@ -17,13 +17,17 @@ fi
 
 pushd "${base_dir}" >/dev/null
 
-${fyne_cross} "${os}" -arch="${arches}" -image="${FYNE_CROSS_IMAGE}" ./cmd/save-editor/
+release_flag=""
+if [ "${os}" == "linux" ]; then
+    release_flag="-release"
+fi
+
+${fyne_cross} "${os}" -arch="${arches}" -image="${FYNE_CROSS_IMAGE}" $release_flag
 
 IFS=',' read -ra arch_array <<<"${arches}"
 
 for arch in "${arch_array[@]}"; do
     if [ "${os}" == "linux" ]; then
-        mv "fyne-cross/bin/linux-${arch}/save-editor" "fyne-cross/bin/linux-${arch}/infraspace-savegame-editor"
         rm -rf "fyne-cross/dist/linux-${arch}"
 
         echo "Building actual package fyne-cross/dist/infraspace-savegame-editor_linux-${arch}.tar.gz"
