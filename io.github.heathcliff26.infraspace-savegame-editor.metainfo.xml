@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>io.github.heathcliff26.infraspace-savegame-editor</id>
+
+    <name>InfraSpace Savegame Editor</name>
+    <summary>Savegame editor for InfraSpace</summary>
+
+    <metadata_license>MIT</metadata_license>
+    <project_license>Apache-2.0</project_license>
+
+    <description>
+        <p>Edit your InfraSpace savegames to add more resources, unlock research, increase workers and other progress.</p>
+    </description>
+
+    <url type="homepage">https://github.com/heathcliff26/infraspace-savegame-editor</url>
+    <developer id="io.github.heathcliff26">
+        <name>Heathcliff</name>
+    </developer>
+
+    <content_rating type="oars-1.1" />
+
+    <launchable type="desktop-id">io.github.heathcliff26.infraspace-savegame-editor.desktop</launchable>
+
+    <branding>
+        <color type="primary" scheme_preference="light">#023c8a</color>
+        <color type="primary" scheme_preference="dark">#03228a</color>
+    </branding>
+
+    <screenshots>
+        <screenshot type="default">
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/MainWindow.png
+            </image>
+            <caption>No savegame loaded (Dark Theme)</caption>
+        </screenshot>
+        <screenshot type="default">
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/MainWindow.png
+            </image>
+            <caption>No savegame loaded (Light Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/SaveEditing.png
+            </image>
+            <caption>Editing savegame (Dark Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/SaveEditing.png
+            </image>
+            <caption>Editing savegame (Light Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/FileMenu.png
+            </image>
+            <caption>File Menu (Dark Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/FileMenu.png
+            </image>
+            <caption>File Menu (Light Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/FileDialog.png
+            </image>
+            <caption>File Dialog (Dark Theme)</caption>
+        </screenshot>
+        <screenshot>
+            <image type="source">
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/FileDialog.png
+            </image>
+            <caption>File Dialog (Light Theme)</caption>
+        </screenshot>
+    </screenshots>
+
+    <releases>
+        <release version="v1.3.0" date="2025-05-12" type="stable">
+            <description>
+                <p>Implemented os native file dialogs</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.0</url>
+        </release>
+    </releases>
+
+</component>

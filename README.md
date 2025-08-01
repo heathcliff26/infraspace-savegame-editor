@@ -40,6 +40,19 @@ Notes:
 ```
 3. Delete the folder.
 
+
+### Fedora Copr
+
+The app is available as an rpm by using the fedora copr repository [heathcliff26/games](https://copr.fedorainfracloud.org/coprs/heathcliff26/games/).
+1. Enable the copr repository
+```bash
+sudo dnf copr enable heathcliff26/games
+```
+2. Install the app
+```bash
+sudo dnf install infraspace-savegame-editor
+```
+
 ## Images
 
 ### Main Window

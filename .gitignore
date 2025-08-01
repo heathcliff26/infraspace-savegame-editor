@@ -12,3 +12,6 @@ coverprofile.out
 /bin
 /dist
 /fyne-cross
+
+# Packit RPM builds
+/tmp
