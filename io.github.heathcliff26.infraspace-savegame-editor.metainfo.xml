@@ -78,6 +78,16 @@
     </screenshots>
 
     <releases>
+        <release version="v1.3.1" date="2025-08-01" type="stable">
+            <description>
+                <p>Improved installation experience for tarball installs on linux.</p>
+                <p>Added rpm packages for Fedora 42.</p>
+                <p>Bumped dependencies.</p>
+                <p>Bumped supported InfraSpace version to 1.53.451.</p>
+                <p>Fixed missing icon in dashbar on linux.</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.1</url>
+        </release>
         <release version="v1.3.0" date="2025-05-12" type="stable">
             <description>
                 <p>Implemented os native file dialogs</p>
