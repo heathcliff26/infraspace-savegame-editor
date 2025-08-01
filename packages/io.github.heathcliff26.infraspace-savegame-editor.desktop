@@ -1,11 +1,12 @@
 [Desktop Entry]
 Type=Application
 
-Name=Infraspace Savegame Editor
-Comment=A minesweeper implementation in golang
+Name=InfraSpace Savegame Editor
+Comment=Savegame Editor for InfraSpace
 Categories=Utility;
 Keywords=infraspace;
 
 Icon=io.github.heathcliff26.infraspace-savegame-editor
 Exec=infraspace-savegame-editor
 Terminal=false
+StartupWMClass=InfraSpace Savegame Editor
