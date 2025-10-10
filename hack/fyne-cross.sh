@@ -4,7 +4,7 @@ set -e
 
 base_dir="$(dirname "${BASH_SOURCE[0]}" | xargs realpath)/.."
 
-FYNE_CROSS_IMAGE="ghcr.io/heathcliff26/go-fyne-ci:latest"
+FYNE_CROSS_IMAGE=${FYNE_CROSS_IMAGE:-"ghcr.io/heathcliff26/go-fyne-ci:latest"}
 
 os="${1}"
 arches="${2:-$(go env GOARCH)}"
