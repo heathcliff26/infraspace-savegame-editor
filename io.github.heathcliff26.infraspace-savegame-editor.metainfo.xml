@@ -78,6 +78,12 @@
     </screenshots>
 
     <releases>
+        <release version="v1.3.4" date="2025-12-01" type="stable">
+            <description>
+                <p>Bumped framework version</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.4</url>
+        </release>
         <release version="v1.3.3" date="2025-11-01" type="stable">
             <description>
                 <p>Bumped framework version</p>
