@@ -9,7 +9,7 @@ import (
 )
 
 func TestNoDataLoss(t *testing.T) {
-	tMatrix := []string{"1.33.423", "1.35.426", "1.49.446", "1.50.448", "1.53.451"}
+	tMatrix := []string{"1.33.423", "1.35.426", "1.49.446", "1.50.448", "1.53.451", "1.55.454"}
 
 	for _, tCase := range tMatrix {
 		t.Run(tCase, func(t *testing.T) {
