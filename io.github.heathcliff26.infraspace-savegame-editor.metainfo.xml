@@ -78,6 +78,12 @@
     </screenshots>
 
     <releases>
+        <release version="v1.3.6" date="2026-02-01" type="stable">
+            <description>
+                <p>Bumped framework version.</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.6</url>
+        </release>
         <release version="v1.3.5" date="2026-01-01" type="stable">
             <description>
                 <p>Bumped supported InfraSpace version to 1.55.454.</p>
@@ -86,20 +92,20 @@
         </release>
         <release version="v1.3.4" date="2025-12-01" type="stable">
             <description>
-                <p>Bumped framework version</p>
+                <p>Bumped framework version.</p>
             </description>
             <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.4</url>
         </release>
         <release version="v1.3.3" date="2025-11-01" type="stable">
             <description>
-                <p>Bumped framework version</p>
+                <p>Bumped framework version.</p>
             </description>
             <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.3</url>
         </release>
         <release version="v1.3.2" date="2025-09-30" type="stable">
             <description>
                 <p>Fixed missing version in rpm package</p>
-                <p>Bumped framework version</p>
+                <p>Bumped framework version.</p>
             </description>
             <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.2</url>
         </release>
