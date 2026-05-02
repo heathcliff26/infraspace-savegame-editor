@@ -15,9 +15,9 @@ test:
 build: tools
 	"$(shell pwd)/bin/fyne"  build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
 
-# Build the project for all supported platforms
-build-all:
-	hack/build-all.sh
+# Build all release artifacts
+release:
+	hack/release.sh
 
 # Generate coverage profile
 coverprofile:
@@ -62,6 +62,7 @@ help:
 .PHONY: \
 	default \
 	build \
+	release \
 	test \
 	lint \
 	coverprofile \
