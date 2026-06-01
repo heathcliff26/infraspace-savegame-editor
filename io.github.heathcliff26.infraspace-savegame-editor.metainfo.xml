@@ -78,9 +78,15 @@
     </screenshots>
 
     <releases>
+        <release version="v1.3.9" date="2026-06-01" type="stable">
+            <description>
+                <p>Small maintenance update.</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.9</url>
+        </release>
         <release version="v1.3.8" date="2026-05-01" type="stable">
             <description>
-                <p>Small maintainance update.</p>
+                <p>Small maintenance update.</p>
             </description>
             <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.8</url>
         </release>
