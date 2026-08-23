@@ -89,6 +89,10 @@ func TestReadSaveFile(t *testing.T) {
 			Name:   "1.55.454",
 			Prefix: "\ufeffInfraSpace\nInfraSpace 1.55.454\nCampaignMap\n01/01/2026 08:37:39\n",
 		},
+		{
+			Name:   "1.56.457",
+			Prefix: "\ufeffInfraSpace\nInfraSpace 1.56.457\nCampaignMap\n08/23/2026 08:16:30\n",
+		},
 	}
 
 	for _, tCase := range tMatrix {
