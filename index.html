@@ -55,23 +55,23 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (32.8%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.7%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/theme.go (87.5%)</option>
 				
 				<option value="file2">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/utils.go (100.0%)</option>
 				
-				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/version.go (54.8%)</option>
+				<option value="file3">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/version.go (50.0%)</option>
 				
 				<option value="file4">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/errors.go (0.0%)</option>
 				
-				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (78.3%)</option>
+				<option value="file5">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/json.go (79.6%)</option>
 				
 				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (92.7%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (94.3%)</option>
 				
-				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (80.0%)</option>
+				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (83.3%)</option>
 				
 				</select>
 			</div>
@@ -135,8 +135,8 @@ var dialogFileFilters = godialog.FileFilters{
         },
 }
 
-func New() *GUI <span class="cov0" title="0">{
-        a := app.New()
+func New() *GUI {
+        <span class="cov0" title="0">a := app.New()
         version := NewVersionFromApp(a)
         main := a.NewWindow(version.Name)
         g := &amp;GUI{
@@ -144,215 +144,215 @@ func New() *GUI <span class="cov0" title="0">{
                 Main:    main,
                 Version: version,
                 Backup:  true,
-        }
+</span>        }
 
-        g.Main.SetMainMenu(g.makeMenu())
-
-        resourcesBox := g.makeResourcesBox()
+        <span class="cov0" title="0">g.Main.SetMainMenu(g.makeMenu())
+</span>
+        <span class="cov0" title="0">resourcesBox := g.makeResourcesBox()
         researchBox := g.makeResearchBox()
         spaceshipBox := g.makeSpaceshipBox()
         optionsBox := g.makeOptionsBox()
         actionButtons := g.makeActionButtons()
         g.Main.SetContent(container.NewVBox(resourcesBox, researchBox, spaceshipBox, optionsBox, actionButtons))
         g.Main.SetFixedSize(true)
-
-        g.Main.Show()
-
-        fd := godialog.NewFileDialog()
+</span>
+        <span class="cov0" title="0">g.Main.Show()
+</span>
+        <span class="cov0" title="0">fd := godialog.NewFileDialog()
         fd.SetFilters(dialogFileFilters)
         fd.SetFallback(fynefallback.NewFyneFallbackDialog(g.App))
         saveLocation, err := save.DefaultSaveLocation()
-        if !RELEASE </span><span class="cov0" title="0">{
+        if !RELEASE </span>{
                 // When developing, you likely have a copy of the save in the current directory
-                saveLocation, err = os.Getwd()
-        }</span>
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
-                g.DisplayError(err)
-        }</span>
+                <span class="cov0" title="0">saveLocation, err = os.Getwd()
+</span>        }
+        <span class="cov0" title="0">if err != nil </span>{
+                <span class="cov0" title="0">g.DisplayError(err)
+</span>        }
         <span class="cov0" title="0">fd.SetInitialDirectory(saveLocation)
-
-        g.filedialog = fd
-
-        return g</span>
+</span>
+        <span class="cov0" title="0">g.filedialog = fd
+</span>
+        <span class="cov0" title="0">return g</span>
 }
 
-func (g *GUI) Run() <span class="cov0" title="0">{
-        g.App.Run()
-}</span>
+func (g *GUI) Run() {
+        <span class="cov0" title="0">g.App.Run()
+</span>}
 
-func (g *GUI) DisplayError(err error) <span class="cov0" title="0">{
-        dialog.ShowError(err, g.Main)
-}</span>
+func (g *GUI) DisplayError(err error) {
+        <span class="cov0" title="0">dialog.ShowError(err, g.Main)
+</span>}
 
-func (g *GUI) loadSavegame(path string, err error) <span class="cov0" title="0">{
-        if err != nil </span><span class="cov0" title="0">{
-                g.DisplayError(err)
+func (g *GUI) loadSavegame(path string, err error) {
+        <span class="cov0" title="0">if err != nil </span>{
+                <span class="cov0" title="0">g.DisplayError(err)
                 return
-        }</span>
-        <span class="cov0" title="0">if path == "" </span><span class="cov0" title="0">{
-                return
-        }</span>
+</span>        }
+        <span class="cov0" title="0">if path == "" </span>{
+                <span class="cov0" title="0">return
+</span>        }
 
         <span class="cov0" title="0">g.Save, err = save.LoadSavegame(path)
-        if err != nil </span><span class="cov0" title="0">{
-                g.DisplayError(err)
+        if err != nil </span>{
+                <span class="cov0" title="0">g.DisplayError(err)
                 return
-        }</span>
+</span>        }
 
         <span class="cov0" title="0">fyne.DoAndWait(g.ReloadFromSave)
         fmt.Println("Successfully loaded save file: " + path)
-
-        newTitle := g.Version.Name + " - " + filepath.Base(path)
+</span>
+        <span class="cov0" title="0">newTitle := g.Version.Name + " - " + filepath.Base(path)
         fmt.Println("Setting title to: " + newTitle) // Leaving this here for debug, since it keeps panicking here
-        fyne.Do(func() </span><span class="cov0" title="0">{
-                g.Main.SetTitle(newTitle)
-                for _, b := range g.ActionButtons </span><span class="cov0" title="0">{
-                        b.Enable()
-                }</span>
+        fyne.Do(func() </span>{
+                <span class="cov0" title="0">g.Main.SetTitle(newTitle)
+                for _, b := range g.ActionButtons </span>{
+                        <span class="cov0" title="0">b.Enable()
+</span>                }
         })
 }
 
-func (g *GUI) writeSavegame() <span class="cov0" title="0">{
-        abortDialog := func(err error) </span><span class="cov0" title="0">{
-                msg := fmt.Sprintf("Encountered an error while saving: %v. No changes have been written to the save-file", err)
+func (g *GUI) writeSavegame() {
+        <span class="cov0" title="0">abortDialog := func(err error) </span>{
+                <span class="cov0" title="0">msg := fmt.Sprintf("Encountered an error while saving: %v. No changes have been written to the save-file", err)
                 dialog.NewInformation("Error", msg, g.Main).Show()
-        }</span>
+</span>        }
 
-        <span class="cov0" title="0">for _, resource := range g.Resources </span><span class="cov0" title="0">{
-                value, err := resource.Value.Get()
-                if err != nil </span><span class="cov0" title="0">{
-                        abortDialog(err)
+        <span class="cov0" title="0">for _, resource := range g.Resources </span>{
+                <span class="cov0" title="0">value, err := resource.Value.Get()
+                if err != nil </span>{
+                        <span class="cov0" title="0">abortDialog(err)
                         return
-                }</span>
+</span>                }
                 <span class="cov0" title="0">err = g.Save.SetResource(resource.Name, value)
-                if err != nil </span><span class="cov0" title="0">{
-                        abortDialog(err)
+                if err != nil </span>{
+                        <span class="cov0" title="0">abortDialog(err)
                         return
-                }</span>
+</span>                }
         }
 
-        <span class="cov0" title="0">if g.UnlockAllResearch.Checked </span><span class="cov0" title="0">{
-                g.Save.UnlockAllResearch()
-        }</span> else<span class="cov0" title="0"> {
-                for _, research := range g.Research </span><span class="cov0" title="0">{
-                        if research.Checkbox.Checked </span><span class="cov0" title="0">{
-                                g.Save.UnlockResearch(research.Name)
-                        }</span> else<span class="cov0" title="0"> {
-                                g.Save.LockResearch(research.Name)
-                        }</span>
+        <span class="cov0" title="0">if g.UnlockAllResearch.Checked </span>{
+                <span class="cov0" title="0">g.Save.UnlockAllResearch()
+</span>        } else {
+                <span class="cov0" title="0">for _, research := range g.Research </span>{
+                        <span class="cov0" title="0">if research.Checkbox.Checked </span>{
+                                <span class="cov0" title="0">g.Save.UnlockResearch(research.Name)
+</span>                        } else {
+                                <span class="cov0" title="0">g.Save.LockResearch(research.Name)
+</span>                        }
                 }
         }
 
-        <span class="cov0" title="0">for _, part := range g.SpaceshipParts </span><span class="cov0" title="0">{
-                if part.Checkbox.Checked </span><span class="cov0" title="0">{
-                        g.Save.RepairSpaceshipPart(part.Name)
-                }</span>
+        <span class="cov0" title="0">for _, part := range g.SpaceshipParts </span>{
+                <span class="cov0" title="0">if part.Checkbox.Checked </span>{
+                        <span class="cov0" title="0">g.Save.RepairSpaceshipPart(part.Name)
+</span>                }
         }
 
         <span class="cov0" title="0">starterWorkerCount, err := g.OtherOptions.StarterWorker.Value.Get()
-        if err != nil </span><span class="cov0" title="0">{
-                abortDialog(err)
+        if err != nil </span>{
+                <span class="cov0" title="0">abortDialog(err)
                 return
-        }</span>
-        <span class="cov0" title="0">if starterWorkerCount &gt; g.Save.GetStarterWorkerCount() </span><span class="cov0" title="0">{
-                g.Save.AddStarterWorkers(starterWorkerCount)
-        }</span>
+</span>        }
+        <span class="cov0" title="0">if starterWorkerCount &gt; g.Save.GetStarterWorkerCount() </span>{
+                <span class="cov0" title="0">g.Save.AddStarterWorkers(starterWorkerCount)
+</span>        }
 
         <span class="cov0" title="0">buildingOptions := save.EditBuildingsOptions{
                 HabitatWorkers: g.OtherOptions.HabitatWorkers.Checked,
                 HabitatStorage: g.OtherOptions.HabitatStorage.Checked,
                 FactoryStorage: g.OtherOptions.FactoryStorage.Checked,
                 UpgradesOnly:   g.OtherOptions.UpgradesOnly.Checked,
-        }
-        g.Save.EditBuildings(buildingOptions)
-
-        if g.Save.Changed </span><span class="cov0" title="0">{
-                if g.Backup </span><span class="cov0" title="0">{
-                        path, err := g.Save.Backup()
-                        if err != nil </span><span class="cov0" title="0">{
-                                abortDialog(err)
+</span>        }
+        <span class="cov0" title="0">g.Save.EditBuildings(buildingOptions)
+</span>
+        <span class="cov0" title="0">if g.Save.Changed </span>{
+                <span class="cov0" title="0">if g.Backup </span>{
+                        <span class="cov0" title="0">path, err := g.Save.Backup()
+                        if err != nil </span>{
+                                <span class="cov0" title="0">abortDialog(err)
                                 return
-                        }</span>
+</span>                        }
                         <span class="cov0" title="0">dialog.NewInformation("Created Backup", "Created backup of save at "+path, g.Main).Show()</span>
                 }
 
                 <span class="cov0" title="0">err = g.Save.Save()
-                if err != nil </span><span class="cov0" title="0">{
-                        abortDialog(err)
+                if err != nil </span>{
+                        <span class="cov0" title="0">abortDialog(err)
                         return
-                }</span>
-        } else<span class="cov0" title="0"> {
-                dialog.NewInformation("Info", "Please make some changes first.", g.Main).Show()
-        }</span>
+</span>                }
+        } else {
+                <span class="cov0" title="0">dialog.NewInformation("Info", "Please make some changes first.", g.Main).Show()
+</span>        }
 }
 
-func (g *GUI) ReloadFromSave() <span class="cov0" title="0">{
-        for _, resource := range g.Resources </span><span class="cov0" title="0">{
-                value, ok := g.Save.GetResource(resource.Name)
-                if !ok </span><span class="cov0" title="0">{
-                        g.DisplayError(fmt.Errorf("unkown resource name: %s", resource.Name))
-                }</span>
+func (g *GUI) ReloadFromSave() {
+        <span class="cov0" title="0">for _, resource := range g.Resources </span>{
+                <span class="cov0" title="0">value, ok := g.Save.GetResource(resource.Name)
+                if !ok </span>{
+                        <span class="cov0" title="0">g.DisplayError(fmt.Errorf("unkown resource name: %s", resource.Name))
+</span>                }
                 <span class="cov0" title="0">err := resource.Value.Set(value)
-                if err != nil </span><span class="cov0" title="0">{
-                        g.DisplayError(err)
+                if err != nil </span>{
+                        <span class="cov0" title="0">g.DisplayError(err)
                         return
-                }</span>
+</span>                }
                 <span class="cov0" title="0">resource.Entry.Refresh()</span>
         }
 
         <span class="cov0" title="0">unlockedResearch := g.Save.GetUnlockedResearch()
-        for _, item := range g.Research </span><span class="cov0" title="0">{
-                item.Checkbox.Enable()
+        for _, item := range g.Research </span>{
+                <span class="cov0" title="0">item.Checkbox.Enable()
                 item.Checkbox.Checked = slices.Contains(unlockedResearch, item.Name)
                 item.Checkbox.Refresh()
-        }</span>
+</span>        }
         <span class="cov0" title="0">g.UnlockAllResearch.Checked = false
         g.UnlockAllResearch.Refresh()
         g.UnlockResearchQueue.Enable()
-
-        repairedSpaceshipParts := g.Save.GetRepairedSpaceshipParts()
-        for _, item := range g.SpaceshipParts </span><span class="cov0" title="0">{
-                item.Checkbox.Checked = slices.Contains(repairedSpaceshipParts, item.Name)
-                if item.Checkbox.Checked </span><span class="cov0" title="0">{
-                        item.Checkbox.Disable()
-                }</span> else<span class="cov0" title="0"> {
-                        item.Checkbox.Enable()
-                }</span>
+</span>
+        <span class="cov0" title="0">repairedSpaceshipParts := g.Save.GetRepairedSpaceshipParts()
+        for _, item := range g.SpaceshipParts </span>{
+                <span class="cov0" title="0">item.Checkbox.Checked = slices.Contains(repairedSpaceshipParts, item.Name)
+                if item.Checkbox.Checked </span>{
+                        <span class="cov0" title="0">item.Checkbox.Disable()
+</span>                } else {
+                        <span class="cov0" title="0">item.Checkbox.Enable()
+</span>                }
                 <span class="cov0" title="0">item.Checkbox.Refresh()</span>
         }
 
         <span class="cov0" title="0">err := g.OtherOptions.StarterWorker.Value.Set(g.Save.GetStarterWorkerCount())
-        if err != nil </span><span class="cov0" title="0">{
-                g.DisplayError(err)
+        if err != nil </span>{
+                <span class="cov0" title="0">g.DisplayError(err)
                 return
-        }</span>
+</span>        }
         <span class="cov0" title="0">g.OtherOptions.StarterWorker.Entry.Refresh()</span>
 }
 
-func (g *GUI) makeMenu() *fyne.MainMenu <span class="cov8" title="1">{
-        openSave := fyne.NewMenuItem("Load Save", func() </span><span class="cov0" title="0">{
-                g.filedialog.Open("Load Save", g.loadSavegame)
-        }</span>)
+func (g *GUI) makeMenu() *fyne.MainMenu {
+        <span class="cov8" title="1">openSave := fyne.NewMenuItem("Load Save", func() </span>{
+                <span class="cov0" title="0">g.filedialog.Open("Load Save", g.loadSavegame)
+</span>        })
 
         <span class="cov8" title="1">backup := fyne.NewMenuItem("Backup", nil)
         backup.Checked = g.Backup
-        backup.Action = func() </span><span class="cov0" title="0">{
-                backup.Checked = !backup.Checked
+        backup.Action = func() </span>{
+                <span class="cov0" title="0">backup.Checked = !backup.Checked
                 g.Backup = backup.Checked
                 g.Menu.Refresh()
-        }</span>
+</span>        }
 
         <span class="cov8" title="1">fileMenu := fyne.NewMenu("File", openSave, fyne.NewMenuItemSeparator(), backup)
-
-        about := fyne.NewMenuItem("About", nil)
-        about.Action = func() </span><span class="cov0" title="0">{
-                vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
+</span>
+        <span class="cov8" title="1">about := fyne.NewMenuItem("About", nil)
+        about.Action = func() </span>{
+                <span class="cov0" title="0">vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
                 vInfo.Show()
-        }</span>
+</span>        }
 
         <span class="cov8" title="1">helpMenu := fyne.NewMenu("Help", about)
-
-        g.Menu = fyne.NewMainMenu(fileMenu, helpMenu)
+</span>
+        <span class="cov8" title="1">g.Menu = fyne.NewMainMenu(fileMenu, helpMenu)
         return g.Menu</span>
 }
 
@@ -362,21 +362,21 @@ type Resource struct {
         Entry *widget.Entry
 }
 
-func (g *GUI) makeResourcesBox() fyne.CanvasObject <span class="cov8" title="1">{
-        resources := []Resource{{Name: "concrete"}, {Name: "steel"}, {Name: "car"}, {Name: "adamantine"}}
-
-        content := make([]fyne.CanvasObject, len(resources))
-        for i := 0; i &lt; len(resources); i++ </span><span class="cov8" title="1">{
-                label := widget.NewLabel(resources[i].Name + ": ")
+func (g *GUI) makeResourcesBox() fyne.CanvasObject {
+        <span class="cov8" title="1">resources := []Resource{{Name: "concrete"}, {Name: "steel"}, {Name: "car"}, {Name: "adamantine"}}
+</span>
+        <span class="cov8" title="1">content := make([]fyne.CanvasObject, len(resources))
+        for i := 0; i &lt; len(resources); i++ </span>{
+                <span class="cov8" title="1">label := widget.NewLabel(resources[i].Name + ": ")
                 resources[i].Value = binding.NewInt()
                 resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
                 r := resources[i]
-                button := widget.NewButton("1 mio.", func() </span><span class="cov0" title="0">{
-                        err := r.Value.Set(1000000)
-                        if err != nil </span><span class="cov0" title="0">{
-                                dialog.NewError(err, g.Main).Show()
+                button := widget.NewButton("1 mio.", func() </span>{
+                        <span class="cov0" title="0">err := r.Value.Set(1000000)
+                        if err != nil </span>{
+                                <span class="cov0" title="0">dialog.NewError(err, g.Main).Show()
                                 return
-                        }</span>
+</span>                        }
                         <span class="cov0" title="0">r.Entry.Refresh()</span>
                 })
                 <span class="cov8" title="1">size := resources[i].Entry.MinSize()
@@ -394,58 +394,58 @@ type NamedCheckbox struct {
         Checkbox *widget.Check
 }
 
-func (g *GUI) makeResearchBox() fyne.CanvasObject <span class="cov8" title="1">{
-        items, widgets := createNamedCheckboxes(save.ResearchNames())
+func (g *GUI) makeResearchBox() fyne.CanvasObject {
+        <span class="cov8" title="1">items, widgets := createNamedCheckboxes(save.ResearchNames())
         g.Research = items
-
-        rows := make([]fyne.CanvasObject, 0, (len(widgets)/10)+1)
-        for i := 0; i &lt; len(widgets); </span><span class="cov8" title="1">{
-                row := make([]fyne.CanvasObject, 0, 10)
-                for x := 0; x &lt; 10; x++ </span><span class="cov8" title="1">{
-                        if i &lt; len(widgets) </span><span class="cov8" title="1">{
-                                row = append(row, widgets[i])
+</span>
+        <span class="cov8" title="1">rows := make([]fyne.CanvasObject, 0, (len(widgets)/10)+1)
+        for i := 0; i &lt; len(widgets); </span>{
+                <span class="cov8" title="1">row := make([]fyne.CanvasObject, 0, 10)
+                for x := 0; x &lt; 10; x++ </span>{
+                        <span class="cov8" title="1">if i &lt; len(widgets) </span>{
+                                <span class="cov8" title="1">row = append(row, widgets[i])
                                 i++
-                        }</span> else<span class="cov8" title="1"> {
-                                row = append(row, layout.NewSpacer())
+</span>                        } else {
+                                <span class="cov8" title="1">row = append(row, layout.NewSpacer())
                                 break</span>
                         }
                 }
                 <span class="cov8" title="1">rows = append(rows, container.NewVBox(row...))</span>
         }
         <span class="cov8" title="1">researchGrid := newBorder(container.NewHBox(rows...))
-
-        g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) </span><span class="cov8" title="1">{
-                for _, item := range g.Research </span><span class="cov8" title="1">{
-                        if checked </span><span class="cov8" title="1">{
-                                item.Checkbox.Disable()
-                        }</span> else<span class="cov8" title="1"> {
-                                item.Checkbox.Enable()
-                        }</span>
+</span>
+        <span class="cov8" title="1">g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) </span>{
+                <span class="cov8" title="1">for _, item := range g.Research </span>{
+                        <span class="cov8" title="1">if checked </span>{
+                                <span class="cov8" title="1">item.Checkbox.Disable()
+</span>                        } else {
+                                <span class="cov8" title="1">item.Checkbox.Enable()
+</span>                        }
                 }
         })
 
-        <span class="cov8" title="1">g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() </span><span class="cov0" title="0">{
-                queue := g.Save.GetResearchQueue()
-                for _, research := range g.Research </span><span class="cov0" title="0">{
-                        if slices.Contains(queue, research.Name) </span><span class="cov0" title="0">{
-                                research.Checkbox.Checked = true
+        <span class="cov8" title="1">g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() </span>{
+                <span class="cov0" title="0">queue := g.Save.GetResearchQueue()
+                for _, research := range g.Research </span>{
+                        <span class="cov0" title="0">if slices.Contains(queue, research.Name) </span>{
+                                <span class="cov0" title="0">research.Checkbox.Checked = true
                                 research.Checkbox.Refresh()
-                        }</span>
+</span>                        }
                 }
         })
         <span class="cov8" title="1">g.UnlockResearchQueue.Disable()
-
-        actions := container.NewHBox(g.UnlockAllResearch, g.UnlockResearchQueue)
-
-        return newBorder(container.NewVBox(actions, researchGrid))</span>
+</span>
+        <span class="cov8" title="1">actions := container.NewHBox(g.UnlockAllResearch, g.UnlockResearchQueue)
+</span>
+        <span class="cov8" title="1">return newBorder(container.NewVBox(actions, researchGrid))</span>
 }
 
-func (g *GUI) makeSpaceshipBox() fyne.CanvasObject <span class="cov8" title="1">{
-        items, widgets := createNamedCheckboxes(save.SpaceshipParts())
+func (g *GUI) makeSpaceshipBox() fyne.CanvasObject {
+        <span class="cov8" title="1">items, widgets := createNamedCheckboxes(save.SpaceshipParts())
         g.SpaceshipParts = items
-
-        return newBorder(container.NewGridWithColumns(7, widgets...))
-}</span>
+</span>
+        <span class="cov8" title="1">return newBorder(container.NewGridWithColumns(7, widgets...))
+</span>}
 
 type OtherOptions struct {
         StarterWorker struct {
@@ -458,21 +458,21 @@ type OtherOptions struct {
         UpgradesOnly   *widget.Check
 }
 
-func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
-        g.OtherOptions = OtherOptions{
+func (g *GUI) makeOptionsBox() fyne.CanvasObject {
+        <span class="cov8" title="1">g.OtherOptions = OtherOptions{
                 HabitatWorkers: widget.NewCheck("Fill all habitats with workers", nil),
                 HabitatStorage: widget.NewCheck("Fill the storage of all habitats", nil),
                 FactoryStorage: widget.NewCheck("Fill the storage of all factories", nil),
                 UpgradesOnly:   widget.NewCheck("Fill only upgrades factories", nil),
-        }
+</span>        }
 
-        g.OtherOptions.FactoryStorage.OnChanged = func(b bool) </span><span class="cov0" title="0">{
-                if b </span><span class="cov0" title="0">{
-                        g.OtherOptions.UpgradesOnly.Checked = b
+        <span class="cov8" title="1">g.OtherOptions.FactoryStorage.OnChanged = func(b bool) </span>{
+                <span class="cov0" title="0">if b </span>{
+                        <span class="cov0" title="0">g.OtherOptions.UpgradesOnly.Checked = b
                         g.OtherOptions.UpgradesOnly.Disable()
-                }</span> else<span class="cov0" title="0"> {
-                        g.OtherOptions.UpgradesOnly.Enable()
-                }</span>
+</span>                } else {
+                        <span class="cov0" title="0">g.OtherOptions.UpgradesOnly.Enable()
+</span>                }
                 <span class="cov0" title="0">g.OtherOptions.UpgradesOnly.Refresh()</span>
         }
 
@@ -483,28 +483,28 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject <span class="cov8" title="1">{
         wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
         starterWorkerLabel := widget.NewLabel("Increase starter worker count: ")
         starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
-
-        checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
-
-        return newBorder(container.NewVBox(starterWorkerBox, checkboxes))</span>
+</span>
+        <span class="cov8" title="1">checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
+</span>
+        <span class="cov8" title="1">return newBorder(container.NewVBox(starterWorkerBox, checkboxes))</span>
 }
 
-func (g *GUI) makeActionButtons() fyne.CanvasObject <span class="cov8" title="1">{
-        resetWarning := func() </span><span class="cov0" title="0">{
-                dialog.NewConfirm("Warning", "This will reload all values from the save", func(b bool) </span><span class="cov0" title="0">{
-                        if b </span><span class="cov0" title="0">{
-                                g.ReloadFromSave()
-                        }</span>
+func (g *GUI) makeActionButtons() fyne.CanvasObject {
+        <span class="cov8" title="1">resetWarning := func() </span>{
+                <span class="cov0" title="0">dialog.NewConfirm("Warning", "This will reload all values from the save", func(b bool) </span>{
+                        <span class="cov0" title="0">if b </span>{
+                                <span class="cov0" title="0">g.ReloadFromSave()
+</span>                        }
                 }, g.Main).Show()
         }
         <span class="cov8" title="1">reset := widget.NewButton("Reset", resetWarning)
         reset.Disable()
         saveFile := widget.NewButton("Save", g.writeSavegame)
         saveFile.Disable()
-
-        g.ActionButtons = []*widget.Button{reset, saveFile}
-
-        return container.NewPadded(container.NewCenter(container.NewHBox(reset, saveFile)))</span>
+</span>
+        <span class="cov8" title="1">g.ActionButtons = []*widget.Button{reset, saveFile}
+</span>
+        <span class="cov8" title="1">return container.NewPadded(container.NewCenter(container.NewHBox(reset, saveFile)))</span>
 }
 </pre>
 		
@@ -521,25 +521,25 @@ var _ fyne.Theme = borderTheme{}
 
 type borderTheme struct{}
 
-func (borderTheme) Font(style fyne.TextStyle) fyne.Resource <span class="cov0" title="0">{
-        return theme.DefaultTheme().Font(style)
-}</span>
+func (borderTheme) Font(style fyne.TextStyle) fyne.Resource {
+        <span class="cov0" title="0">return theme.DefaultTheme().Font(style)
+</span>}
 
-func (borderTheme) Icon(name fyne.ThemeIconName) fyne.Resource <span class="cov8" title="1">{
-        return theme.DefaultTheme().Icon(name)
-}</span>
+func (borderTheme) Icon(name fyne.ThemeIconName) fyne.Resource {
+        <span class="cov8" title="1">return theme.DefaultTheme().Icon(name)
+</span>}
 
-func (borderTheme) Size(name fyne.ThemeSizeName) float32 <span class="cov8" title="1">{
-        return theme.DefaultTheme().Size(name)
-}</span>
+func (borderTheme) Size(name fyne.ThemeSizeName) float32 {
+        <span class="cov8" title="1">return theme.DefaultTheme().Size(name)
+</span>}
 
-func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color <span class="cov8" title="1">{
-        if name == theme.ColorNameShadow </span><span class="cov8" title="1">{
-                switch variant </span>{
-                case theme.VariantLight:<span class="cov8" title="1">
-                        return color.Black</span>
-                case theme.VariantDark:<span class="cov8" title="1">
-                        return color.White</span>
+func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) color.Color {
+        <span class="cov8" title="1">if name == theme.ColorNameShadow </span>{
+                <span class="cov8" title="1">switch variant </span>{
+                case theme.VariantLight:
+                        <span class="cov8" title="1">return color.Black</span>
+                case theme.VariantDark:
+                        <span class="cov8" title="1">return color.White</span>
                 }
         }
         <span class="cov8" title="1">return theme.DefaultTheme().Color(name, variant)</span>
@@ -556,22 +556,22 @@ import (
 )
 
 // Wrap the objects in a box with border lines
-func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject <span class="cov8" title="1">{
-        contentContainer := container.NewThemeOverride(container.NewPadded(content...), theme.DefaultTheme())
+func newBorder(content ...fyne.CanvasObject) fyne.CanvasObject {
+        <span class="cov8" title="1">contentContainer := container.NewThemeOverride(container.NewPadded(content...), theme.DefaultTheme())
         border := widget.NewCard("", "", contentContainer)
-
-        return container.NewThemeOverride(border, borderTheme{})
-}</span>
+</span>
+        <span class="cov8" title="1">return container.NewThemeOverride(border, borderTheme{})
+</span>}
 
 // Create NamedCheckboxes from a list of names
-func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject) <span class="cov8" title="1">{
-        items := make([]NamedCheckbox, len(names))
+func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject) {
+        <span class="cov8" title="1">items := make([]NamedCheckbox, len(names))
         widgets := make([]fyne.CanvasObject, len(names))
-        for i := 0; i &lt; len(names); i++ </span><span class="cov8" title="1">{
-                items[i] = NamedCheckbox{Name: names[i]}
+        for i := 0; i &lt; len(names); i++ </span>{
+                <span class="cov8" title="1">items[i] = NamedCheckbox{Name: names[i]}
                 items[i].Checkbox = widget.NewCheck(names[i], nil)
                 widgets[i] = items[i].Checkbox
-        }</span>
+</span>        }
         <span class="cov8" title="1">return items, widgets</span>
 }
 </pre>
@@ -597,17 +597,17 @@ const RELEASE = true
 // directory.  See also https://git-scm.com/docs/gitattributes
 var gitCommit string = "$Format:%H$" // sha1 from git, output of $(git rev-parse HEAD)
 
-func init() <span class="cov8" title="1">{
-        initGitCommit()
-}</span>
+func init() {
+        <span class="cov8" title="1">initGitCommit()
+</span>}
 
-func initGitCommit() <span class="cov8" title="1">{
-        if strings.HasPrefix(gitCommit, "$Format") </span><span class="cov8" title="1">{
-                var commit string
+func initGitCommit() {
+        <span class="cov8" title="1">if strings.HasPrefix(gitCommit, "$Format") </span>{
+                <span class="cov8" title="1">var commit string
                 buildinfo, _ := debug.ReadBuildInfo()
-                for _, item := range buildinfo.Settings </span><span class="cov8" title="1">{
-                        if item.Key == "vcs.revision" </span><span class="cov0" title="0">{
-                                commit = item.Value
+                for _, item := range buildinfo.Settings </span>{
+                        <span class="cov8" title="1">if item.Key == "vcs.revision" </span>{
+                                <span class="cov0" title="0">commit = item.Value
                                 break</span>
                         }
                 }
@@ -619,18 +619,18 @@ type Version struct {
         Name, Version, Commit, Go, GameVersion string
 }
 
-func NewVersionFromApp(app fyne.App) Version <span class="cov8" title="1">{
-        commit := gitCommit
-        if len(commit) &gt; 7 </span><span class="cov8" title="1">{
-                commit = commit[:7]
-        }</span>
+func NewVersionFromApp(app fyne.App) Version {
+        <span class="cov8" title="1">commit := gitCommit
+        if len(commit) &gt; 7 </span>{
+                <span class="cov8" title="1">commit = commit[:7]
+</span>        }
 
         <span class="cov8" title="1">metadata := app.Metadata()
-
-        name, _ := strings.CutSuffix(metadata.Name, ".exe")
-        if name == "" </span><span class="cov8" title="1">{
-                name = filepath.Base(os.Args[0])
-        }</span>
+</span>
+        <span class="cov8" title="1">name, _ := strings.CutSuffix(metadata.Name, ".exe")
+        if name == "" </span>{
+                <span class="cov8" title="1">name = filepath.Base(os.Args[0])
+</span>        }
 
         <span class="cov8" title="1">result := Version{
                 Name:        name,
@@ -638,34 +638,34 @@ func NewVersionFromApp(app fyne.App) Version <span class="cov8" title="1">{
                 Commit:      commit,
                 Go:          runtime.Version(),
                 GameVersion: save.GAME_VERSION,
-        }
+</span>        }
 
-        if !RELEASE </span><span class="cov0" title="0">{
-                result.Version += "-devel"
-        }</span>
+        <span class="cov8" title="1">if !RELEASE </span>{
+                <span class="cov0" title="0">result.Version += "-devel"
+</span>        }
 
         <span class="cov8" title="1">return result</span>
 }
 
 // Create the content for the version dialog
-func (v Version) CreateContent() fyne.CanvasObject <span class="cov0" title="0">{
-        data := [][]string{
+func (v Version) CreateContent() fyne.CanvasObject {
+        <span class="cov0" title="0">data := [][]string{
                 {"Version:", v.Version},
                 {"Commit:", v.Commit},
                 {"Go:", v.Go},
                 {"InfraSpace:", v.GameVersion},
-        }
+</span>        }
 
-        versionTable := widget.NewTable(
-                func() (int, int) </span><span class="cov0" title="0">{
-                        return len(data), len(data[0])
-                }</span>,
-                func() fyne.CanvasObject <span class="cov0" title="0">{
-                        return widget.NewLabel("                    ")
-                }</span>,
-                func(i widget.TableCellID, o fyne.CanvasObject) <span class="cov0" title="0">{
-                        o.(*widget.Label).SetText(data[i.Row][i.Col])
-                }</span>,
+        <span class="cov0" title="0">versionTable := widget.NewTable(
+                func() (int, int) </span>{
+                        <span class="cov0" title="0">return len(data), len(data[0])
+</span>                },
+                func() fyne.CanvasObject {
+                        <span class="cov0" title="0">return widget.NewLabel("                    ")
+</span>                },
+                func(i widget.TableCellID, o fyne.CanvasObject) {
+                        <span class="cov0" title="0">o.(*widget.Label).SetText(data[i.Row][i.Col])
+</span>                },
         )
 
         <span class="cov0" title="0">versionTable.ShowHeaderRow = false
@@ -673,8 +673,8 @@ func (v Version) CreateContent() fyne.CanvasObject <span class="cov0" title="0">
         versionTable.StickyRowCount = len(data) - 1
         versionTable.StickyColumnCount = len(data[0]) - 1
         versionTable.HideSeparators = true
-
-        return versionTable</span>
+</span>
+        <span class="cov0" title="0">return versionTable</span>
 }
 </pre>
 		
@@ -686,13 +686,13 @@ type ErrMissingKey struct {
         Map, Key string
 }
 
-func NewErrMissingKey(m, key string) error <span class="cov0" title="0">{
-        return &amp;ErrMissingKey{m, key}
-}</span>
+func NewErrMissingKey(m, key string) error {
+        <span class="cov0" title="0">return &amp;ErrMissingKey{m, key}
+</span>}
 
-func (e *ErrMissingKey) Error() string <span class="cov0" title="0">{
-        return fmt.Sprintf("The map \"%s\" has no key \"%s\"", e.Map, e.Key)
-}</span>
+func (e *ErrMissingKey) Error() string {
+        <span class="cov0" title="0">return fmt.Sprintf("The map \"%s\" has no key \"%s\"", e.Map, e.Key)
+</span>}
 </pre>
 		
 		<pre class="file" id="file5" style="display: none">package save
@@ -851,71 +851,71 @@ type UnlockabilityStatus struct {
         DisabledDueToCheatsBackingField               bool `json:"&lt;disabledDueToCheats&gt;k__BackingField"`
 }
 
-func (c *ConsumerProducer) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
-        var v map[string]json.RawMessage
+func (c *ConsumerProducer) UnmarshalJSON(data []byte) error {
+        <span class="cov8" title="1">var v map[string]json.RawMessage
         err := json.Unmarshal(data, &amp;v)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
 
         <span class="cov8" title="1">err = json.Unmarshal(v["incomingStorage"], &amp;c.IncomingStorage)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
         <span class="cov8" title="1">err = json.Unmarshal(v["outgoingStorage"], &amp;c.OutgoingStorage)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
         <span class="cov8" title="1">err = json.Unmarshal(v["requestStatusDirty"], &amp;c.RequestStatusDirty)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
         <span class="cov8" title="1">err = json.Unmarshal(v["lastStepPowerProduced"], &amp;c.LastStepPowerProduced)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
         <span class="cov8" title="1">err = json.Unmarshal(v["lastStepPowerNeeded"], &amp;c.LastStepPowerNeeded)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
 
         <span class="cov8" title="1">var tmp struct {
                 Type string `json:"$type"`
-        }
-        err = json.Unmarshal(v["productionLogic"], &amp;tmp)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+</span>        }
+        <span class="cov8" title="1">err = json.Unmarshal(v["productionLogic"], &amp;tmp)
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
         <span class="cov8" title="1">switch tmp.Type </span>{
-        case "FactoryProductionLogic, old":<span class="cov8" title="1">
-                c.Type = TYPE_FACTORY
+        case "FactoryProductionLogic, old":
+                <span class="cov8" title="1">c.Type = TYPE_FACTORY
                 var fProd FactoryProductionLogic
                 err = json.Unmarshal(v["productionLogic"], &amp;fProd)
-                if err != nil </span><span class="cov0" title="0">{
-                        return err
-                }</span>
+                if err != nil </span>{
+                        <span class="cov0" title="0">return err
+</span>                }
                 <span class="cov8" title="1">c.ProductionLogic = fProd</span>
-        case "Habitat, old":<span class="cov8" title="1">
-                c.Type = TYPE_HABITAT
+        case "Habitat, old":
+                <span class="cov8" title="1">c.Type = TYPE_HABITAT
                 var hProd HabitatProductionLogic
                 err = json.Unmarshal(v["productionLogic"], &amp;hProd)
-                if err != nil </span><span class="cov0" title="0">{
-                        return err
-                }</span>
+                if err != nil </span>{
+                        <span class="cov0" title="0">return err
+</span>                }
                 <span class="cov8" title="1">c.ProductionLogic = hProd</span>
-        case "StorehouseProductionLogic, old":<span class="cov8" title="1">
-                c.Type = TYPE_STOREHOUSE</span>
-        case "ResearchProductionLogic, old":<span class="cov8" title="1">
-                c.Type = TYPE_RESEARCH</span>
-        default:<span class="cov8" title="1">
-                c.Type = TYPE_UNKNOWN</span>
+        case "StorehouseProductionLogic, old":
+                <span class="cov8" title="1">c.Type = TYPE_STOREHOUSE</span>
+        case "ResearchProductionLogic, old":
+                <span class="cov8" title="1">c.Type = TYPE_RESEARCH</span>
+        default:
+                <span class="cov8" title="1">c.Type = TYPE_UNKNOWN</span>
         }
-        <span class="cov8" title="1">if c.Type &gt; 1 </span><span class="cov8" title="1">{
-                var raw json.RawMessage
+        <span class="cov8" title="1">if c.Type &gt; 1 </span>{
+                <span class="cov8" title="1">var raw json.RawMessage
                 err = json.Unmarshal(v["productionLogic"], &amp;raw)
-                if err != nil </span><span class="cov0" title="0">{
-                        return err
-                }</span>
+                if err != nil </span>{
+                        <span class="cov0" title="0">return err
+</span>                }
                 <span class="cov8" title="1">c.ProductionLogic = raw</span>
         }
 
@@ -942,17 +942,17 @@ type Savegame struct {
 }
 
 // Load the savegame from the path
-func LoadSavegame(path string) (*Savegame, error) <span class="cov0" title="0">{
-        prefix, buf, err := readSaveFile(path)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
+func LoadSavegame(path string) (*Savegame, error) {
+        <span class="cov0" title="0">prefix, buf, err := readSaveFile(path)
+        if err != nil </span>{
+                <span class="cov0" title="0">return nil, err
+</span>        }
 
         <span class="cov0" title="0">var data SaveData
         err = json.Unmarshal(buf, &amp;data)
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return nil, err
+</span>        }
 
         <span class="cov0" title="0">return &amp;Savegame{
                 Changed: false,
@@ -963,150 +963,150 @@ func LoadSavegame(path string) (*Savegame, error) <span class="cov0" title="0">{
 }
 
 // Save the savegame to the Path
-func (s *Savegame) Save() error <span class="cov0" title="0">{
-        data, err := marshalJSON(s.Data())
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
+func (s *Savegame) Save() error {
+        <span class="cov0" title="0">data, err := marshalJSON(s.Data())
+        if err != nil </span>{
+                <span class="cov0" title="0">return err
+</span>        }
 
         <span class="cov0" title="0">fullSave := s.prefix + data
-        // #nosec G306 -- 0644 permissions are acceptable as the file does not contain sensitive information.
-        err = os.WriteFile(s.Path(), []byte(fullSave), 0644)
+</span>        // #nosec G306 -- 0644 permissions are acceptable as the file does not contain sensitive information.
+        <span class="cov0" title="0">err = os.WriteFile(s.Path(), []byte(fullSave), 0644)
         return err</span>
 }
 
 // Create a backup of the save file, returns the path of the backup
-func (s *Savegame) Backup() (string, error) <span class="cov0" title="0">{
-        dst := s.Path() + ".backup"
+func (s *Savegame) Backup() (string, error) {
+        <span class="cov0" title="0">dst := s.Path() + ".backup"
         i := 0
         _, err := os.Stat(dst)
-        for !errors.Is(err, os.ErrNotExist) </span><span class="cov0" title="0">{
-                i++
+        for !errors.Is(err, os.ErrNotExist) </span>{
+                <span class="cov0" title="0">i++
                 dst = s.Path() + ".backup_" + fmt.Sprint(i)
                 _, err = os.Stat(dst)
-        }</span>
+</span>        }
 
         <span class="cov0" title="0">input, err := os.ReadFile(s.Path())
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return "", err
+</span>        }
 
         // #nosec G306 -- 0644 permissions are acceptable as the backup file does not contain sensitive information.
         <span class="cov0" title="0">err = os.WriteFile(dst, input, 0644)
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
+        if err != nil </span>{
+                <span class="cov0" title="0">return "", err
+</span>        }
 
         <span class="cov0" title="0">return dst, nil</span>
 }
 
-func (s *Savegame) Path() string <span class="cov0" title="0">{
-        return s.path
-}</span>
+func (s *Savegame) Path() string {
+        <span class="cov0" title="0">return s.path
+</span>}
 
-func (s *Savegame) Prefix() string <span class="cov0" title="0">{
-        return s.prefix
-}</span>
+func (s *Savegame) Prefix() string {
+        <span class="cov0" title="0">return s.prefix
+</span>}
 
-func (s *Savegame) Data() *SaveData <span class="cov0" title="0">{
-        return s.data
-}</span>
+func (s *Savegame) Data() *SaveData {
+        <span class="cov0" title="0">return s.data
+</span>}
 
 // Get a resource by name
-func (s *Savegame) GetResource(key string) (int, bool) <span class="cov0" title="0">{
-        value, ok := s.Data().Resources[key]
+func (s *Savegame) GetResource(key string) (int, bool) {
+        <span class="cov0" title="0">value, ok := s.Data().Resources[key]
         return int(value / RESOURCE_FACTOR), ok
-}</span>
+</span>}
 
 // Get unlocked research
-func (s *Savegame) GetUnlockedResearch() []string <span class="cov0" title="0">{
-        res := make([]string, 0, len(maxResearchProgress))
-        for k, v := range maxResearchProgress </span><span class="cov0" title="0">{
-                if s.Data().ResearchManager.ResearchProgress[k] == v </span><span class="cov0" title="0">{
-                        res = append(res, k)
-                }</span>
+func (s *Savegame) GetUnlockedResearch() []string {
+        <span class="cov0" title="0">res := make([]string, 0, len(maxResearchProgress))
+        for k, v := range maxResearchProgress </span>{
+                <span class="cov0" title="0">if s.Data().ResearchManager.ResearchProgress[k] == v </span>{
+                        <span class="cov0" title="0">res = append(res, k)
+</span>                }
         }
         <span class="cov0" title="0">return res</span>
 }
 
 // Get research queue
-func (s *Savegame) GetResearchQueue() []string <span class="cov0" title="0">{
-        return s.Data().ResearchManager.ResearchQueue
-}</span>
+func (s *Savegame) GetResearchQueue() []string {
+        <span class="cov0" title="0">return s.Data().ResearchManager.ResearchQueue
+</span>}
 
 // Get the current number of starter workers
-func (s *Savegame) GetStarterWorkerCount() int <span class="cov0" title="0">{
-        return len(s.Data().Market.StarterWorkers)
-}</span>
+func (s *Savegame) GetStarterWorkerCount() int {
+        <span class="cov0" title="0">return len(s.Data().Market.StarterWorkers)
+</span>}
 
 // Get the repaired spaceship parts
-func (s *Savegame) GetRepairedSpaceshipParts() []string <span class="cov0" title="0">{
-        res := make([]string, 0, len(spaceshipParts))
-        for _, part := range s.Data().Spaceship.Parts </span><span class="cov0" title="0">{
-                if part.CurrentSteps == SPACESHIP_UNLOCK_VALUE </span><span class="cov0" title="0">{
-                        res = append(res, part.Name)
-                }</span>
+func (s *Savegame) GetRepairedSpaceshipParts() []string {
+        <span class="cov0" title="0">res := make([]string, 0, len(spaceshipParts))
+        for _, part := range s.Data().Spaceship.Parts </span>{
+                <span class="cov0" title="0">if part.CurrentSteps == SPACESHIP_UNLOCK_VALUE </span>{
+                        <span class="cov0" title="0">res = append(res, part.Name)
+</span>                }
         }
         <span class="cov0" title="0">return res</span>
 }
 
 // Unlock research by name
-func (s *Savegame) UnlockResearch(name string) <span class="cov0" title="0">{
-        if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] </span><span class="cov0" title="0">{
-                s.Data().ResearchManager.ResearchProgress[name] = maxResearchProgress[name]
+func (s *Savegame) UnlockResearch(name string) {
+        <span class="cov0" title="0">if s.Data().ResearchManager.ResearchProgress[name] != maxResearchProgress[name] </span>{
+                <span class="cov0" title="0">s.Data().ResearchManager.ResearchProgress[name] = maxResearchProgress[name]
                 s.Changed = true
-        }</span>
+</span>        }
 }
 
 // Lock Research by name, if currently unlocked
-func (s *Savegame) LockResearch(name string) <span class="cov0" title="0">{
-        if s.Data().ResearchManager.ResearchProgress[name] == maxResearchProgress[name] </span><span class="cov0" title="0">{
-                s.Data().ResearchManager.ResearchProgress[name] = 0
+func (s *Savegame) LockResearch(name string) {
+        <span class="cov0" title="0">if s.Data().ResearchManager.ResearchProgress[name] == maxResearchProgress[name] </span>{
+                <span class="cov0" title="0">s.Data().ResearchManager.ResearchProgress[name] = 0
                 s.Changed = true
-        }</span>
+</span>        }
 }
 
 // Unlocks all research
-func (s *Savegame) UnlockAllResearch() <span class="cov0" title="0">{
-        for name := range s.Data().ResearchManager.ResearchProgress </span><span class="cov0" title="0">{
-                s.UnlockResearch(name)
-        }</span>
+func (s *Savegame) UnlockAllResearch() {
+        <span class="cov0" title="0">for name := range s.Data().ResearchManager.ResearchProgress </span>{
+                <span class="cov0" title="0">s.UnlockResearch(name)
+</span>        }
 }
 
 // Increase the starter workers to the given count, return number of added workers
-func (s *Savegame) AddStarterWorkers(count int) int64 <span class="cov0" title="0">{
-        var diff int64
+func (s *Savegame) AddStarterWorkers(count int) int64 {
+        <span class="cov0" title="0">var diff int64
         diff, s.Data().Market.StarterWorkers = s.addWorkers(count, 0, s.Data().Market.StarterWorkers)
-
-        if diff &gt; 0 </span><span class="cov0" title="0">{
-                s.Changed = true
-        }</span>
+</span>
+        <span class="cov0" title="0">if diff &gt; 0 </span>{
+                <span class="cov0" title="0">s.Changed = true
+</span>        }
         <span class="cov0" title="0">return diff</span>
 }
 
 // Adds workes to the given array until it's length matches count
-func (s *Savegame) addWorkers(count int, homeID int64, workers []Worker) (int64, []Worker) <span class="cov0" title="0">{
-        oldNextID := s.Data().NextID
-        for len(workers) &lt; count </span><span class="cov0" title="0">{
-                newWorker := Worker{
+func (s *Savegame) addWorkers(count int, homeID int64, workers []Worker) (int64, []Worker) {
+        <span class="cov0" title="0">oldNextID := s.Data().NextID
+        for len(workers) &lt; count </span>{
+                <span class="cov0" title="0">newWorker := Worker{
                         Home: homeID,
                         ID:   s.Data().NextID,
-                }
-                s.Data().NextID++
+</span>                }
+                <span class="cov0" title="0">s.Data().NextID++
                 workers = append(workers, newWorker)
-        }</span>
+</span>        }
         <span class="cov0" title="0">return (s.Data().NextID - oldNextID), workers</span>
 }
 
 // Set the given resource
-func (s *Savegame) SetResource(key string, value int) error <span class="cov0" title="0">{
-        if _, ok := s.Data().Resources[key]; ok </span><span class="cov0" title="0">{
-                s.Data().Resources[key] = int64(value) * RESOURCE_FACTOR
+func (s *Savegame) SetResource(key string, value int) error {
+        <span class="cov0" title="0">if _, ok := s.Data().Resources[key]; ok </span>{
+                <span class="cov0" title="0">s.Data().Resources[key] = int64(value) * RESOURCE_FACTOR
                 s.Changed = true
                 return nil
-        }</span> else<span class="cov0" title="0"> {
-                return NewErrMissingKey("resources", key)
-        }</span>
+</span>        } else {
+                <span class="cov0" title="0">return NewErrMissingKey("resources", key)
+</span>        }
 }
 
 type EditBuildingsOptions struct {
@@ -1117,25 +1117,25 @@ type EditBuildingsOptions struct {
 }
 
 // Edit the buildings with the given configuration
-func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" title="0">{
-        if !reflect.DeepEqual(opt, EditBuildingsOptions{}) </span><span class="cov0" title="0">{
-                buildings := s.Data().Buildings
-                for i := 0; i &lt; len(buildings); i++ </span><span class="cov0" title="0">{
-                        if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_HABITAT </span><span class="cov0" title="0">{
-                                if opt.HabitatStorage </span><span class="cov0" title="0">{
-                                        buildings[i] = maxHabitatStorage(buildings[i])
-                                }</span>
-                                <span class="cov0" title="0">if opt.HabitatWorkers </span><span class="cov0" title="0">{
-                                        buildings[i] = s.fillHabitatWorkers(buildings[i])
-                                }</span>
+func (s *Savegame) EditBuildings(opt EditBuildingsOptions) {
+        <span class="cov0" title="0">if !reflect.DeepEqual(opt, EditBuildingsOptions{}) </span>{
+                <span class="cov0" title="0">buildings := s.Data().Buildings
+                for i := 0; i &lt; len(buildings); i++ </span>{
+                        <span class="cov0" title="0">if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_HABITAT </span>{
+                                <span class="cov0" title="0">if opt.HabitatStorage </span>{
+                                        <span class="cov0" title="0">buildings[i] = maxHabitatStorage(buildings[i])
+</span>                                }
+                                <span class="cov0" title="0">if opt.HabitatWorkers </span>{
+                                        <span class="cov0" title="0">buildings[i] = s.fillHabitatWorkers(buildings[i])
+</span>                                }
                         }
 
-                        <span class="cov0" title="0">if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span><span class="cov0" title="0">{
-                                if opt.FactoryStorage </span><span class="cov0" title="0">{
-                                        buildings[i] = maxFactoryStorage(buildings[i])
-                                }</span> else<span class="cov0" title="0"> if opt.UpgradesOnly &amp;&amp; (buildings[i].BuildingName == "industrialRobotFactory" || buildings[i].BuildingName == "highTechWorkshop") </span><span class="cov0" title="0">{
-                                        buildings[i] = maxFactoryStorage(buildings[i])
-                                }</span>
+                        <span class="cov0" title="0">if buildings[i].ConsumerProducer != nil &amp;&amp; buildings[i].ConsumerProducer.Type == TYPE_FACTORY </span>{
+                                <span class="cov0" title="0">if opt.FactoryStorage </span>{
+                                        <span class="cov0" title="0">buildings[i] = maxFactoryStorage(buildings[i])
+</span>                                } else <span class="cov0" title="0">if opt.UpgradesOnly &amp;&amp; (buildings[i].BuildingName == "industrialRobotFactory" || buildings[i].BuildingName == "highTechWorkshop") </span>{
+                                        <span class="cov0" title="0">buildings[i] = maxFactoryStorage(buildings[i])
+</span>                                }
                         }
                 }
                 <span class="cov0" title="0">s.Changed = true</span>
@@ -1143,19 +1143,19 @@ func (s *Savegame) EditBuildings(opt EditBuildingsOptions) <span class="cov0" ti
 }
 
 // Fill a habitat with workers
-func (s *Savegame) fillHabitatWorkers(b Building) Building <span class="cov0" title="0">{
-        prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
+func (s *Savegame) fillHabitatWorkers(b Building) Building {
+        <span class="cov0" title="0">prodLogic := b.ConsumerProducer.ProductionLogic.(HabitatProductionLogic)
         count := int(prodLogic.MaxInhabitants)
         _, prodLogic.Workers = s.addWorkers(count, b.ID, prodLogic.Workers)
         b.ConsumerProducer.ProductionLogic = prodLogic
         return b
-}</span>
+</span>}
 
 // Repair the specified spaceship part
-func (s *Savegame) RepairSpaceshipPart(name string) <span class="cov0" title="0">{
-        for i := 0; i &lt; len(s.Data().Spaceship.Parts); i++ </span><span class="cov0" title="0">{
-                if s.Data().Spaceship.Parts[i].Name == name </span><span class="cov0" title="0">{
-                        s.Data().Spaceship.Parts[i].CurrentSteps = SPACESHIP_UNLOCK_VALUE
+func (s *Savegame) RepairSpaceshipPart(name string) {
+        <span class="cov0" title="0">for i := 0; i &lt; len(s.Data().Spaceship.Parts); i++ </span>{
+                <span class="cov0" title="0">if s.Data().Spaceship.Parts[i].Name == name </span>{
+                        <span class="cov0" title="0">s.Data().Spaceship.Parts[i].CurrentSteps = SPACESHIP_UNLOCK_VALUE
                         s.Changed = true
                         break</span>
                 }
@@ -1175,82 +1175,82 @@ import (
         "strings"
 )
 
-func ResourceNames() []string <span class="cov8" title="1">{
-        list := make([]string, len(resourceNames))
+func ResourceNames() []string {
+        <span class="cov8" title="1">list := make([]string, len(resourceNames))
         copy(list, resourceNames)
         return list
-}</span>
+</span>}
 
-func ResearchNames() []string <span class="cov8" title="1">{
-        list := make([]string, len(researchNames))
+func ResearchNames() []string {
+        <span class="cov8" title="1">list := make([]string, len(researchNames))
         copy(list, researchNames)
         return list
-}</span>
+</span>}
 
-func SpaceshipParts() []string <span class="cov8" title="1">{
-        list := make([]string, len(spaceshipParts))
+func SpaceshipParts() []string {
+        <span class="cov8" title="1">list := make([]string, len(spaceshipParts))
         copy(list, spaceshipParts)
         return list
-}</span>
+</span>}
 
-func saveFolderWindows(root string) string <span class="cov8" title="1">{
-        return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
-}</span>
+func saveFolderWindows(root string) string {
+        <span class="cov8" title="1">return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
+</span>}
 
-func readSaveFile(path string) (string, []byte, error) <span class="cov8" title="1">{
+func readSaveFile(path string) (string, []byte, error) {
         // #nosec G304 -- Local users can decide on their file path themselves.
-        buf, err := os.ReadFile(path)
-        if err != nil </span><span class="cov0" title="0">{
-                return "", nil, err
-        }</span>
+        <span class="cov8" title="1">buf, err := os.ReadFile(path)
+        if err != nil </span>{
+                <span class="cov0" title="0">return "", nil, err
+</span>        }
         <span class="cov8" title="1">fullSave := string(buf)
         i := strings.Index(fullSave, "{")
-        if i &lt; 0 </span><span class="cov0" title="0">{
-                return "", nil, fmt.Errorf("could not find start of json-body")
-        }</span>
+        if i &lt; 0 </span>{
+                <span class="cov0" title="0">return "", nil, fmt.Errorf("could not find start of json-body")
+</span>        }
         <span class="cov8" title="1">return fullSave[:i], []byte(fullSave[i:]), nil</span>
 }
 
-func maxFactoryStorage(building Building) Building <span class="cov8" title="1">{
-        if building.ConsumerProducer == nil </span><span class="cov8" title="1">{
-                return building
-        }</span>
+func maxFactoryStorage(building Building) Building {
+        <span class="cov8" title="1">if building.ConsumerProducer == nil </span>{
+                <span class="cov8" title="1">return building
+</span>        }
         <span class="cov8" title="1">building.ConsumerProducer.IncomingStorage = maxStorage(building.ConsumerProducer.IncomingStorage)
-        if building.BuildingName != "spaceShipConstructionFacility" </span><span class="cov8" title="1">{
-                building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
-        }</span>
+        if building.BuildingName != "spaceShipConstructionFacility" </span>{
+                <span class="cov8" title="1">building.ConsumerProducer.OutgoingStorage = maxStorage(building.ConsumerProducer.OutgoingStorage)
+</span>        }
 
         <span class="cov8" title="1">return building</span>
 }
 
-func maxStorage(storage []int64) []int64 <span class="cov8" title="1">{
-        for i := range storage </span><span class="cov8" title="1">{
-                storage[i] = BUILDING_MAX_STORAGE
-        }</span>
+func maxStorage(storage []int64) []int64 {
+        <span class="cov8" title="1">for i := range storage </span>{
+                <span class="cov8" title="1">storage[i] = BUILDING_MAX_STORAGE
+</span>        }
         <span class="cov8" title="1">return storage</span>
 }
 
-func maxHabitatStorage(building Building) Building <span class="cov8" title="1">{
-        if building.ConsumerProducer == nil || building.ConsumerProducer.Type != TYPE_HABITAT </span><span class="cov8" title="1">{
-                return building
-        }</span>
-        <span class="cov8" title="1">for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage </span><span class="cov8" title="1">{
-                building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = json.Number(strconv.Itoa(BUILDING_MAX_STORAGE))
-        }</span>
+func maxHabitatStorage(building Building) Building {
+        <span class="cov8" title="1">if building.ConsumerProducer == nil || building.ConsumerProducer.Type != TYPE_HABITAT </span>{
+                <span class="cov8" title="1">return building
+</span>        }
+        <span class="cov8" title="1">for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage </span>{
+                <span class="cov8" title="1">building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = json.Number(strconv.Itoa(BUILDING_MAX_STORAGE))
+</span>        }
         <span class="cov8" title="1">return building</span>
 }
 
-func marshalJSON(v any) (string, error) <span class="cov8" title="1">{
-        buf := new(bytes.Buffer)
+func marshalJSON(v any) (string, error) {
+        <span class="cov8" title="1">buf := new(bytes.Buffer)
         enc := json.NewEncoder(buf)
-
-        enc.SetEscapeHTML(false)
+</span>
+        <span class="cov8" title="1">enc.SetEscapeHTML(false)
         enc.SetIndent("", "  ")
-
-        err := enc.Encode(v)
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
+</span>
+        <span class="cov8" title="1">err := enc.Encode(v)
+        if err != nil </span>{
+                <span class="cov0" title="0">return "", err
+</span>        }
 
         <span class="cov8" title="1">res := buf.String()
         return strings.ReplaceAll(res, "\n", "\r\n"), nil</span>
@@ -1266,24 +1266,24 @@ import (
         "path/filepath"
 )
 
-func DefaultSaveLocation() (string, error) <span class="cov8" title="1">{
-        home, err := os.UserHomeDir()
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
+func DefaultSaveLocation() (string, error) {
+        <span class="cov8" title="1">home, err := os.UserHomeDir()
+        if err != nil </span>{
+                <span class="cov0" title="0">return "", err
+</span>        }
 
         <span class="cov8" title="1">paths := []string{
                 ".local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
                 "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
                 ".var/app/com.valvesoftware.Steam/data/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
-        }
+</span>        }
 
-        for _, path := range paths </span><span class="cov8" title="1">{
-                path = filepath.Join(home, path)
+        <span class="cov8" title="1">for _, path := range paths </span>{
+                <span class="cov8" title="1">path = filepath.Join(home, path)
                 path = saveFolderWindows(path)
-                if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span><span class="cov0" title="0">{
-                        return path, nil
-                }</span>
+                if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span>{
+                        <span class="cov0" title="0">return path, nil
+</span>                }
         }
         <span class="cov8" title="1">return home, nil</span>
 }
