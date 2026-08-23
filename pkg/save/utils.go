@@ -1,8 +1,8 @@
 package save
 
 import (
-	"bytes"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -70,23 +70,16 @@ func maxHabitatStorage(building Building) Building {
 		return building
 	}
 	for key := range building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage {
-		building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = json.Number(strconv.Itoa(BUILDING_MAX_STORAGE))
+		building.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage[key] = jsontext.Value(strconv.Itoa(BUILDING_MAX_STORAGE))
 	}
 	return building
 }
 
 func marshalJSON(v any) (string, error) {
-	buf := new(bytes.Buffer)
-	enc := json.NewEncoder(buf)
-
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-
-	err := enc.Encode(v)
+	buf, err := json.Marshal(v, jsontext.WithIndent("  "), jsontext.EscapeForHTML(false))
 	if err != nil {
 		return "", err
 	}
 
-	res := buf.String()
-	return strings.ReplaceAll(res, "\n", "\r\n"), nil
+	return strings.ReplaceAll(string(buf), "\n", "\r\n") + "\r\n", nil
 }
