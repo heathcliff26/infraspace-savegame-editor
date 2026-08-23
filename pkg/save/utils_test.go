@@ -1,7 +1,8 @@
 package save
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -137,13 +138,13 @@ func TestMaxHabitatStorage(t *testing.T) {
 		ConsumerProducer: &ConsumerProducer{
 			Type: TYPE_HABITAT,
 			ProductionLogic: HabitatProductionLogic{
-				Storage: map[string]json.Number{
-					"culturePoints": "0",
-					"oxygen":        "0",
-					"parkPoints":    "0",
-					"schoolPoints":  "0",
-					"survivalFood":  "0",
-					"water":         "0",
+				Storage: map[string]jsontext.Value{
+					"culturePoints": jsontext.Value("0"),
+					"oxygen":        jsontext.Value("0"),
+					"parkPoints":    jsontext.Value("0"),
+					"schoolPoints":  jsontext.Value("0"),
+					"survivalFood":  jsontext.Value("0"),
+					"water":         jsontext.Value("0"),
 				},
 			},
 		},
@@ -154,13 +155,13 @@ func TestMaxHabitatStorage(t *testing.T) {
 	assert.Equal(b, res, "Should not be changed since ConsumerProducer is a pointer")
 
 	buildingMaxStorage := strconv.Itoa(BUILDING_MAX_STORAGE)
-	expectedStorage := map[string]json.Number{
-		"culturePoints": json.Number(buildingMaxStorage),
-		"oxygen":        json.Number(buildingMaxStorage),
-		"parkPoints":    json.Number(buildingMaxStorage),
-		"schoolPoints":  json.Number(buildingMaxStorage),
-		"survivalFood":  json.Number(buildingMaxStorage),
-		"water":         json.Number(buildingMaxStorage),
+	expectedStorage := map[string]jsontext.Value{
+		"culturePoints": jsontext.Value(buildingMaxStorage),
+		"oxygen":        jsontext.Value(buildingMaxStorage),
+		"parkPoints":    jsontext.Value(buildingMaxStorage),
+		"schoolPoints":  jsontext.Value(buildingMaxStorage),
+		"survivalFood":  jsontext.Value(buildingMaxStorage),
+		"water":         jsontext.Value(buildingMaxStorage),
 	}
 	assert.Equal(expectedStorage, res.ConsumerProducer.ProductionLogic.(HabitatProductionLogic).Storage)
 }
@@ -176,7 +177,7 @@ func TestMarshalJSON(t *testing.T) {
 
 	assert := assert.New(t)
 
-	var data json.RawMessage
+	var data jsontext.Value
 
 	err := json.Unmarshal([]byte(input), &data)
 	assert.Nil(err)
