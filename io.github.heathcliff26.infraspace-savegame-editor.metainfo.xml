@@ -78,6 +78,13 @@
     </screenshots>
 
     <releases>
+        <release version="v1.4.0" date="2026-08-27" type="stable">
+            <description>
+                <p>Add wayland support.</p>
+                <p>Support game version 1.56</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.4.0</url>
+        </release>
         <release version="v1.3.10" date="2026-06-13" type="stable">
             <description>
                 <p>Small maintenance update.</p>
