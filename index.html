@@ -69,9 +69,9 @@
 				
 				<option value="file6">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/save.go (0.0%)</option>
 				
-				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (91.7%)</option>
+				<option value="file7">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils.go (88.9%)</option>
 				
-				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (83.3%)</option>
+				<option value="file8">github.com/heathcliff26/infraspace-savegame-editor/pkg/save/utils_linux.go (37.8%)</option>
 				
 				</select>
 			</div>
@@ -1195,7 +1195,7 @@ func SpaceshipParts() []string {
 </span>}
 
 func saveFolderWindows(root string) string {
-        <span class="cov8" title="1">return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
+        <span class="cov0" title="0">return filepath.Join(root, "AppData", "LocalLow", "Dionic Software", "InfraSpace", "saves")
 </span>}
 
 func readSaveFile(path string) (string, []byte, error) {
@@ -1258,6 +1258,8 @@ package save
 import (
         "os"
         "path/filepath"
+
+        "github.com/andygrunwald/vdf"
 )
 
 func DefaultSaveLocation() (string, error) {
@@ -1266,20 +1268,50 @@ func DefaultSaveLocation() (string, error) {
                 <span class="cov0" title="0">return "", err
 </span>        }
 
-        <span class="cov8" title="1">paths := []string{
-                ".local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
-                "snap/steam/common/.local/share/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
-                ".var/app/com.valvesoftware.Steam/data/Steam/steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/",
+        <span class="cov8" title="1">libraryfolders := loadLibraryFolders(home)
+        if libraryfolders == nil </span>{
+                <span class="cov8" title="1">return home, nil
 </span>        }
 
-        <span class="cov8" title="1">for _, path := range paths </span>{
-                <span class="cov8" title="1">path = filepath.Join(home, path)
+        <span class="cov0" title="0">libraryfolders = libraryfolders["libraryfolders"].(map[string]interface{})
+</span>
+        <span class="cov0" title="0">for _, v := range libraryfolders </span>{
+                <span class="cov0" title="0">path := v.(map[string]interface{})["path"].(string)
+                path = filepath.Join(path, "steamapps/compatdata/1511460/pfx/drive_c/users/steamuser/")
                 path = saveFolderWindows(path)
                 if _, err := os.Stat(path); path != "" &amp;&amp; !os.IsNotExist(err) </span>{
                         <span class="cov0" title="0">return path, nil
 </span>                }
         }
-        <span class="cov8" title="1">return home, nil</span>
+
+        <span class="cov0" title="0">return home, nil</span>
+}
+
+func loadLibraryFolders(home string) map[string]interface{} {
+        <span class="cov8" title="1">paths := []string{
+                ".local/share/Steam/config/libraryfolders.vdf",
+                ".var/app/com.valvesoftware.Steam/data/Steam/config/libraryfolders.vdf",
+                "snap/steam/common/.local/share/Steam/config/libraryfolders.vdf",
+</span>        }
+
+        <span class="cov8" title="1">for _, path := range paths </span>{
+                <span class="cov8" title="1">path = filepath.Join(home, path)
+                f, err := os.Open(path)
+                if os.IsNotExist(err) </span>{
+                        <span class="cov8" title="1">continue</span>
+                } else <span class="cov0" title="0">if err != nil </span>{
+                        <span class="cov0" title="0">return nil
+</span>                }
+                <span class="cov0" title="0">defer f.Close()
+</span>
+                <span class="cov0" title="0">p := vdf.NewParser(f)
+                cfg, err := p.Parse()
+                if err != nil </span>{
+                        <span class="cov0" title="0">return nil
+</span>                }
+                <span class="cov0" title="0">return cfg</span>
+        }
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
