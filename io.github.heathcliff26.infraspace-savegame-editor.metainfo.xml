@@ -63,18 +63,6 @@
             </image>
             <caption>File Menu (Light Theme)</caption>
         </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/FileDialog.png
-            </image>
-            <caption>File Dialog (Dark Theme)</caption>
-        </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/FileDialog.png
-            </image>
-            <caption>File Dialog (Light Theme)</caption>
-        </screenshot>
     </screenshots>
 
     <releases>

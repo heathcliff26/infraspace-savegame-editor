@@ -65,5 +65,3 @@ sudo dnf install infraspace-savegame-editor
 
 ![](images/dark/FileMenu.png#gh-dark-mode-only)
 ![](images/light/FileMenu.png#gh-light-mode-only)
-![](images/dark/FileDialog.png#gh-dark-mode-only)
-![](images/light/FileDialog.png#gh-light-mode-only)
