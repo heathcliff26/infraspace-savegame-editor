@@ -29,43 +29,50 @@
     <screenshots>
         <screenshot type="default">
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/MainWindow.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/MainWindow.png
             </image>
             <caption>No savegame loaded (Dark Theme)</caption>
         </screenshot>
         <screenshot type="default">
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/MainWindow.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/MainWindow.png
             </image>
             <caption>No savegame loaded (Light Theme)</caption>
         </screenshot>
         <screenshot>
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/SaveEditing.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/SaveEditing.png
             </image>
             <caption>Editing savegame (Dark Theme)</caption>
         </screenshot>
         <screenshot>
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/SaveEditing.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/SaveEditing.png
             </image>
             <caption>Editing savegame (Light Theme)</caption>
         </screenshot>
         <screenshot>
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/dark/FileMenu.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/FileMenu.png
             </image>
             <caption>File Menu (Dark Theme)</caption>
         </screenshot>
         <screenshot>
             <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.3.0/images/light/FileMenu.png
+                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/FileMenu.png
             </image>
             <caption>File Menu (Light Theme)</caption>
         </screenshot>
     </screenshots>
 
     <releases>
+        <release version="v1.4.1" date="2026-09-27" type="stable">
+            <description>
+                <p>Fix icon under wayland.</p>
+                <p>Stop writing release notes here going forward.</p>
+            </description>
+            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.4.1</url>
+        </release>
         <release version="v1.4.0" date="2026-08-27" type="stable">
             <description>
                 <p>Add wayland support.</p>
@@ -145,5 +152,4 @@
             <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.0</url>
         </release>
     </releases>
-
 </component>
