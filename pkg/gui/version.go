@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
@@ -78,23 +79,14 @@ func (v Version) CreateContent() fyne.CanvasObject {
 		{"InfraSpace:", v.GameVersion},
 	}
 
-	versionTable := widget.NewTable(
-		func() (int, int) {
-			return len(data), len(data[0])
-		},
-		func() fyne.CanvasObject {
-			return widget.NewLabel("                    ")
-		},
-		func(i widget.TableCellID, o fyne.CanvasObject) {
-			o.(*widget.Label).SetText(data[i.Row][i.Col])
-		},
-	)
+	description := container.NewVBox()
+	values := container.NewVBox()
+	for _, row := range data {
+		description.Add(widget.NewLabel(row[0]))
+		values.Add(widget.NewLabel(row[1]))
+	}
 
-	versionTable.ShowHeaderRow = false
-	versionTable.ShowHeaderColumn = false
-	versionTable.StickyRowCount = len(data) - 1
-	versionTable.StickyColumnCount = len(data[0]) - 1
-	versionTable.HideSeparators = true
+	versionTable := container.NewHBox(description, values)
 
 	return versionTable
 }
