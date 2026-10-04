@@ -70,6 +70,4 @@ jobs:
     with:
       cmd: "make release"
       artifact-name: "artifacts"
-      artifact: |
-        dist/*.tar.gz
-        dist/*.zip
+      artifact: dist/*
