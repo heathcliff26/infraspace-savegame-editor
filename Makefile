@@ -1,7 +1,16 @@
 SHELL := bash
 
-# The default target
-default: build
+# Build the binary
+build: fyne-metadata tools
+	"$(shell pwd)/bin/fyne"  build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
+
+# Build all release artifacts
+release: fyne-metadata
+	hack/containerized hack/release.sh
+
+# Prepare the Fyne.toml for fyne
+fyne-metadata:
+	hack/fyne-metadata.sh
 
 # Run linter
 lint:
@@ -10,14 +19,6 @@ lint:
 # Run unit-tests
 test:
 	go test -v -coverprofile=coverprofile.out -coverpkg "./pkg/..." ./...
-
-# Build the binary
-build: tools
-	"$(shell pwd)/bin/fyne"  build -o "$(shell pwd)/bin/infraspace-savegame-editor" -release
-
-# Build all release artifacts
-release:
-	hack/containerized goreleaser release --skip=announce,publish,validate --clean -p 1
 
 # Generate coverage profile
 coverprofile:
@@ -43,6 +44,15 @@ update-deps:
 gosec:
 	gosec ./...
 
+# Build rpm with code in current workdir using packit
+packit:
+	packit build locally
+
+# Build rpm of upstream code using packit + mock
+packit-mock:
+	packit build in-mock --resultdir tmp
+	rm *.src.rpm
+
 # Clean up build artifacts
 clean:
 	hack/clean.sh
@@ -60,17 +70,19 @@ help:
 	@echo "Run 'make <target>' to execute a specific target."
 
 .PHONY: \
-	default \
 	build \
 	release \
-	test \
+	fyne-metadata \
 	lint \
+	test \
 	coverprofile \
 	fmt \
 	validate \
 	validate-metainfo \
 	update-deps \
 	gosec \
+	packit \
+	packit-mock \
 	clean \
 	tools \
 	help \
