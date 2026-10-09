@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (34.7%)</option>
+				<option value="file0">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/app.go (35.2%)</option>
 				
 				<option value="file1">github.com/heathcliff26/infraspace-savegame-editor/pkg/gui/theme.go (87.5%)</option>
 				
@@ -88,7 +88,9 @@
 		<pre class="file" id="file0" style="display: none">package gui
 
 import (
+        "embed"
         "fmt"
+        "log/slog"
         "os"
         "path/filepath"
         "slices"
@@ -98,6 +100,7 @@ import (
         "fyne.io/fyne/v2/container"
         "fyne.io/fyne/v2/data/binding"
         "fyne.io/fyne/v2/dialog"
+        "fyne.io/fyne/v2/lang"
         "fyne.io/fyne/v2/layout"
         "fyne.io/fyne/v2/widget"
         "github.com/heathcliff26/godialog"
@@ -109,6 +112,9 @@ const (
         ENTRY_WIDTH = 120
         BORDER_SIZE = 1
 )
+
+//go:embed translations
+var translationsFS embed.FS
 
 type GUI struct {
         App                 fyne.App
@@ -128,11 +134,20 @@ type GUI struct {
         filedialog godialog.FileDialog
 }
 
-var dialogFileFilters = godialog.FileFilters{
-        {
-                Description: "Savegame (*.sav)",
-                Extensions:  []string{".sav"},
-        },
+var dialogFileFilters godialog.FileFilters
+
+func init() {
+        <span class="cov8" title="1">err := lang.AddTranslationsFS(translationsFS, "translations")
+        if err != nil </span>{
+                <span class="cov0" title="0">slog.Error("Failed to load translations", slog.Any("error", err))
+</span>        }
+
+        <span class="cov8" title="1">dialogFileFilters = godialog.FileFilters{
+                {
+                        Description: lang.L("Savegame") + " (*.sav)",
+                        Extensions:  []string{".sav"},
+                },
+</span>        }
 }
 
 func New() *GUI {
@@ -273,7 +288,7 @@ func (g *GUI) writeSavegame() {
                                 <span class="cov0" title="0">abortDialog(err)
                                 return
 </span>                        }
-                        <span class="cov0" title="0">dialog.NewInformation("Created Backup", "Created backup of save at "+path, g.Main).Show()</span>
+                        <span class="cov0" title="0">dialog.NewInformation(lang.L("Created Backup"), lang.L("Created backup of save at {{.Path}}", map[string]any{"Path": path}), g.Main).Show()</span>
                 }
 
                 <span class="cov0" title="0">err = g.Save.Save()
@@ -282,7 +297,7 @@ func (g *GUI) writeSavegame() {
                         return
 </span>                }
         } else {
-                <span class="cov0" title="0">dialog.NewInformation("Info", "Please make some changes first.", g.Main).Show()
+                <span class="cov0" title="0">dialog.NewInformation(lang.L("Info"), "Please make some changes first.", g.Main).Show()
 </span>        }
 }
 
@@ -330,11 +345,11 @@ func (g *GUI) ReloadFromSave() {
 }
 
 func (g *GUI) makeMenu() *fyne.MainMenu {
-        <span class="cov8" title="1">openSave := fyne.NewMenuItem("Load Save", func() </span>{
-                <span class="cov0" title="0">g.filedialog.Open("Load Save", g.loadSavegame)
+        <span class="cov8" title="1">openSave := fyne.NewMenuItem(lang.L("Load Save"), func() </span>{
+                <span class="cov0" title="0">g.filedialog.Open(lang.L("Load Save"), g.loadSavegame)
 </span>        })
 
-        <span class="cov8" title="1">backup := fyne.NewMenuItem("Backup", nil)
+        <span class="cov8" title="1">backup := fyne.NewMenuItem(lang.L("Backup"), nil)
         backup.Checked = g.Backup
         backup.Action = func() </span>{
                 <span class="cov0" title="0">backup.Checked = !backup.Checked
@@ -342,15 +357,15 @@ func (g *GUI) makeMenu() *fyne.MainMenu {
                 g.Menu.Refresh()
 </span>        }
 
-        <span class="cov8" title="1">fileMenu := fyne.NewMenu("File", openSave, fyne.NewMenuItemSeparator(), backup)
+        <span class="cov8" title="1">fileMenu := fyne.NewMenu(lang.L("File"), openSave, fyne.NewMenuItemSeparator(), backup)
 </span>
-        <span class="cov8" title="1">about := fyne.NewMenuItem("About", nil)
+        <span class="cov8" title="1">about := fyne.NewMenuItem(lang.L("About"), nil)
         about.Action = func() </span>{
-                <span class="cov0" title="0">vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
+                <span class="cov0" title="0">vInfo := dialog.NewCustom(g.Version.Name, lang.L("Close"), g.Version.CreateContent(), g.Main)
                 vInfo.Show()
 </span>        }
 
-        <span class="cov8" title="1">helpMenu := fyne.NewMenu("Help", about)
+        <span class="cov8" title="1">helpMenu := fyne.NewMenu(lang.L("Help"), about)
 </span>
         <span class="cov8" title="1">g.Menu = fyne.NewMainMenu(fileMenu, helpMenu)
         return g.Menu</span>
@@ -367,11 +382,11 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 </span>
         <span class="cov8" title="1">content := make([]fyne.CanvasObject, len(resources))
         for i := 0; i &lt; len(resources); i++ </span>{
-                <span class="cov8" title="1">label := widget.NewLabel(resources[i].Name + ": ")
+                <span class="cov8" title="1">label := widget.NewLabel(lang.L(resources[i].Name) + ": ")
                 resources[i].Value = binding.NewInt()
                 resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
                 r := resources[i]
-                button := widget.NewButton("1 mio.", func() </span>{
+                button := widget.NewButton(lang.L("1 mio."), func() </span>{
                         <span class="cov0" title="0">err := r.Value.Set(1000000)
                         if err != nil </span>{
                                 <span class="cov0" title="0">dialog.NewError(err, g.Main).Show()
@@ -414,7 +429,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
         }
         <span class="cov8" title="1">researchGrid := newBorder(container.NewHBox(rows...))
 </span>
-        <span class="cov8" title="1">g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) </span>{
+        <span class="cov8" title="1">g.UnlockAllResearch = widget.NewCheck(lang.L("Unlock all Research"), func(checked bool) </span>{
                 <span class="cov8" title="1">for _, item := range g.Research </span>{
                         <span class="cov8" title="1">if checked </span>{
                                 <span class="cov8" title="1">item.Checkbox.Disable()
@@ -424,7 +439,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
                 }
         })
 
-        <span class="cov8" title="1">g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() </span>{
+        <span class="cov8" title="1">g.UnlockResearchQueue = widget.NewButton(lang.L("Unlock Queue"), func() </span>{
                 <span class="cov0" title="0">queue := g.Save.GetResearchQueue()
                 for _, research := range g.Research </span>{
                         <span class="cov0" title="0">if slices.Contains(queue, research.Name) </span>{
@@ -460,10 +475,10 @@ type OtherOptions struct {
 
 func (g *GUI) makeOptionsBox() fyne.CanvasObject {
         <span class="cov8" title="1">g.OtherOptions = OtherOptions{
-                HabitatWorkers: widget.NewCheck("Fill all habitats with workers", nil),
-                HabitatStorage: widget.NewCheck("Fill the storage of all habitats", nil),
-                FactoryStorage: widget.NewCheck("Fill the storage of all factories", nil),
-                UpgradesOnly:   widget.NewCheck("Fill only upgrades factories", nil),
+                HabitatWorkers: widget.NewCheck(lang.L("Fill all habitats with workers"), nil),
+                HabitatStorage: widget.NewCheck(lang.L("Fill the storage of all habitats"), nil),
+                FactoryStorage: widget.NewCheck(lang.L("Fill the storage of all factories"), nil),
+                UpgradesOnly:   widget.NewCheck(lang.L("Fill only upgrades factories"), nil),
 </span>        }
 
         <span class="cov8" title="1">g.OtherOptions.FactoryStorage.OnChanged = func(b bool) </span>{
@@ -481,7 +496,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
         size := g.OtherOptions.StarterWorker.Entry.MinSize()
         size.Width = ENTRY_WIDTH
         wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
-        starterWorkerLabel := widget.NewLabel("Increase starter worker count: ")
+        starterWorkerLabel := widget.NewLabel(lang.L("Increase starter population: "))
         starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 </span>
         <span class="cov8" title="1">checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
@@ -491,15 +506,15 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 
 func (g *GUI) makeActionButtons() fyne.CanvasObject {
         <span class="cov8" title="1">resetWarning := func() </span>{
-                <span class="cov0" title="0">dialog.NewConfirm("Warning", "This will reload all values from the save", func(b bool) </span>{
+                <span class="cov0" title="0">dialog.NewConfirm(lang.L("Warning"), lang.L("This will reload all values from the save"), func(b bool) </span>{
                         <span class="cov0" title="0">if b </span>{
                                 <span class="cov0" title="0">g.ReloadFromSave()
 </span>                        }
                 }, g.Main).Show()
         }
-        <span class="cov8" title="1">reset := widget.NewButton("Reset", resetWarning)
+        <span class="cov8" title="1">reset := widget.NewButton(lang.L("Reset"), resetWarning)
         reset.Disable()
-        saveFile := widget.NewButton("Save", g.writeSavegame)
+        saveFile := widget.NewButton(lang.L("Save"), g.writeSavegame)
         saveFile.Disable()
 </span>
         <span class="cov8" title="1">g.ActionButtons = []*widget.Button{reset, saveFile}
@@ -556,6 +571,7 @@ func (borderTheme) Color(name fyne.ThemeColorName, variant fyne.ThemeVariant) co
 import (
         "fyne.io/fyne/v2"
         "fyne.io/fyne/v2/container"
+        "fyne.io/fyne/v2/lang"
         "fyne.io/fyne/v2/theme"
         "fyne.io/fyne/v2/widget"
 )
@@ -574,7 +590,7 @@ func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject
         widgets := make([]fyne.CanvasObject, len(names))
         for i := 0; i &lt; len(names); i++ </span>{
                 <span class="cov8" title="1">items[i] = NamedCheckbox{Name: names[i]}
-                items[i].Checkbox = widget.NewCheck(names[i], nil)
+                items[i].Checkbox = widget.NewCheck(lang.L(names[i]), nil)
                 widgets[i] = items[i].Checkbox
 </span>        }
         <span class="cov8" title="1">return items, widgets</span>
