@@ -1,7 +1,9 @@
 package gui
 
 import (
+	"embed"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"slices"
@@ -11,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/godialog"
@@ -22,6 +25,9 @@ const (
 	ENTRY_WIDTH = 120
 	BORDER_SIZE = 1
 )
+
+//go:embed translations
+var translationsFS embed.FS
 
 type GUI struct {
 	App                 fyne.App
@@ -41,11 +47,20 @@ type GUI struct {
 	filedialog godialog.FileDialog
 }
 
-var dialogFileFilters = godialog.FileFilters{
-	{
-		Description: "Savegame (*.sav)",
-		Extensions:  []string{".sav"},
-	},
+var dialogFileFilters godialog.FileFilters
+
+func init() {
+	err := lang.AddTranslationsFS(translationsFS, "translations")
+	if err != nil {
+		slog.Error("Failed to load translations", slog.Any("error", err))
+	}
+
+	dialogFileFilters = godialog.FileFilters{
+		{
+			Description: lang.L("Savegame") + " (*.sav)",
+			Extensions:  []string{".sav"},
+		},
+	}
 }
 
 func New() *GUI {
@@ -186,7 +201,7 @@ func (g *GUI) writeSavegame() {
 				abortDialog(err)
 				return
 			}
-			dialog.NewInformation("Created Backup", "Created backup of save at "+path, g.Main).Show()
+			dialog.NewInformation(lang.L("Created Backup"), lang.L("Created backup of save at {{.Path}}", map[string]any{"Path": path}), g.Main).Show()
 		}
 
 		err = g.Save.Save()
@@ -195,7 +210,7 @@ func (g *GUI) writeSavegame() {
 			return
 		}
 	} else {
-		dialog.NewInformation("Info", "Please make some changes first.", g.Main).Show()
+		dialog.NewInformation(lang.L("Info"), "Please make some changes first.", g.Main).Show()
 	}
 }
 
@@ -243,11 +258,11 @@ func (g *GUI) ReloadFromSave() {
 }
 
 func (g *GUI) makeMenu() *fyne.MainMenu {
-	openSave := fyne.NewMenuItem("Load Save", func() {
-		g.filedialog.Open("Load Save", g.loadSavegame)
+	openSave := fyne.NewMenuItem(lang.L("Load Save"), func() {
+		g.filedialog.Open(lang.L("Load Save"), g.loadSavegame)
 	})
 
-	backup := fyne.NewMenuItem("Backup", nil)
+	backup := fyne.NewMenuItem(lang.L("Backup"), nil)
 	backup.Checked = g.Backup
 	backup.Action = func() {
 		backup.Checked = !backup.Checked
@@ -255,15 +270,15 @@ func (g *GUI) makeMenu() *fyne.MainMenu {
 		g.Menu.Refresh()
 	}
 
-	fileMenu := fyne.NewMenu("File", openSave, fyne.NewMenuItemSeparator(), backup)
+	fileMenu := fyne.NewMenu(lang.L("File"), openSave, fyne.NewMenuItemSeparator(), backup)
 
-	about := fyne.NewMenuItem("About", nil)
+	about := fyne.NewMenuItem(lang.L("About"), nil)
 	about.Action = func() {
-		vInfo := dialog.NewCustom(g.Version.Name, "close", g.Version.CreateContent(), g.Main)
+		vInfo := dialog.NewCustom(g.Version.Name, lang.L("Close"), g.Version.CreateContent(), g.Main)
 		vInfo.Show()
 	}
 
-	helpMenu := fyne.NewMenu("Help", about)
+	helpMenu := fyne.NewMenu(lang.L("Help"), about)
 
 	g.Menu = fyne.NewMainMenu(fileMenu, helpMenu)
 	return g.Menu
@@ -280,11 +295,11 @@ func (g *GUI) makeResourcesBox() fyne.CanvasObject {
 
 	content := make([]fyne.CanvasObject, len(resources))
 	for i := 0; i < len(resources); i++ {
-		label := widget.NewLabel(resources[i].Name + ": ")
+		label := widget.NewLabel(lang.L(resources[i].Name) + ": ")
 		resources[i].Value = binding.NewInt()
 		resources[i].Entry = widget.NewEntryWithData(binding.IntToString(resources[i].Value))
 		r := resources[i]
-		button := widget.NewButton("1 mio.", func() {
+		button := widget.NewButton(lang.L("1 mio."), func() {
 			err := r.Value.Set(1000000)
 			if err != nil {
 				dialog.NewError(err, g.Main).Show()
@@ -327,7 +342,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 	}
 	researchGrid := newBorder(container.NewHBox(rows...))
 
-	g.UnlockAllResearch = widget.NewCheck("Unlock all Research", func(checked bool) {
+	g.UnlockAllResearch = widget.NewCheck(lang.L("Unlock all Research"), func(checked bool) {
 		for _, item := range g.Research {
 			if checked {
 				item.Checkbox.Disable()
@@ -337,7 +352,7 @@ func (g *GUI) makeResearchBox() fyne.CanvasObject {
 		}
 	})
 
-	g.UnlockResearchQueue = widget.NewButton("Unlock Queue", func() {
+	g.UnlockResearchQueue = widget.NewButton(lang.L("Unlock Queue"), func() {
 		queue := g.Save.GetResearchQueue()
 		for _, research := range g.Research {
 			if slices.Contains(queue, research.Name) {
@@ -373,10 +388,10 @@ type OtherOptions struct {
 
 func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 	g.OtherOptions = OtherOptions{
-		HabitatWorkers: widget.NewCheck("Fill all habitats with workers", nil),
-		HabitatStorage: widget.NewCheck("Fill the storage of all habitats", nil),
-		FactoryStorage: widget.NewCheck("Fill the storage of all factories", nil),
-		UpgradesOnly:   widget.NewCheck("Fill only upgrades factories", nil),
+		HabitatWorkers: widget.NewCheck(lang.L("Fill all habitats with workers"), nil),
+		HabitatStorage: widget.NewCheck(lang.L("Fill the storage of all habitats"), nil),
+		FactoryStorage: widget.NewCheck(lang.L("Fill the storage of all factories"), nil),
+		UpgradesOnly:   widget.NewCheck(lang.L("Fill only upgrades factories"), nil),
 	}
 
 	g.OtherOptions.FactoryStorage.OnChanged = func(b bool) {
@@ -394,7 +409,7 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 	size := g.OtherOptions.StarterWorker.Entry.MinSize()
 	size.Width = ENTRY_WIDTH
 	wrappedStarterWorkerEntry := container.NewGridWrap(size, g.OtherOptions.StarterWorker.Entry)
-	starterWorkerLabel := widget.NewLabel("Increase starter worker count: ")
+	starterWorkerLabel := widget.NewLabel(lang.L("Increase starter population: "))
 	starterWorkerBox := container.NewHBox(starterWorkerLabel, wrappedStarterWorkerEntry)
 
 	checkboxes := container.NewGridWithColumns(4, g.OtherOptions.HabitatWorkers, g.OtherOptions.HabitatStorage, g.OtherOptions.FactoryStorage, g.OtherOptions.UpgradesOnly)
@@ -404,15 +419,15 @@ func (g *GUI) makeOptionsBox() fyne.CanvasObject {
 
 func (g *GUI) makeActionButtons() fyne.CanvasObject {
 	resetWarning := func() {
-		dialog.NewConfirm("Warning", "This will reload all values from the save", func(b bool) {
+		dialog.NewConfirm(lang.L("Warning"), lang.L("This will reload all values from the save"), func(b bool) {
 			if b {
 				g.ReloadFromSave()
 			}
 		}, g.Main).Show()
 	}
-	reset := widget.NewButton("Reset", resetWarning)
+	reset := widget.NewButton(lang.L("Reset"), resetWarning)
 	reset.Disable()
-	saveFile := widget.NewButton("Save", g.writeSavegame)
+	saveFile := widget.NewButton(lang.L("Save"), g.writeSavegame)
 	saveFile.Disable()
 
 	g.ActionButtons = []*widget.Button{reset, saveFile}

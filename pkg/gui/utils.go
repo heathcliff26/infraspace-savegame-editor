@@ -3,6 +3,7 @@ package gui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -21,7 +22,7 @@ func createNamedCheckboxes(names []string) ([]NamedCheckbox, []fyne.CanvasObject
 	widgets := make([]fyne.CanvasObject, len(names))
 	for i := 0; i < len(names); i++ {
 		items[i] = NamedCheckbox{Name: names[i]}
-		items[i].Checkbox = widget.NewCheck(names[i], nil)
+		items[i].Checkbox = widget.NewCheck(lang.L(names[i]), nil)
 		widgets[i] = items[i].Checkbox
 	}
 	return items, widgets
