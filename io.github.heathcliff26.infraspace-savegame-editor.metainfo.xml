@@ -1,155 +1,327 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <component type="desktop-application">
-    <id>io.github.heathcliff26.infraspace-savegame-editor</id>
-
-    <name>InfraSpace Savegame Editor</name>
-    <summary>Savegame editor for InfraSpace</summary>
-
-    <metadata_license>MIT</metadata_license>
-    <project_license>Apache-2.0</project_license>
-
-    <description>
-        <p>Edit your InfraSpace savegames to add more resources, unlock research, increase workers and other progress.</p>
-    </description>
-
-    <url type="homepage">https://github.com/heathcliff26/infraspace-savegame-editor</url>
-    <developer id="io.github.heathcliff26">
-        <name>Heathcliff</name>
-    </developer>
-
-    <content_rating type="oars-1.1" />
-
-    <launchable type="desktop-id">io.github.heathcliff26.infraspace-savegame-editor.desktop</launchable>
-
-    <branding>
-        <color type="primary" scheme_preference="light">#023c8a</color>
-        <color type="primary" scheme_preference="dark">#03228a</color>
-    </branding>
-
-    <screenshots>
-        <screenshot type="default">
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/MainWindow.png
-            </image>
-            <caption>No savegame loaded (Dark Theme)</caption>
-        </screenshot>
-        <screenshot type="default">
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/MainWindow.png
-            </image>
-            <caption>No savegame loaded (Light Theme)</caption>
-        </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/SaveEditing.png
-            </image>
-            <caption>Editing savegame (Dark Theme)</caption>
-        </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/SaveEditing.png
-            </image>
-            <caption>Editing savegame (Light Theme)</caption>
-        </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/FileMenu.png
-            </image>
-            <caption>File Menu (Dark Theme)</caption>
-        </screenshot>
-        <screenshot>
-            <image type="source">
-                https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/FileMenu.png
-            </image>
-            <caption>File Menu (Light Theme)</caption>
-        </screenshot>
-    </screenshots>
-
-    <releases>
-        <release version="v1.4.1" date="2026-09-27" type="stable">
-            <description>
-                <p>Fix icon under wayland.</p>
-                <p>Stop writing release notes here going forward.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.4.1</url>
-        </release>
-        <release version="v1.4.0" date="2026-08-27" type="stable">
-            <description>
-                <p>Add wayland support.</p>
-                <p>Support game version 1.56</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.4.0</url>
-        </release>
-        <release version="v1.3.10" date="2026-06-13" type="stable">
-            <description>
-                <p>Small maintenance update.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.10</url>
-        </release>
-        <release version="v1.3.9" date="2026-06-01" type="stable">
-            <description>
-                <p>Small maintenance update.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.9</url>
-        </release>
-        <release version="v1.3.8" date="2026-05-01" type="stable">
-            <description>
-                <p>Small maintenance update.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.8</url>
-        </release>
-        <release version="v1.3.7" date="2026-03-01" type="stable">
-            <description>
-                <p>Bumped framework version.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.7</url>
-        </release>
-        <release version="v1.3.6" date="2026-02-01" type="stable">
-            <description>
-                <p>Bumped framework version.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.6</url>
-        </release>
-        <release version="v1.3.5" date="2026-01-01" type="stable">
-            <description>
-                <p>Bumped supported InfraSpace version to 1.55.454.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.5</url>
-        </release>
-        <release version="v1.3.4" date="2025-12-01" type="stable">
-            <description>
-                <p>Bumped framework version.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.4</url>
-        </release>
-        <release version="v1.3.3" date="2025-11-01" type="stable">
-            <description>
-                <p>Bumped framework version.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.3</url>
-        </release>
-        <release version="v1.3.2" date="2025-09-30" type="stable">
-            <description>
-                <p>Fixed missing version in rpm package</p>
-                <p>Bumped framework version.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.2</url>
-        </release>
-        <release version="v1.3.1" date="2025-08-01" type="stable">
-            <description>
-                <p>Improved installation experience for tarball installs on linux.</p>
-                <p>Added rpm packages for Fedora 42.</p>
-                <p>Bumped dependencies.</p>
-                <p>Bumped supported InfraSpace version to 1.53.451.</p>
-                <p>Fixed missing icon in dashbar on linux.</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.1</url>
-        </release>
-        <release version="v1.3.0" date="2025-05-12" type="stable">
-            <description>
-                <p>Implemented os native file dialogs</p>
-            </description>
-            <url type="details">https://github.com/heathcliff26/infraspace-savegame-editor/releases/tag/v1.3.0</url>
-        </release>
-    </releases>
+  <id>io.github.heathcliff26.infraspace-savegame-editor</id>
+  <name>InfraSpace Savegame Editor</name>
+  <summary>Savegame editor for InfraSpace</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>Apache-2.0</project_license>
+  <description>
+    <p>Edit your InfraSpace savegames to add more resources, unlock research, increase workers and other progress.</p>
+  </description>
+  <developer id="io.github.heathcliff26">
+    <name>Heathcliff</name>
+  </developer>
+  <launchable type="desktop-id">io.github.heathcliff26.infraspace-savegame-editor.desktop</launchable>
+  <url type="homepage">https://github.com/heathcliff26/infraspace-savegame-editor</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>No savegame loaded (Dark Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/MainWindow.png</image>
+    </screenshot>
+    <screenshot type="default">
+      <caption>No savegame loaded (Light Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/MainWindow.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Editing savegame (Dark Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/SaveEditing.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Editing savegame (Light Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/SaveEditing.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>File Menu (Dark Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/dark/FileMenu.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>File Menu (Light Theme)</caption>
+      <image type="source">https://raw.githubusercontent.com/heathcliff26/infraspace-savegame-editor/refs/tags/v1.4.1/images/light/FileMenu.png</image>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#023c8a</color>
+    <color type="primary" scheme_preference="dark">#03228a</color>
+  </branding>
+  <releases>
+    <release type="stable" version="v1.5.0" date="2026-10-13T00:00:00Z">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>Determine version from tag</li>
+          <li>Use goreleaser to build rpm package</li>
+          <li>Add framework for localisation</li>
+          <li>Add german translation</li>
+          <li>🐛 Bug Fixes:</li>
+          <li>Ensure version information fits into dialog</li>
+          <li>*(deps)* Update gomod</li>
+          <li>⚙️ Miscellaneous Tasks:</li>
+          <li>Enforce conventional commits</li>
+          <li>Add new changelog workflow</li>
+          <li>*(builder)* Update image ghcr.io/heathcliff26/go-fyne-ci to v202610090432</li>
+        </ul>
+      </description>
+    </release>
+    <release type="stable" version="v1.4.1" date="2026-09-27T00:00:00Z">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>*(container)* [**breaking**] Update image ghcr.io/heathcliff26/go-fyne-ci to v202609060502</li>
+          <li>*(container)* [**breaking**] Update image ghcr.io/heathcliff26/go-fyne-ci to v202609241228</li>
+          <li>💼 Other:</li>
+          <li>Add support for alternative steam library location</li>
+          <li>Fix coverprofiles permissions</li>
+          <li>Adapt border color to new fyne design</li>
+        </ul>
+      </description>
+    </release>
+    <release type="stable" version="v1.4.0" date="2026-08-27T00:00:00Z">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>*(container)* [**breaking**] Update image ghcr.io/heathcliff26/go-fyne-ci to v202608201646</li>
+          <li>*(container)* [**breaking**] Update image ghcr.io/heathcliff26/go-fyne-ci to v202608261637</li>
+          <li>*(container)* [**breaking**] Update image ghcr.io/heathcliff26/go-fyne-ci to v202608261947</li>
+          <li>🐛 Bug Fixes:</li>
+          <li>*(deps)* Update gomod</li>
+          <li>*(deps)* Update gomod</li>
+          <li>💼 Other:</li>
+          <li>Move renovate and Link Check to tekton</li>
+          <li>Remove obsolete Renovate status badge</li>
+          <li>Switch to containerized script</li>
+          <li>*(deps)* Bump golang.org/x/net from 0.50.0 to 0.55.0</li>
+          <li>*(deps)* Bump golang.org/x/image from 0.38.0 to 0.41.0</li>
+        </ul>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.9" date="2026-06-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.8" date="2026-05-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>*(deps)* Bump golang.org/x/image from 0.24.0 to 0.38.0</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.7" date="2026-03-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.6" date="2026-02-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>Remove unneeded prepare step in renovate workflow</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.5" date="2026-01-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module github.com/heathcliff26/godialog to v0.1.8</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.4" date="2025-12-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>Enable signing artifacts in release workflow</p>
+        <p>Consolidate targets after F41 moved to go1.24</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.3" date="2025-11-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>Add Fedora 43 and Rawhide targets</p>
+        <p>Allow customising container image via env variable</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.2" date="2025-09-30T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>Add commit when archiving git</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.1" date="2025-08-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update gomod</p>
+        <p>💼 Other:</p>
+        <p>Additionally force-reload icons</p>
+        <p>Fully install app on system</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.3.0" date="2025-05-12T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.6.1</p>
+        <p>💼 Other:</p>
+        <p>Add help target</p>
+        <p>Do not wait for unit-tests for running build jobs</p>
+        <p>Add gosec to improve code quality</p>
+        <p>Move target description to above them</p>
+        <p>Fix realease job permissions</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.2.2" date="2025-04-12T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Update fyne to v2.6</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.2.1" date="2025-04-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.5.5</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.2.0" date="2025-02-16T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Use windows style newlines when saving</p>
+        <p>Increase infra-space support to version 1.50.448</p>
+        <p>Simplify call to build script</p>
+        <p>Fix process not exiting when called from cli</p>
+        <p>Implement light mode</p>
+        <p>Update screenshots with latest version</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.1.4" date="2025-02-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.5.4</p>
+        <p>💼 Other:</p>
+        <p>Upload coverprofile to coveralls</p>
+        <p>Fix missing explicit permissions for workflow runs</p>
+        <p>Add coverpkg flag</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.1.3" date="2025-01-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module github.com/stretchr/testify to v1.10.0</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.5.3</p>
+        <p>⚙️ Miscellaneous Tasks:</p>
+        <p>Run unit-tests on windows and linux</p>
+        <p>💼 Other:</p>
+        <p>Bump go version to 1.23</p>
+        <p>Update go version to 1.N.P notation</p>
+        <p>Add fmt and validate commands</p>
+        <p>Add validate step to ci job</p>
+        <p>Delete intermediary artifact</p>
+        <p>Add script for cleaning working directory</p>
+        <p>Fix unit-test on windows</p>
+        <p>Improve screenshots</p>
+        <p>Use build tags for deciding default path during compile</p>
+        <p>Add multiple location on linux for save folder</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.1.2" date="2024-11-01T00:00:00Z">
+      <description>
+        <p>🐛 Bug Fixes:</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.5.1</p>
+        <p>*(deps)* Update module fyne.io/fyne/v2 to v2.5.2</p>
+        <p>💼 Other:</p>
+        <p>Fix max lvl habitats endlessly updating</p>
+        <p>Fix breaking electricity by adding workers to habitats</p>
+      </description>
+    </release>
+    <release type="stable" version="v1.1.1" date="2024-08-01T00:00:00Z">
+      <description>
+        <p>This release adds the following features:</p>
+        <ul>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.7.0</li>
+          <li>*(github-action)* Update actions/upload-artifact action to v4.3.0</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.8.0</li>
+          <li>*(github-action)* Update ncipollo/release-action action to v1.14.0</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.9.0</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.10.0</li>
+          <li>🐛 Bug Fixes:</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.2</li>
+          <li>*(github-action)* Update actions/upload-artifact action to v4.3.1</li>
+          <li>*(deps)* Update module fyne.io/fyne/v2 to v2.4.4</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.8.1</li>
+          <li>*(github-action)* Update actions/cache action to v4.0.1</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.3</li>
+          <li>*(deps)* Update module github.com/stretchr/testify to v1.9.0</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.8.2</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.4</li>
+          <li>*(github-action)* Update actions/cache action to v4.0.2</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.9.1</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.9.3</li>
+          <li>*(github-action)* Update stefanzweifel/git-auto-commit-action action to v5.0.1</li>
+          <li>*(github-action)* Update actions/upload-artifact action to v4.3.2</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.5</li>
+          <li>*(deps)* Update module fyne.io/fyne/v2 to v2.4.5</li>
+          <li>*(github-action)* Update actions/checkout action to v4.1.4</li>
+          <li>*(github-action)* Update actions/upload-artifact action to v4.3.3</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.7</li>
+          <li>*(github-action)* Update actions/setup-go action to v5.0.1</li>
+          <li>*(github-action)* Update actions/checkout action to v4.1.5</li>
+          <li>*(github-action)* Update actions/checkout action to v4.1.6</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.10.1</li>
+          <li>*(github-action)* Update actions/checkout action to v4.1.7</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.10.2</li>
+          <li>*(github-action)* Update actions/create-github-app-token action to v1.10.3</li>
+          <li>*(github-action)* Update actions/upload-artifact action to v4.3.4</li>
+          <li>*(github-action)* Update actions/download-artifact action to v4.1.8</li>
+          <li>*(github-action)* Update actions/setup-go action to v5.0.2</li>
+          <li>*(deps)* Update module fyne.io/fyne/v2 to v2.5.0</li>
+          <li>💼 Other:</li>
+          <li>Use new ci repo for workflows where possible</li>
+          <li>Fix go coverprofile report workflow</li>
+          <li>Switch gh actions automerge type to pr</li>
+          <li>Mount cache into go-fyne-ci container to speed up operations</li>
+          <li>Use cache action to decrease test and build time</li>
+          <li>Use custom fyne-cross image</li>
+          <li>Run Renovate less frequently</li>
+          <li>Move all workflows to CI repository</li>
+        </ul>
+      </description>
+    </release>
+    <release type="stable" version="v1.0.1" date="2024-01-13T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Use prebuilt container image for lint and unit-tests</p>
+        <p>Set Renovate automerge type to PR</p>
+        <p>Add button next to resources for setting value to 1 mio.</p>
+      </description>
+    </release>
+    <release type="stable" version="v0.2.0" date="2024-01-07T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Fix trigger for testcover report</p>
+        <p>Fix build job</p>
+        <p>Fix release workflow</p>
+      </description>
+    </release>
+    <release type="stable" version="v0.1.2" date="2024-01-04T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Maintain Workflows</p>
+        <p>Enable Renovate</p>
+        <p>Always run on changes to go files</p>
+        <p>Compress release artifacts</p>
+      </description>
+    </release>
+    <release type="stable" version="v0.1.1" date="2024-01-02T00:00:00Z">
+      <description>
+        <p>💼 Other:</p>
+        <p>Add initial ci and helper scripts</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1"/>
 </component>
