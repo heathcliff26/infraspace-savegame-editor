@@ -17,7 +17,7 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/heathcliff26/godialog"
-	fynefallback "github.com/heathcliff26/godialog/fallback/fyne"
+	"github.com/heathcliff26/godialog/fallback/fynefb"
 	"github.com/heathcliff26/infraspace-savegame-editor/pkg/save"
 )
 
@@ -88,7 +88,7 @@ func New() *GUI {
 
 	fd := godialog.NewFileDialog()
 	fd.SetFilters(dialogFileFilters)
-	fd.SetFallback(fynefallback.NewFyneFallbackDialog(g.App))
+	fd.SetFallback(fynefb.NewFyneFallbackDialog(g.App))
 	saveLocation, err := save.DefaultSaveLocation()
 	if !RELEASE {
 		// When developing, you likely have a copy of the save in the current directory
