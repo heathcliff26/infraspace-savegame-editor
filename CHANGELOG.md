@@ -1,5 +1,20 @@
 # Changelog
 
+Version v1.5.1
+--------------------
+Released: 2026-11-13
+
+🐛 Bug Fixes:
+- Add library dependencies to rpm
+- *(deps)* Update gomod
+
+⚙️ Miscellaneous Tasks:
+- Synced file(s) with heathcliff26/ci
+- Synced file(s) with heathcliff26/ci
+- Synced file(s) with heathcliff26/ci
+- *(ci)* Remove gemfury job
+- *(builder)* Update image go-fyne-ci to v202611121610
+
 Version v1.5.0
 --------------------
 Released: 2026-10-13
@@ -18,6 +33,7 @@ Released: 2026-10-13
 - Enforce conventional commits
 - Add new changelog workflow
 - *(builder)* Update image ghcr.io/heathcliff26/go-fyne-ci to v202610090432
+- *(release)* Update changelog for v1.5.0
 
 Version v1.4.1
 --------------------
